@@ -1,110 +1,152 @@
-📘 README – Projet Qualité de Développement ASBank
-Projet réalisé dans le cadre du cours R5.A08 – Qualité de Développement à l’IUT Informatique de Metz.
-Ce projet met en place une application Java EE avec Spring, Hibernate, Tomcat 9 et une base MySQL.
-📦 Prérequis
-macOS
-IntelliJ IDEA Ultimate (licence étudiante JetBrains, nécessaire pour Tomcat)
-Java JDK 8 (obligatoire pour compiler le projet)
-Maven
-Apache Tomcat 9
-MySQL 8 ou équivalent
-⚙️ Installation et configuration
-1. Installation d’IntelliJ IDEA Ultimate
-Télécharger depuis JetBrains.
-Installer sur Mac (glisser dans Applications).
-Activer la licence avec l’adresse email étudiante.
-2. Installation du JDK 8
-Télécharger depuis Adoptium Temurin 8.
-Vérifier l’installation :
+# 💻 Projet Qualité de Développement – **ASBank**
+
+📚 Projet réalisé dans le cadre du cours **R5.A08 – Qualité de Développement** (IUT Informatique de Metz).  
+Ce projet déploie une application Java EE avec **Spring**, **Hibernate**, **Tomcat 9** et une base **MySQL**.
+
+---
+
+## 🛠️ Prérequis
+
+- macOS
+- [IntelliJ IDEA Ultimate](https://www.jetbrains.com/idea/download) (licence étudiante JetBrains)
+- Java **JDK 8**
+- Maven
+- Apache **Tomcat 9**
+- MySQL (version 8+)
+
+---
+
+## ⚙️ Installation
+
+### 1. IntelliJ IDEA Ultimate
+- Télécharger et installer IntelliJ.
+- Activer la licence avec l’email étudiant.
+
+### 2. JDK 8
+```bash
 java -version
-Résultat attendu → 1.8.x.
-3. Installation de Tomcat 9
-Télécharger depuis Tomcat 9 → archive tar.gz.
-Décompresser dans un dossier, ex. :
-~/Documents/ANNEE 3/QualiteDev/apache-tomcat-9.0.109
-4. Import du projet dans IntelliJ
-Ouvrir _00_ASBank2023/ comme projet Maven.
-Vérifier que le SDK est bien sur JDK 1.8.
-Compiler une première fois :
+```
+➡️ Doit afficher `1.8.x`.  
+Si ce n’est pas le cas → installer [Temurin 8](https://adoptium.net/temurin/releases/?version=8).
+
+### 3. Tomcat 9
+- Télécharger [Tomcat 9 (tar.gz)](https://tomcat.apache.org/download-90.cgi).
+- Extraire dans :
+  ```
+  ~/Documents/ANNEE 3/QualiteDev/apache-tomcat-9.0.109
+  ```
+
+### 4. Import du projet
+- Ouvrir `_00_ASBank2023/` dans IntelliJ (projet Maven).
+- Vérifier **Project SDK** → Java 1.8.
+- Compiler une première fois :
+```bash
 mvn clean install -DskipTests
-🚀 Configuration Tomcat dans IntelliJ
-Ajouter Tomcat
-IntelliJ → Preferences (⌘,) → Build, Execution, Deployment → Application Servers.
-Ajouter Tomcat 9 et pointer vers apache-tomcat-9.0.109.
-Configurer une Run Configuration
-Run → Edit Configurations…
-Ajouter Tomcat Server → Local.
-Dans l’onglet Server : HTTP port = 8080.
-Dans l’onglet Deployment :
-Ajouter l’artifact war exploded.
-Définir le Application context :
-/_00_ASBank2023
-Créer l’Artifact
-File → Project Structure → Artifacts
-Ajouter Web Application → Exploded → From Modules.
-Vérifier que WEB-INF et WebContent sont bien inclus.
-Lancer Tomcat
-Sélectionner la configuration Tomcat9_ASBank.
-Lancer ▶️.
-Accéder à l’appli via :
-👉 http://localhost:8080/_00_ASBank2023
-🗄️ Configuration de la base MySQL
-Importer la base de données
-Lancer MySQL.
-Créer la base :
-CREATE DATABASE bankiuttest;
-CREATE DATABASE bankiut;
-Importer le .sql fourni.
-Configurer applicationContext.xml (test et prod)
-Exemple pour bankiuttest :
+```
+
+---
+
+## 🚀 Configuration Tomcat dans IntelliJ
+
+1. **Ajouter Tomcat**  
+   `Preferences → Build, Execution, Deployment → Application Servers`  
+   → pointer vers `apache-tomcat-9.0.109`.
+
+2. **Créer une configuration Run**
+    - `Run → Edit Configurations` → **Tomcat Local**
+    - HTTP Port : `8080`
+    - Deployment → ajouter **artifact** `war exploded`
+    - **Context path** :
+      ```
+      /_00_ASBank2023
+      ```
+
+3. **Artifact**
+    - `File → Project Structure → Artifacts`
+    - Ajouter `Web Application: Exploded → From Modules`.
+
+4. **Lancer**  
+   ▶️ Run → accéder à :  
+   👉 [http://localhost:8080/_00_ASBank2023](http://localhost:8080/_00_ASBank2023)
+
+---
+
+## 🗄️ Base de données MySQL
+
+1. Créer les bases :
+   ```sql
+   CREATE DATABASE bankiuttest;
+   CREATE DATABASE bankiut;
+   ```
+
+2. Importer le `.sql` fourni.
+
+3. Exemple de config `applicationContext.xml` :
+
+```xml
 <bean id="dataSource" scope="singleton"
       class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
     <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
     <property name="url" value="jdbc:mysql://localhost:3306/bankiuttest?useSSL=false&amp;serverTimezone=UTC" />
     <property name="username" value="root" />
-    <property name="password" value="" /> <!-- ou root selon ton MySQL -->
+    <property name="password" value="" /> <!-- changer si besoin -->
     <property name="defaultAutoCommit" value="false" />
 </bean>
-⚠️ Remarques :
-Utiliser com.mysql.cj.jdbc.Driver (nouveau driver).
-Ne pas oublier &amp;serverTimezone=UTC (car en XML & doit être échappé).
-Adapter username et password selon ta config MySQL.
-🎨 Gestion du CSS
-Les fichiers CSS doivent être placés dans WebContent/css/ (ou src/main/webapp/css/).
-Vérifier qu’ils sont inclus dans l’artifact.
-Dans les JSP/HTML, utiliser :
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
-Accessible via :
-👉 http://localhost:8080/_00_ASBank2023/css/style.css
-🐙 Dépôt GitHub
-1. Initialisation
-cd "/Users/lilianmorinon/Documents/ANNEE 3/QualiteDev"
+```
+
+⚠️ Attention : en XML, utiliser `&amp;` (pas `&`).
+
+---
+
+## 🎨 CSS et ressources
+
+- Placer CSS dans `WebContent/css/` ou `src/main/webapp/css/`.
+- Vérifier qu’ils sont inclus dans l’artifact.
+- Dans vos JSP :
+
+```html
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css" />
+```
+
+---
+
+## 🐙 Git & GitHub
+
+### Initialisation
+```bash
+cd "Documents/ANNEE 3/QualiteDev"
 git init
 git remote add origin https://github.com/EskYzK/BUT3_QUALDEV_GROUPE3.git
-2. .gitignore (pour ne pas pousser Tomcat ni IntelliJ)
+```
+
+### `.gitignore`
+```gitignore
 apache-tomcat-9.0.109/
 .idea/
 out/
 target/
 *.iml
-3. Préparation du dépôt
-Supprimer .git/ dans _00_ASBank2023/ (pas de sous-repo Git).
-Ajouter et commit :
+```
+
+### Ajout & Push
+```bash
 git add .
-git commit -m "Ajout projet ASBank (code source + config Tomcat/MySQL)"
-4. Gestion des conflits avec le dépôt distant
-Si le dépôt contient déjà un README ou du code → faire :
-git pull --rebase origin main
-# résoudre conflits si besoin
-git push origin main
-✅ État d’avancement
- Installation IntelliJ Ultimate
- Installation JDK 8
- Installation Tomcat 9
- Import du projet _00_ASBank2023 dans IntelliJ
- Création et configuration de l’artifact war exploded
- Déploiement sur Tomcat avec URL / _00_ASBank2023
- Connexion MySQL (Spring + Hibernate)
- Correction &amp;serverTimezone=UTC
- Vérification CSS dans WebContent
- Dépôt GitHub de groupe fonctionnel avec .gitignore
+git commit -m "Ajout projet ASBank"
+git pull --rebase origin main   # récupérer le travail du groupe
+git push -u origin main
+```
+
+---
+
+## ✅ État d’avancement
+
+- [x] Installation IntelliJ Ultimate
+- [x] Installation JDK 8
+- [x] Installation Tomcat 9
+- [x] Import projet `_00_ASBank2023`
+- [x] Création artifact `war exploded`
+- [x] Déploiement sur Tomcat avec `/ _00_ASBank2023`
+- [x] Connexion MySQL via Spring/Hibernate
+- [x] Correction `&amp;serverTimezone=UTC`
+- [x] Vérification CSS
+- [x] Dépôt GitHub fonctionnel  
