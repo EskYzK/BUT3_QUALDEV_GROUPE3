@@ -166,13 +166,12 @@ git push -u origin main
 
 ## ✅ État d’avancement
 
-- [x] Installation IntelliJ Ultimate
-- [x] Installation JDK 8
-- [x] Installation Tomcat 9
-- [x] Import projet `_00_ASBank2023`
-- [x] Création artifact `war exploded`
-- [x] Déploiement sur Tomcat avec `/ _00_ASBank2023`
-- [x] Connexion MySQL via Spring/Hibernate
-- [x] Correction `&amp;serverTimezone=UTC`
-- [x] Vérification CSS
-- [x] Dépôt GitHub fonctionnel  
+* [x] Installation **IntelliJ IDEA Ultimate**
+* [x] Installation **JDK 11** 
+* [x] Installation **Apache Tomcat 9**
+* [x] Importation du projet **_00_ASBank2023** dans IntelliJ
+* [x] Création de l’**artifact WAR exploded**
+* [x] Déploiement sur **Tomcat** avec le contexte `/_00_ASBank2023_war_exploded`
+* [x] Connexion **MySQL** via **Spring / Hibernate**
+* [x] Vérification du rendu **CSS** dans l’application
+* [x] Dépôt **GitHub** initialisé et fonctionnel (`git add / commit / push`)
