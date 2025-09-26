@@ -72,10 +72,16 @@ Avant toute installation, assurez-vous d’avoir les outils suivants installés 
 Dans IntelliJ ou via un terminal, exécutez :
 
 ```bash
-mvn clean install
+mvn clean install -DskipTests
 ```
 
-Cela permet de télécharger toutes les dépendances nécessaires et de compiler le projet.
+Cette commande permet de :
+
+* Nettoyer le projet,
+* Télécharger toutes les dépendances nécessaires,
+* Compiler et générer le WAR,
+* **Ignorer les tests unitaires** (qui nécessitent la configuration complète de la base de test).
+
 Résultat attendu : **BUILD SUCCESS**.
 
 ### b) Connexion à la base de données
