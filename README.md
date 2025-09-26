@@ -7,7 +7,6 @@ Ce projet déploie une application Java EE avec **Spring**, **Hibernate**, **Tom
 
 ## 🛠️ Prérequis
 
-- macOS
 - [IntelliJ IDEA Ultimate](https://www.jetbrains.com/idea/download) (licence étudiante JetBrains)
 - Java **JDK 8**
 - Maven
