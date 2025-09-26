@@ -5,107 +5,132 @@ Ce projet déploie une application Java EE avec **Spring**, **Hibernate**, **Tom
 
 ---
 
-## 🛠️ Prérequis
+## 1. Pré-requis logiciels
 
-- [IntelliJ IDEA Ultimate](https://www.jetbrains.com/idea/download) (licence étudiante JetBrains)
-- Java **JDK 8**
-- Maven
-- Apache **Tomcat 9**
-- MySQL (version 8+)
+Avant toute installation, assurez-vous d’avoir les outils suivants installés et configurés :
 
----
+### 🔹 Java JDK 11
 
-## ⚙️ Installation
+* Téléchargez et installez la version [Temurin JDK 11](https://adoptium.net/temurin/releases/?version=11).
+* Configurez la variable d’environnement `JAVA_HOME` vers le dossier d’installation du JDK.
+* Vérifiez l’installation avec la commande :
 
-### 1. IntelliJ IDEA Ultimate
-- Télécharger et installer IntelliJ.
-- Activer la licence avec l’email étudiant.
-
-### 2. JDK 8
-```bash
-java -version
-```
-➡️ Doit afficher `1.8.x`.  
-Si ce n’est pas le cas → installer [Temurin 8](https://adoptium.net/temurin/releases/?version=8).
-
-### 3. Tomcat 9
-- Télécharger [Tomcat 9 (tar.gz)](https://tomcat.apache.org/download-90.cgi).
-- Extraire dans :
-  ```
-  ~/Documents/ANNEE 3/QualiteDev/apache-tomcat-9.0.109
+  ```bash
+  java -version
   ```
 
-### 4. Import du projet
-- Ouvrir `_00_ASBank2023/` dans IntelliJ (projet Maven).
-- Vérifier **Project SDK** → Java 1.8.
-- Compiler une première fois :
+  Résultat attendu : une version **openjdk 11.x**.
+
+### 🔹 Apache Maven (≥ 3.9)
+
+* Téléchargez Maven [ici](https://maven.apache.org/download.cgi).
+* Décompressez-le dans un dossier stable (ex. `C:\apache-maven-3.9.x`).
+* Ajoutez le chemin `bin/` de Maven dans la variable d’environnement `PATH`.
+* Vérifiez l’installation avec :
+
+  ```bash
+  mvn -v
+  ```
+
+  Résultat attendu : la version de Maven + Java 11.
+
+### 🔹 Apache Tomcat 9.x
+
+* Téléchargez la version ZIP depuis [Tomcat 9 Downloads](https://tomcat.apache.org/download-90.cgi).
+* Décompressez-le dans un dossier (ex. `C:\apache-tomcat-9.0.xx`).
+* Vérifiez l’installation avec :
+
+  ```bash
+  catalina.bat version
+  ```
+
+### 🔹 MySQL / MariaDB
+
+* Téléchargez et installez [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) ou utilisez XAMPP/WAMP.
+* Vérifiez que le service MySQL est démarré.
+
+### 🔹 IntelliJ IDEA Ultimate
+
+* Utilisez la version **Ultimate** (car elle gère Tomcat et les projets Java EE nativement).
+
+---
+
+## 2. Installation des bases de données
+
+1. Créez deux bases vides dans MySQL :
+
+   * `nomuser_bankiut` (base principale de l’application)
+   * `nomuser_bankiut_test` (base utilisée pour les tests)
+
+2. Importez les fichiers SQL fournis dans le dossier `script/` :
+
+   * `dumpSQL.sql` → pour la base principale
+   * `dumpSQL_JUnitTest.sql` → pour la base de test
+
+---
+
+## 3. Configuration du projet
+
+### a) Récupération des dépendances
+
+Dans IntelliJ ou via un terminal, exécutez :
+
 ```bash
-mvn clean install -DskipTests
+mvn clean install
 ```
 
----
+Cela permet de télécharger toutes les dépendances nécessaires et de compiler le projet.
+Résultat attendu : **BUILD SUCCESS**.
 
-## 🚀 Configuration Tomcat dans IntelliJ
+### b) Connexion à la base de données
 
-1. **Ajouter Tomcat**  
-   `Preferences → Build, Execution, Deployment → Application Servers`  
-   → pointer vers `apache-tomcat-9.0.109`.
+Le projet utilise **Spring** et **Hibernate** pour accéder à la base MySQL.
 
-2. **Créer une configuration Run**
-    - `Run → Edit Configurations` → **Tomcat Local**
-    - HTTP Port : `8080`
-    - Deployment → ajouter **artifact** `war exploded`
-    - **Context path** :
-      ```
-      /_00_ASBank2023
-      ```
+* Le fichier `applicationContext.xml` contient la configuration pour la base principale.
+* Les fichiers `TestsBanqueManager-context.xml` et `TestsDaoHibernate-context.xml` définissent la configuration pour la base de test.
 
-3. **Artifact**
-    - `File → Project Structure → Artifacts`
-    - Ajouter `Web Application: Exploded → From Modules`.
+Vérifiez dans ces fichiers que :
 
-4. **Lancer**  
-   ▶️ Run → accéder à :  
-   👉 [http://localhost:8080/_00_ASBank2023](http://localhost:8080/_00_ASBank2023)
+* Le nom de la base correspond bien à `nomuser_bankiut` (ou `nomuser_bankiut_test` pour les tests).
+* L’utilisateur et le mot de passe MySQL sont corrects (par défaut `root` / `root`, sauf si vous avez modifié votre configuration).
+
+En résumé :
+
+* **applicationContext.xml** → doit pointer sur la base principale.
+* **fichiers de test** → doivent pointer sur la base de test.
 
 ---
 
-## 🗄️ Base de données MySQL
+## 4. Déploiement avec Tomcat
 
-1. Créer les bases :
-   ```sql
-   CREATE DATABASE bankiuttest;
-   CREATE DATABASE bankiut;
+1. Dans IntelliJ, ouvrez **Run > Edit Configurations**.
+2. Ajoutez une configuration **Tomcat Server > Local**.
+3. Dans l’onglet **Deployment**, ajoutez l’artifact généré par Maven :
+
+   ```
+   _00_ASBank2023:war exploded
+   ```
+4. Conservez le **contexte par défaut** généré par IntelliJ (ex. `/_00_ASBank2023_war_exploded`).
+5. Cliquez sur **Apply**, puis **OK**.
+
+---
+
+## 5. Lancement de l’application
+
+1. Lancez Tomcat depuis IntelliJ avec ▶️ **Run**.
+2. Surveillez la console et attendez le message :
+
+   ```
+   Artifact _00_ASBank2023:war exploded: Artifact is deployed successfully
+   ```
+3. Ouvrez un navigateur et accédez à l’URL :
+
+   ```
+   http://localhost:8080/_00_ASBank2023_war_exploded
    ```
 
-2. Importer le `.sql` fourni.
-
-3. Exemple de config `applicationContext.xml` :
-
-```xml
-<bean id="dataSource" scope="singleton"
-      class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-    <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
-    <property name="url" value="jdbc:mysql://localhost:3306/bankiuttest?useSSL=false&amp;serverTimezone=UTC" />
-    <property name="username" value="root" />
-    <property name="password" value="" /> <!-- changer si besoin -->
-    <property name="defaultAutoCommit" value="false" />
-</bean>
-```
-
-⚠️ Attention : en XML, utiliser `&amp;` (pas `&`).
-
----
-
-## 🎨 CSS et ressources
-
-- Placer CSS dans `WebContent/css/` ou `src/main/webapp/css/`.
-- Vérifier qu’ils sont inclus dans l’artifact.
-- Dans vos JSP :
-
-```html
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css" />
-```
+Vous devriez voir la page d’accueil de l’application :
+**« Bienvenue sur l'application IUT Bank 2023 »** avec le lien vers la page de connexion.
 
 ---
 
