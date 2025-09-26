@@ -11,15 +11,11 @@ Avant toute installation, assurez-vous d’avoir les outils suivants installés 
 
 ### 🔹 Java JDK 11
 
-* Téléchargez et installez la version [Temurin JDK 11](https://adoptium.net/temurin/releases/?version=11).
-* Configurez la variable d’environnement `JAVA_HOME` vers le dossier d’installation du JDK.
-* Vérifiez l’installation avec la commande :
-
-  ```bash
-  java -version
-  ```
-
-  Résultat attendu : une version **openjdk 11.x**.
+- Le projet fonctionne avec **Java 11**.  
+- Dans IntelliJ IDEA, allez dans :  
+  **File > Project Structure > Project**  
+  et téléchargez/configurez directement un **JDK 11** (exemple : *Microsoft OpenJDK 11*).  
+- Vérifiez que le projet utilise bien **Java 11** comme SDK.  
 
 ### 🔹 Apache Maven (≥ 3.9)
 
