@@ -9,6 +9,8 @@ import com.iut.banque.exceptions.IllegalOperationException;
 import com.iut.banque.exceptions.TechnicalException;
 import com.iut.banque.facade.BanqueFacade;
 import com.opensymphony.xwork2.ActionSupport;
+import com.iut.banque.security.PasswordHasher;
+
 
 public class CreerUtilisateur extends ActionSupport {
 
@@ -199,11 +201,12 @@ public class CreerUtilisateur extends ActionSupport {
 	 * @return String : le status de l'action
 	 */
 	public String creationUtilisateur() {
+        String hashedPassword = PasswordHasher.hash(this.getUserPwd());
 		try {
 			if (client) {
-				banque.createClient(userId, userPwd, nom, prenom, adresse, male, numClient);
+				banque.createClient(userId, hashedPassword, nom, prenom, adresse, male, numClient);
 			} else {
-				banque.createManager(userId, userPwd, nom, prenom, adresse, male);
+				banque.createManager(userId, hashedPassword, nom, prenom, adresse, male);
 			}
 			this.message = "Le nouvel utilisateur avec le user id '" + userId + "' a bien été crée.";
 			this.result = "SUCCESS";
