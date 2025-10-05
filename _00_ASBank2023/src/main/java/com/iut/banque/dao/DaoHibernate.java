@@ -18,6 +18,7 @@ import com.iut.banque.modele.CompteAvecDecouvert;
 import com.iut.banque.modele.CompteSansDecouvert;
 import com.iut.banque.modele.Gestionnaire;
 import com.iut.banque.modele.Utilisateur;
+import com.iut.banque.security.PasswordHasher;
 
 /**
  * Implémentation de IDao utilisant Hibernate.
@@ -149,14 +150,17 @@ public class DaoHibernate implements IDao {
 		Session session = sessionFactory.getCurrentSession();
 
 		Utilisateur user = session.get(Utilisateur.class, userId);
+
 		if (user != null) {
 			throw new TechnicalException("User Id déjà utilisé.");
 		}
 
-		if (manager) {
-			user = new Gestionnaire(nom, prenom, adresse, male, userId, userPwd);
+        String hashedPassword = PasswordHasher.hash(userPwd);
+
+        if (manager) {
+			user = new Gestionnaire(nom, prenom, adresse, male, userId, hashedPassword);
 		} else {
-			user = new Client(nom, prenom, adresse, male, userId, userPwd, numClient);
+			user = new Client(nom, prenom, adresse, male, userId, hashedPassword, numClient);
 		}
 		session.save(user);
 
@@ -190,6 +194,7 @@ public class DaoHibernate implements IDao {
 	@Override
 	public boolean isUserAllowed(String userId, String userPwd) {
 		Session session = null;
+
 		if (userId == null || userPwd == null) {
 			return false;
 		} else {
@@ -203,7 +208,8 @@ public class DaoHibernate implements IDao {
 				if (user == null) {
 					return false;
 				}
-				return (userPwd.equals(user.getUserPwd()));
+                String hashedInput = PasswordHasher.hash(userPwd);
+				return (hashedInput.equals(user.getUserPwd()));
 			}
 		}
 	}
