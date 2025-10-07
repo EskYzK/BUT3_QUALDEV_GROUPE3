@@ -49,6 +49,11 @@ Avant toute installation, assurez-vous d’avoir les outils suivants installés 
 
 * Utilisez la version **Ultimate** (car elle gère Tomcat et les projets Java EE nativement).
 
+#### 🔸 Connexion VPN obligatoire
+Important : pour compiler et exécuter le projet ASBank, vous devez être connecté au VPN Cisco Secure Client (réseau de l’IUT). 
+Sans cette connexion, Maven ne parviendra pas à récupérer certaines dépendances ni à se connecter à la base MySQL distante, et la commande mvn clean install échouera.
+
+
 ---
 
 ## 2. Installation des bases de données
