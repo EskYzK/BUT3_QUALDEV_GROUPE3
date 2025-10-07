@@ -67,7 +67,7 @@ public class CompteAvecDecouvert extends Compte {
 	public CompteAvecDecouvert(String numeroCompte, double solde, double decouvertAutorise, Client client)
 			throws IllegalFormatException, IllegalOperationException {
 		super(numeroCompte, solde, client);
-		this.setDecouverAutorise(decouvertAutorise);
+		this.setDecouvertAutorise(decouvertAutorise);
 	}
 
 	/**

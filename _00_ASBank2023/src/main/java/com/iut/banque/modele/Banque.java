@@ -86,6 +86,6 @@ public class Banque {
 	}
 
 	public void changeDecouvert(CompteAvecDecouvert compte, double nouveauDecouvert) throws IllegalFormatException, IllegalOperationException {
-		compte.setDecouverAutorise(nouveauDecouvert);
+		compte.setDecouvertAutorise(nouveauDecouvert);
 	}
 }
