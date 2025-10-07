@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
- * PasswordHasher — utilitaire simple pour hachage et vérification de mots de passe.
+ * PasswordHasher — utilitaire simple pour hashage et vérification de mots de passe.
  * Utilise BCrypt (lib org.mindrot:jbcrypt).
  */
 public class PasswordHasher {
