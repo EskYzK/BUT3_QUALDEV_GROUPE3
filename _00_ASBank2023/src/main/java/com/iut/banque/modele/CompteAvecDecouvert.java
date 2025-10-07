@@ -42,7 +42,7 @@ public class CompteAvecDecouvert extends Compte {
 	 *             : si le découvert est inférieur à 0
 	 * @throws IllegalOperationException 
 	 */
-	public void setDecouverAutorise(double decouvertAutorise) throws IllegalFormatException, IllegalOperationException {
+	public void setDecouvertAutorise(double decouvertAutorise) throws IllegalFormatException, IllegalOperationException {
 		if (decouvertAutorise < 0) {
 			throw new IllegalFormatException("Un découvert doit forcement être positif.");
 		} else if (this.solde < 0 && decouvertAutorise < Math.abs(this.solde)) {
