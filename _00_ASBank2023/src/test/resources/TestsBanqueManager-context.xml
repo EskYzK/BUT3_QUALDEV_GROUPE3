@@ -33,7 +33,7 @@
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://devbdd.iutmetz.univ-lorraine.fr:3306/chollet14u_bankiuttest?useSSL=false&amp;serverTimezone=UTC" />
-²        <property name="username" value="chollet14u_appli" />
+        <property name="username" value="chollet14u_appli" />
         <property name="password" value="32301542" />
     </bean>
 
