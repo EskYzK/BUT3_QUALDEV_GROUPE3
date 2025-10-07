@@ -30,19 +30,11 @@
     <!-- ============= DataSource (connexion MySQL) ============= -->
 
     <bean id="dataSource" scope="singleton"
-          class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <!-- MODIF : ancien driver com.mysql.jdbc.Driver -->
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
-
-        <!-- MODIF : ajout de ?useSSL=false&serverTimezone=UTC -->
-        <property name="url" value="jdbc:mysql://devbdd.iutmetz.univ-lorraine.fr:3306/morinon1u_bankiut?useSSL=false&amp;serverTimezone=UTC" />
-
-        <property name="username" value="morinon1u_appli" />
-
-        <!-- MODIF : adapte ce mot de passe à ta conf MySQL (vide si aucun) -->
-        <property name="password" value="32309469" />
-
-        <property name="defaultAutoCommit" value="false" />
+        <property name="url" value="jdbc:mysql://devbdd.iutmetz.univ-lorraine.fr:3306/chollet14u_bankiuttest?useSSL=false&amp;serverTimezone=UTC" />
+        <property name="username" value="chollet14u_appli" />
+        <property name="password" value="32301542" />
     </bean>
 
     <!-- ============= Gestion des transactions ============= -->
