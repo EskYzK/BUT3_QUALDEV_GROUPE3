@@ -1,5 +1,8 @@
 package com.iut.banque.security;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -19,3 +22,6 @@ public class PasswordHasher {
         return BCrypt.checkpw(password, hashed);
     }
 }
+
+
+
