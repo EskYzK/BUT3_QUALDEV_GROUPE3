@@ -13,12 +13,10 @@ import com.iut.banque.exceptions.IllegalFormatException;
 
 /**
  * Classe représentant un utilisateur quelconque.
- * 
  * La stratégie d'héritage choisie est SINGLE_TABLE. Cela signifie que tous les
  * objets de cette classe et des classes filles sont enregistrés dans une seule
  * table dans la base de donnée. Les champs non utilisés par la classe sont
  * NULL.
- * 
  * Lors d'un chargement d'un objet appartenant à une des classes filles, le type
  * de l'objet est choisi grâce à la colonne "type" (c'est une colonne de
  * discrimination).
@@ -31,7 +29,6 @@ public abstract class Utilisateur {
 
 	/**
 	 * L'identifiant (unique) de l'utilisateur.
-	 * 
 	 * Correspond à la clé primaire de l'utilisateur dans la BDD.
 	 */
 	@Id
@@ -161,9 +158,8 @@ public abstract class Utilisateur {
 	}
 
 	/**
-	 * Constructeur de Utilisateur avec tous les champs de la classe comme
+	 * Constructeur d'Utilisateur avec tous les champs de la classe comme
 	 * paramètres.
-	 * 
 	 * Il est préférable d'utiliser une classe implémentant IDao pour créer un
 	 * objet au lieu d'appeler ce constructeur.
 	 * 
@@ -174,7 +170,7 @@ public abstract class Utilisateur {
 	 * @param userId
 	 * @param userPwd
 	 */
-	public Utilisateur(String nom, String prenom, String adresse, boolean male, String userId, String userPwd) {
+	protected Utilisateur(String nom, String prenom, String adresse, boolean male, String userId, String userPwd) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
@@ -185,14 +181,12 @@ public abstract class Utilisateur {
 	}
 
 	/**
-	 * Constructeur sans paramètre de Utilisateur.
-	 * 
+	 * Constructeur sans paramètre d'Utilisateur.
 	 * Nécessaire pour Hibernate.
-	 *
 	 * Il est préférable d'utiliser une classe implémentant IDao pour créer un
 	 * objet au lieu d'appeler ce constructeur.
 	 */
-	public Utilisateur() {
+	protected Utilisateur() {
 		super();
 	}
 
