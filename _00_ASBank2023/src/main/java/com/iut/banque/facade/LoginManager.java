@@ -4,6 +4,8 @@ import com.iut.banque.constants.LoginConstants;
 import com.iut.banque.interfaces.IDao;
 import com.iut.banque.modele.Gestionnaire;
 import com.iut.banque.modele.Utilisateur;
+import com.iut.banque.security.PasswordHasher;
+
 
 public class LoginManager {
 
@@ -77,5 +79,22 @@ public class LoginManager {
 	public void logout() {
 		this.user = null;
 		dao.disconnect();
+	}
+
+	public boolean changePassword(Utilisateur user, String oldPwd, String newPwd) {
+		if (user == null || oldPwd == null || newPwd == null) return false;
+
+		// Vérification de l'ancien mot de passe
+		if (!PasswordHasher.verify(oldPwd, user.getUserPwd())) {
+			return false;
+		}
+
+		// Hash du nouveau mot de passe
+		String hashed = PasswordHasher.hash(newPwd);
+		user.setUserPwd(hashed);
+
+		// Met à jour en base
+		dao.updateUser(user);
+		return true;
 	}
 }
