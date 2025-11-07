@@ -18,6 +18,8 @@ import com.iut.banque.modele.CompteAvecDecouvert;
 import com.iut.banque.modele.CompteSansDecouvert;
 import com.iut.banque.modele.Gestionnaire;
 import com.iut.banque.modele.Utilisateur;
+import com.iut.banque.security.PasswordHasher;
+
 
 /**
  * Implémentation de IDao utilisant Hibernate.
@@ -152,11 +154,12 @@ public class DaoHibernate implements IDao {
 		if (user != null) {
 			throw new TechnicalException("User Id déjà utilisé.");
 		}
+		String hashedPwd = PasswordHasher.hash(userPwd);
 
 		if (manager) {
-			user = new Gestionnaire(nom, prenom, adresse, male, userId, userPwd);
+			user = new Gestionnaire(nom, prenom, adresse, male, userId, hashedPwd);
 		} else {
-			user = new Client(nom, prenom, adresse, male, userId, userPwd, numClient);
+			user = new Client(nom, prenom, adresse, male, userId, hashedPwd, numClient);
 		}
 		session.save(user);
 
@@ -189,23 +192,17 @@ public class DaoHibernate implements IDao {
 	 */
 	@Override
 	public boolean isUserAllowed(String userId, String userPwd) {
-		Session session = null;
-		if (userId == null || userPwd == null) {
-			return false;
-		} else {
-			session = sessionFactory.openSession();
-			userId = userId.trim();
-			if ("".equals(userId) || "".equals(userPwd)) {
-				return false;
-			} else {
-				session = sessionFactory.getCurrentSession();
-				Utilisateur user = session.get(Utilisateur.class, userId);
-				if (user == null) {
-					return false;
-				}
-				return (userPwd.equals(user.getUserPwd()));
-			}
-		}
+		if (userId == null || userPwd == null) return false;
+
+		Session session = sessionFactory.getCurrentSession();
+		userId = userId.trim();
+		if (userId.isEmpty() || userPwd.isEmpty()) return false;
+
+		Utilisateur user = session.get(Utilisateur.class, userId);
+		if (user == null) return false;
+
+		// Vérifie le mot de passe hashé avec BCrypt
+		return PasswordHasher.verify(userPwd, user.getUserPwd());
 	}
 
 	/**
