@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-public class PasswordHasherTest {
+public class TestsPasswordHasher {
 
     @Test
     public void testHashNotNull() {
