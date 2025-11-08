@@ -93,7 +93,7 @@ public class LoginManager {
 		String hashed = PasswordHasher.hash(newPwd);
 		user.setUserPwd(hashed);
 
-		// Met à jour en base
+		// Mise à jour dans la base
 		dao.updateUser(user);
 		return true;
 	}

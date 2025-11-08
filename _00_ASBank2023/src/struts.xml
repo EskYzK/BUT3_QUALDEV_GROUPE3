@@ -296,5 +296,11 @@
 			<result>/JSP/CreerUtilisateur.jsp</result>
 		</action>
 
+        <action name="changePassword" class="com.iut.banque.controller.ChangePassword">
+            <result name="success">/pages/changePasswordSuccess.jsp</result>
+            <result name="input">/pages/changePassword.jsp</result>
+            <result name="error">/pages/login.jsp</result>
+        </action>
+
 	</package>
 </struts>
