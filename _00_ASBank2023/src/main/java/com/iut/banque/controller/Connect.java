@@ -14,6 +14,8 @@ import com.iut.banque.modele.Client;
 import com.iut.banque.modele.Compte;
 import com.iut.banque.modele.Utilisateur;
 
+import javax.servlet.http.HttpSession;
+
 public class Connect extends ActionSupport {
 
 	private static final long serialVersionUID = 1L;
@@ -43,7 +45,7 @@ public class Connect extends ActionSupport {
 	 *         échec
 	 */
 	public String login() {
-		System.out.println("Essai de login - 20180512...");
+		System.out.println("Essai de login");
 
 		if (userCde == null || userPwd == null) {
 			return "ERROR";
@@ -58,7 +60,9 @@ public class Connect extends ActionSupport {
 			loginResult = LoginConstants.ERROR;
 		}
 
-		switch (loginResult) {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+
+        switch (loginResult) {
 		case LoginConstants.USER_IS_CONNECTED:
 			System.out.println("user logged in");
 			return "SUCCESS";

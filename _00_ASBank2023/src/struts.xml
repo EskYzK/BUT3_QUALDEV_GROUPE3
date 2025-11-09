@@ -297,8 +297,8 @@
 		</action>
 
         <action name="changePassword" class="com.iut.banque.controller.ChangePassword">
-            <result name="success">/JSP/changePasswordSuccess.jsp</result>
-            <result name="input">/JSP/changePassword.jsp</result>
+            <result name="success">/JSP/ChangePasswordSuccess.jsp</result>
+            <result name="input">/JSP/ChangePassword.jsp</result>
             <result name="error">/JSP/Login.jsp</result>
         </action>
 

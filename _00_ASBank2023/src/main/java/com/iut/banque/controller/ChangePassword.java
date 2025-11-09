@@ -1,13 +1,20 @@
 package com.iut.banque.controller;
 
 
+import com.iut.banque.facade.BanqueFacade;
 import com.iut.banque.facade.LoginManager;
+import com.iut.banque.interfaces.IDao;
 import com.iut.banque.modele.Utilisateur;
 import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ServletActionContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.context.ApplicationContext;
+import javax.servlet.http.HttpSession;
 
 public class ChangePassword extends ActionSupport {
     private String oldPassword;
     private String newPassword;
+    private IDao dao;
 
     // Getters & setters
 
@@ -18,23 +25,25 @@ public class ChangePassword extends ActionSupport {
 
     @Override
     public String execute() {
-        Utilisateur user = (Utilisateur)
-                org.apache.struts2.ServletActionContext.getRequest()
-                        .getSession().getAttribute("user");
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        // Récupérer la BanqueFacade depuis Spring
+        ApplicationContext context = WebApplicationContextUtils
+                .getRequiredWebApplicationContext(ServletActionContext.getServletContext());
+        BanqueFacade banque = (BanqueFacade) context.getBean("banqueFacade");
+
+        Utilisateur user = banque.getConnectedUser(); // tu n'as plus besoin du DAO direct
 
         if (user == null) {
             addActionError("Vous devez être connecté.");
             return ERROR;
         }
 
-        LoginManager manager = new LoginManager();
-        boolean success = manager.changePassword(user, oldPassword, newPassword);
+        // Utiliser directement le LoginManager via la facade
+        boolean success = banque.changePassword(user, oldPassword, newPassword);
 
         if (success) {
-            addActionMessage("Mot de passe modifié avec succès !");
             return SUCCESS;
         } else {
-            addActionError("Ancien mot de passe incorrect.");
             return INPUT;
         }
     }

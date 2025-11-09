@@ -276,4 +276,8 @@ public class BanqueFacade {
 			banqueManager.changeDecouvert(compte, nouveauDecouvert);
 		}
 	}
+
+    public boolean changePassword(Utilisateur user, String oldPwd, String newPwd) {
+        return loginManager.changePassword(user, oldPwd, newPwd);
+    }
 }
