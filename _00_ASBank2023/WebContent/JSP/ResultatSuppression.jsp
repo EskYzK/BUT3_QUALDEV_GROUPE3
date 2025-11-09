@@ -5,9 +5,9 @@
 
 <html>
 <head>
-<title>Résultat de la suppression</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="stylesheet" href="/_00_ASBank2023/style/style.css" />
+    <title>Résultat de la suppression</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="<s:url value='/style/style.css'/>" />
 </head>
 <body>
 

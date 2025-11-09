@@ -15,9 +15,9 @@
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Liste des comptes de la banque</title>
-<link rel="stylesheet" href="/_00_ASBank2023/style/style.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Liste des comptes de la banque</title>
+    <link rel="stylesheet" href="<s:url value='/style/style.css'/>" />
 </head>
 <body>
 	<div class="btnLogout">

@@ -4,9 +4,9 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Page de connexion</title>
-<link rel="stylesheet" href="/_00_ASBank2023/style/style.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Page de connexion</title>
+    <link rel="stylesheet" href="<s:url value='/style/style.css'/>" />
 </head>
 
 <body>
@@ -15,8 +15,8 @@
 		method="POST">
 		<s:textfield label="Code user" name="userCde" />
 		<s:password label="Password" name="userPwd" />
-		<s:submit name="submit" />
-	</s:form>
+        <s:submit value="Submit"/>
+    </s:form>
 		<s:form name="myFormRetour" action="retourAccueil" method="POST">
 			<s:submit name="Retour" value="Retour à l'accueil" />
 		</s:form>

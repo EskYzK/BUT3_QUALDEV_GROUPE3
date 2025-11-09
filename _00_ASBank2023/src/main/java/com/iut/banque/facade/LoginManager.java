@@ -14,7 +14,6 @@ public class LoginManager {
 
 	/**
 	 * Setter pour la DAO.
-	 * 
 	 * Utilisé par Spring par Injection de Dependence
 	 * 
 	 * @param dao
@@ -30,12 +29,12 @@ public class LoginManager {
 	 * passe donné en paramètre
 	 * 
 	 * @param userCde
-	 *            : un String correspondant au userID de l'utilisateur qui
+	 *            : un String correspondant à l'userID de l'utilisateur qui
 	 *            cherche à se connecter
 	 * @param userPwd
 	 *            : un String correspondant au mot de passe qui doit être
 	 *            confronté avec celui de la base de données
-	 * @return int correspondant aux constantes LoginConstants pour inforer de
+	 * @return int correspondant aux constantes LoginConstants pour informer de
 	 *         l'état du login
 	 */
 	public int tryLogin(String userCde, String userPwd) {

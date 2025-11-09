@@ -4,11 +4,11 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Formulaire de création d'un compte</title>
-<link rel="stylesheet" href="/_00_ASBank2023/style/style.css" />
-<script src="/_00_ASBank2023/js/jquery.js"></script>
-<script src="/_00_ASBank2023/js/jsCreerCompte.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Formulaire de création d'un compte</title>
+    <link rel="stylesheet" href="<s:url value='/style/style.css'/>" />
+    <script src="<s:url value='/js/jquery.js'/>"></script>
+    <script src="<s:url value='/js/jsCreerCompte.js'/>"></script>
 </head>
 
 <body>

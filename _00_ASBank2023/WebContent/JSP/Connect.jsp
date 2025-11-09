@@ -5,9 +5,9 @@
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Tableau de bord</title>
-<link rel="stylesheet" href="/_00_ASBank2023/style/style.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Tableau de bord</title>
+    <link rel="stylesheet" href="<s:url value='/style/style.css'/>" />
 </head>
 <body>
 	<div class="btnLogout">
@@ -20,7 +20,11 @@
 		Bienvenue <b><s:property value="connectedUser.prenom" /> <s:property
 				value="connectedUser.nom" /></b> !
 	</p>
-	<p>Voici l'état de vos comptes :</p>
+    <p>
+        <s:url action="changePassword" var="urlChangePassword"></s:url>
+        <s:a href="%{urlChangePassword}">Changer mon mot de passe</s:a>
+    </p>
+    <p>Voici l'état de vos comptes :</p>
 	<table>
 		<tr>
 			<td><b>Numéro de compte</b></td>
