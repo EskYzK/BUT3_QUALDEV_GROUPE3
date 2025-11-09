@@ -3,7 +3,6 @@ package com.iut.banque.controller;
 
 import com.iut.banque.facade.LoginManager;
 import com.iut.banque.modele.Utilisateur;
-import com.iut.banque.security.PasswordHasher;
 import com.opensymphony.xwork2.ActionSupport;
 
 public class ChangePassword extends ActionSupport {
@@ -29,7 +28,7 @@ public class ChangePassword extends ActionSupport {
         }
 
         LoginManager manager = new LoginManager();
-        boolean success = manager.changePassword(user, oldPassword, PasswordHasher.hash(newPassword));
+        boolean success = manager.changePassword(user, oldPassword, newPassword);
 
         if (success) {
             addActionMessage("Mot de passe modifié avec succès !");
