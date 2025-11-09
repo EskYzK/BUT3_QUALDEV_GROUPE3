@@ -225,7 +225,7 @@ public class TestsDaoHibernate {
             assertEquals("ADRESSE", user.getAdresse());
             assertEquals("c.new1", user.getUserId());
 
-            // :white_check_mark: Vérifie que le mot de passe correspond via BCrypt
+            // Vérifie que le mot de passe correspond via BCrypt
             assertTrue(PasswordHasher.verify("PASS", user.getUserPwd()));
 
             assertTrue(user.isMale());
