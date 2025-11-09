@@ -39,7 +39,7 @@ jobs:
           VPN_USER: ${{ secrets.VPN_USER }}
           VPN_PASS: ${{ secrets.VPN_PASS }}
         run: |
-          echo $VPN_PASS | sudo openconnect --user=$VPN_USER --passwd-on-stdin vpn.iut.example.fr --background
+          echo $VPN_PASS | sudo openconnect --user=$VPN_USER --passwd-on-stdin vpn.lothaire.net --background
 
       # 5️⃣ Cache SonarCloud packages
       - name: Cache SonarCloud packages
