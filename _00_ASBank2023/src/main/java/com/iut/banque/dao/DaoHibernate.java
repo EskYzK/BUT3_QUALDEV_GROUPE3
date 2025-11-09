@@ -103,6 +103,10 @@ public class DaoHibernate implements IDao {
 		session.update(c);
 	}
 
+    public SessionFactory getSessionFactory() {
+        return this.sessionFactory;
+    }
+
 	/**
 	 * {@inheritDoc}
 	 */

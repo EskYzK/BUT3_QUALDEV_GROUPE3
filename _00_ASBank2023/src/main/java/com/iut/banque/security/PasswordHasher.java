@@ -1,6 +1,12 @@
 package com.iut.banque.security;
 
+import java.util.List;
+import com.iut.banque.dao.DaoHibernate;
+import com.iut.banque.modele.Utilisateur;
+import org.hibernate.Transaction;
 import org.mindrot.jbcrypt.BCrypt;
+import org.hibernate.Session;
+import org.hibernate.HibernateException;
 
 /**
  * PasswordHasher — utilitaire simple pour hashage et vérification de mots de passe.
@@ -19,7 +25,31 @@ public class PasswordHasher {
         return BCrypt.checkpw(password, hashed);
     }
 
-    public static boolean modifyPassword(String password) {
+    /**
+     * Rehash tous les utilisateurs existants (Clients et Gestionnaires)
+     * en utilisant la méthode updateUserPassword du DAO.
+     */
+    public static void rehashAllUsers(DaoHibernate dao) {
+        Session session = dao.getSessionFactory().openSession(); // Session indépendante
+        Transaction tx = session.beginTransaction();
 
+        try {
+            @SuppressWarnings("unchecked")
+            List<Utilisateur> users = session.createQuery("FROM Utilisateur").list();
+
+            for (Utilisateur user : users) {
+                String oldPwd = user.getUserPwd();
+                String newHashed = PasswordHasher.hash(oldPwd);
+                user.setUserPwd(newHashed);
+                session.update(user);
+            }
+
+            tx.commit(); // Commit des changements
+        } catch (HibernateException e) { // plus précis que Exception
+            if (tx != null) tx.rollback();
+            System.err.println("Erreur lors du rehash des mots de passe : " + e.getMessage());
+        } finally {
+            session.close();
+        }
     }
 }
