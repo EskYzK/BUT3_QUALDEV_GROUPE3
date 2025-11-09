@@ -62,7 +62,7 @@ public class AccountConverter extends StrutsTypeConverter {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object convertFromString(Map context, String[] values, Class classe) {
-		Compte compte = (Compte) dao.getAccountById(values[0]);
+		Compte compte = dao.getAccountById(values[0]);
 		if (compte == null) {
 			throw new TypeConversionException("Impossible de convertir la chaine suivante : " + values[0]);
 		}
