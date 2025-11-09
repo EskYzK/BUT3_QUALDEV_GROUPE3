@@ -23,6 +23,7 @@ import com.iut.banque.modele.CompteAvecDecouvert;
 import com.iut.banque.modele.CompteSansDecouvert;
 import com.iut.banque.modele.Gestionnaire;
 import com.iut.banque.modele.Utilisateur;
+import com.iut.banque.security.PasswordHasher;
 
 /**
  * Class de test pour la DAO.
@@ -207,29 +208,33 @@ public class TestsDaoHibernate {
 		}
 	}
 
-	@Test
-	public void testCreateUser() {
-		try {
-			try {
-				daoHibernate.createUser("NOM", "PRENOM", "ADRESSE", true, "c.new1", "PASS", false, "5544554455");
-			} catch (IllegalArgumentException e) {
-				fail("Il ne devrait pas y avoir d'exception ici");
-			} catch (IllegalFormatException e) {
-				fail("Il ne devrait pas y avoir d'exception ici");
-			}
-			Utilisateur user = daoHibernate.getUserById("c.new1");
-			assertEquals("NOM", user.getNom());
-			assertEquals("PRENOM", user.getPrenom());
-			assertEquals("ADRESSE", user.getAdresse());
-			assertEquals("c.new1", user.getUserId());
-			assertEquals("PASS", user.getUserPwd());
-			assertTrue(user.isMale());
-		} catch (TechnicalException he) {
-			fail("L'utilisateur aurait du être créé.");
-		}
-	}
+    @Test
+    public void testCreateUser() {
+        try {
+            try {
+                daoHibernate.createUser("NOM", "PRENOM", "ADRESSE", true, "c.new1", "PASS", false, "5544554455");
+            } catch (IllegalArgumentException e) {
+                fail("Il ne devrait pas y avoir d'exception ici");
+            } catch (IllegalFormatException e) {
+                fail("Il ne devrait pas y avoir d'exception ici");
+            }
 
-	@Test
+            Utilisateur user = daoHibernate.getUserById("c.new1");
+            assertEquals("NOM", user.getNom());
+            assertEquals("PRENOM", user.getPrenom());
+            assertEquals("ADRESSE", user.getAdresse());
+            assertEquals("c.new1", user.getUserId());
+
+            // ✅ Vérifie que le mot de passe correspond via BCrypt
+            assertTrue(PasswordHasher.verify("PASS", user.getUserPwd()));
+
+            assertTrue(user.isMale());
+        } catch (TechnicalException he) {
+            fail("L'utilisateur aurait dû être créé.");
+        }
+    }
+
+    @Test
 	public void testCreateUserExistingId() {
 		try {
 			try {
