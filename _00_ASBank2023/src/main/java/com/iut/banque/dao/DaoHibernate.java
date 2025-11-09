@@ -253,4 +253,25 @@ public class DaoHibernate implements IDao {
 		System.out.println("Déconnexion de la DAO.");
 	}
 
+    @Override
+    public void updateUserPassword(String userId, String newPlainPassword) throws TechnicalException {
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("userId null ou vide");
+        }
+        if (newPlainPassword == null) {
+            throw new IllegalArgumentException("newPlainPassword null");
+        }
+
+        Session session = sessionFactory.getCurrentSession();
+        Utilisateur user = session.get(Utilisateur.class, userId);
+        if (user == null) {
+            throw new TechnicalException("Utilisateur introuvable pour l'id : " + userId);
+        }
+
+        // Hash le mot de passe avant stockage
+        String hashed = PasswordHasher.hash(newPlainPassword);
+        user.setUserPwd(hashed);
+
+        session.update(user); // transaction gérée par Spring/@Transactional
+    }
 }

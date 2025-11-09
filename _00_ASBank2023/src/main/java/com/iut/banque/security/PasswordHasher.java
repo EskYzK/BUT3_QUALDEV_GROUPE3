@@ -18,4 +18,8 @@ public class PasswordHasher {
         if (password == null || hashed == null) return false;
         return BCrypt.checkpw(password, hashed);
     }
+
+    public static boolean modifyPassword(String password) {
+
+    }
 }

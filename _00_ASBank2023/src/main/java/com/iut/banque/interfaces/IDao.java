@@ -181,4 +181,14 @@ public interface IDao {
 	 * Termine la session commencée lors de isUserAllowed
 	 */
 	void disconnect();
+
+    /**
+     * Met à jour le mot de passe d'un utilisateur (mot de passe en clair fourni).
+     * Le mot de passe sera haché avant stockage.
+     *
+     * @param userId identifiant de l'utilisateur
+     * @param newPlainPassword mot de passe en clair
+     * @throws TechnicalException si l'utilisateur n'existe pas ou erreur technique
+     */
+    void updateUserPassword(String userId, String newPlainPassword) throws TechnicalException;
 }
