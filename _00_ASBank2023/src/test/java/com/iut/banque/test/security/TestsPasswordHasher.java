@@ -80,4 +80,47 @@ public class TestsPasswordHasher {
         assertFalse(PasswordHasher.verify(pwd + "x", hashed));
         assertFalse(PasswordHasher.verify(pwd, hashed + "x"));
     }
+
+    @Test
+    public void hashAndVerify_withEmptyString() {
+        String pwd = "";
+        String hash = PasswordHasher.hash(pwd);
+        assertTrue(PasswordHasher.verify(pwd, hash));
+        assertFalse(PasswordHasher.verify("x", hash));
+    }
+
+    @Test
+    public void hashAndVerify_withUnicode() {
+        String pwd = "Pässwörd🐍漢字";
+        String hash = PasswordHasher.hash(pwd);
+        assertTrue(PasswordHasher.verify(pwd, hash));
+    }
+
+    @Test
+    public void hashIsDifferent_eachTime_dueToSalt() {
+        String pwd = "SamePassword";
+        String h1 = PasswordHasher.hash(pwd);
+        String h2 = PasswordHasher.hash(pwd);
+        assertNotEquals(h1, h2);
+    }
+
+    @Test
+    public void longPassword_isSupported() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 2000; i++) sb.append('a');
+        String pwd = sb.toString();
+        String hash = PasswordHasher.hash(pwd);
+        assertTrue(PasswordHasher.verify(pwd, hash));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void hash_null_throws() {
+        PasswordHasher.hash(null);
+    }
+
+    @Test
+    public void verify_fails_ifHashCorrupted() {
+        String hash = PasswordHasher.hash("secret");
+        assertFalse(PasswordHasher.verify("secret", hash + "x"));
+    }
 }
