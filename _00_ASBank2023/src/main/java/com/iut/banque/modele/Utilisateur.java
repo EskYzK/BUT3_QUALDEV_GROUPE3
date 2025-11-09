@@ -138,11 +138,14 @@ public abstract class Utilisateur {
 	 *            : l'identifiant de l'utilisateur
 	 * @throws IllegalFormatException
 	 */
-	public void setUserId(String userId) throws IllegalFormatException {
-		this.userId = userId;
-	}
+    public void setUserId(String userId) throws IllegalFormatException {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalFormatException("userId ne peut pas être vide");
+        }
+        this.userId = userId;
+    }
 
-	/**
+    /**
 	 * @return userPwd : le mot de passe de l'utilisateur
 	 */
 	public String getUserPwd() {
