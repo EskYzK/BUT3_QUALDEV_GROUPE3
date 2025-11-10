@@ -43,11 +43,10 @@ public class TestsIllegalOperationException {
         IllegalOperationException ex =
                 new IllegalOperationException("msg", cause, false, false);
 
-        try {
-            ex.addSuppressed(new Exception("supp"));
-            fail("addSuppressed should throw when suppression is disabled");
-        } catch (IllegalStateException expected) { }
+        // addSuppressed() ne doit pas ajouter d'exception, même si elle ne lève rien
+        ex.addSuppressed(new Exception("supp"));
 
+        assertEquals(0, ex.getSuppressed().length);
         assertEquals(0, ex.getStackTrace().length);
         assertSame(cause, ex.getCause());
         assertEquals("msg", ex.getMessage());

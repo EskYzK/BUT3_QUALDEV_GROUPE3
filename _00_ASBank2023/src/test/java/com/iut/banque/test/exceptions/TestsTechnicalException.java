@@ -40,14 +40,18 @@ public class TestsTechnicalException {
     @Test
     public void fullConstructor_disableSuppression_disableStackTrace() {
         Throwable cause = new RuntimeException("cause");
-        TechnicalException ex =
-                new TechnicalException("msg", cause, false, false);
+        TechnicalException ex = new TechnicalException("msg", cause, false, false);
 
         try {
             ex.addSuppressed(new Exception("supp"));
-            fail("addSuppressed should throw when suppression is disabled");
-        } catch (IllegalStateException expected){}
+            // Sur Java 8 : devait lever
+            // Sur Java 9+ : ignoré silencieusement
+        } catch (IllegalStateException expected) {
+            // acceptable sur Java 8
+        }
 
+        // Vérifie juste que la suppression n’a pas été enregistrée
+        assertEquals(0, ex.getSuppressed().length);
         assertEquals(0, ex.getStackTrace().length);
     }
 

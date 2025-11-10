@@ -45,9 +45,12 @@ public class TestsInsufficientFundsException {
 
         try {
             ex.addSuppressed(new Exception("supp"));
-            fail("addSuppressed should throw when suppression is disabled");
-        } catch (IllegalStateException expected) { }
+        } catch (IllegalStateException e) {
+            // Ancien comportement (Java 8) → OK aussi
+        }
 
+        // Dans tous les cas, aucun suppressed ne doit être ajouté
+        assertEquals(0, ex.getSuppressed().length);
         assertEquals(0, ex.getStackTrace().length);
     }
 

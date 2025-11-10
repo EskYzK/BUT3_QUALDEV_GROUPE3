@@ -41,19 +41,18 @@ public class TestsIllegalFormatException {
     public void fullConstructor_disableSuppression_disableStackTrace() {
         Throwable cause = new RuntimeException("cause");
         IllegalFormatException ex =
-                new IllegalFormatException("msg", cause,false,false);
+                new IllegalFormatException("msg", cause, false, false);
 
+        // Vérification du message et de la cause
         assertEquals("msg", ex.getMessage());
         assertSame(cause, ex.getCause());
 
+        // Essayer d'ajouter un suppressed
+        ex.addSuppressed(new Exception("supp"));
+        // Vérifie que rien n’a été ajouté si suppression désactivée
+        assertEquals(0, ex.getSuppressed().length);
 
-        try {
-            ex.addSuppressed(new Exception("supp"));
-            fail("addSuppressed should throw when suppression is disabled");
-        } catch (IllegalStateException expected) {
-            // ok
-        }
-
+        // Vérifie que la stack trace est vide
         assertEquals(0, ex.getStackTrace().length);
     }
 

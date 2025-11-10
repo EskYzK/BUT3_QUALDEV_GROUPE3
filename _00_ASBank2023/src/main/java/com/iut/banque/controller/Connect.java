@@ -142,5 +142,4 @@ public class Connect extends ActionSupport {
 		banque.logout();
 		return "SUCCESS";
 	}
-
 }
