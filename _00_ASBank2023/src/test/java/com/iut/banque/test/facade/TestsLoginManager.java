@@ -98,7 +98,7 @@ public class TestsLoginManager {
         assertFalse("Le hash après changement doit être différent de l'ancien",
                 hashedOld.equals(user.getUserPwd()));
 
-        assertTrue(PasswordHasher.verify(newPwd, user.getUserPwd()));
+        assertTrue(PasswordHasher.verify(newPwd, user.  getUserPwd()));
     }
 
     @Test
