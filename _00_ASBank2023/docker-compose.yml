@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb        # base créée automatiquement
+      MYSQL_USER: chollet14u_appli # nouvel utilisateur
+      MYSQL_PASSWORD: 32301542     # mot de passe de l'utilisateur
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: chollet14u_appli
+      PMA_PASSWORD: 32301542
+    ports:
+      - "8082:80"
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
