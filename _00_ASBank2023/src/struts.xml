@@ -13,6 +13,11 @@
 		supplémentaires. -->
 	<constant name="struts.devMode" value="true" />
 
+    <!-- Correction des URLs pour Tomcat et Docker -->
+    <constant name="struts.url.useSchemeHostPort" value="true"/>
+    <constant name="struts.url.http.host" value="%{#request.getHeader('Host')}"/>
+    <constant name="struts.url.includeParams" value="none"/>
+
 	<package name="com.iut.banque" namespace="/" extends="struts-default">
 
 		<!-- Action générique ou dynamique -->
