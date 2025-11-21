@@ -17,7 +17,7 @@ RUN mvn -U clean package -DskipTests
 
 FROM tomcat:9.0-jdk11
 
-COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/_00_ASBank2023.war
 
 EXPOSE 8082
 CMD ["catalina.sh", "run"]
