@@ -35,9 +35,9 @@
     <bean id="dataSource" scope="singleton"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://devbdd.iutmetz.univ-lorraine.fr:3306/chollet14u_bankiut?useSSL=false&amp;serverTimezone=UTC" />
-        <property name="username" value="chollet14u_appli" />
-        <property name="password" value="32301542" />
+        <property name="url" value="jdbc:mysql://localhost:3306/testdb?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC" />
+        <property name="username" value="root" />
+        <property name="password" value="root" />
     </bean>
 
     <!-- ============= Gestion des Transactions ============= -->

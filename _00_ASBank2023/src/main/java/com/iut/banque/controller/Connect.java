@@ -21,6 +21,7 @@ public class Connect extends ActionSupport {
 	private static final long serialVersionUID = 1L;
 	private String userCde;
 	private String userPwd;
+    private String Retour;
 	private BanqueFacade banque;
 
 	/**
@@ -142,4 +143,7 @@ public class Connect extends ActionSupport {
 		banque.logout();
 		return "SUCCESS";
 	}
+
+    public String getRetour() { return Retour; }
+    public void setRetour(String retour) { this.Retour = retour; }
 }
