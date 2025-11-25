@@ -14,6 +14,8 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - asbank_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -28,6 +30,12 @@ services:
       - "8082:80"
     depends_on:
       - db
+    networks:
+      - asbank_network
 
 volumes:
   mysql_data:
+
+networks:
+  asbank_network:
+    external: true
