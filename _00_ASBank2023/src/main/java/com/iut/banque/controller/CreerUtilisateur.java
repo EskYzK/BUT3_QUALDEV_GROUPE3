@@ -22,6 +22,7 @@ public class CreerUtilisateur extends ActionSupport {
 	private boolean male;
 	private boolean client;
 	private String numClient;
+    private String email;
 	private String message;
 	private String result;
 
@@ -123,7 +124,7 @@ public class CreerUtilisateur extends ActionSupport {
 	}
 
 	/**
-	 * @param user
+	 * @param client
 	 *            the user to set
 	 */
 	public void setClient(boolean client) {
@@ -144,6 +145,21 @@ public class CreerUtilisateur extends ActionSupport {
 	public void setNumClient(String numClient) {
 		this.numClient = numClient;
 	}
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email
+     * the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
 	/**
 	 * Constructeur sans paramêtre de CreerUtilisateur
@@ -201,9 +217,9 @@ public class CreerUtilisateur extends ActionSupport {
 	public String creationUtilisateur() {
 		try {
 			if (client) {
-				banque.createClient(userId, userPwd, nom, prenom, adresse, male, numClient);
+				banque.createClient(userId, userPwd, nom, prenom, adresse, male, email, numClient);
 			} else {
-				banque.createManager(userId, userPwd, nom, prenom, adresse, male);
+				banque.createManager(userId, userPwd, nom, prenom, adresse, male, email);
 			}
 			this.message = "Le nouvel utilisateur avec le user id '" + userId + "' a bien été crée.";
 			this.result = "SUCCESS";
