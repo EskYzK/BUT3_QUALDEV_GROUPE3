@@ -3,4 +3,4 @@ apache-tomcat-9.0.109/
 out/
 target/
 *.iml
-
+/_00_ASBank2023/.env
