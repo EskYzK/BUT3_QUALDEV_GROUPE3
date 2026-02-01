@@ -66,6 +66,24 @@ public abstract class Utilisateur {
 	@Column(name = "male")
 	private boolean male;
 
+    /**
+     * L'email de l'utilisateur.
+     */
+    @Column(name = "email")
+    private String email;
+
+    /**
+     * Le jeton associé à l'utilisateur permettant la réinitialisation du mot de passe.
+     */
+    @Column(name = "resetToken")
+    private String resetToken;
+
+    /**
+     * La date d'expiration du jeton de réinitialisation du mot de passe associé à l'utilisateur.
+     */
+    @Column(name = "tokenExpiry")
+    private java.sql.Timestamp tokenExpiry;
+
 	/**
 	 * @return String, le nom de l'utilisateur.
 	 */
@@ -126,6 +144,51 @@ public abstract class Utilisateur {
 		this.male = male;
 	}
 
+    /**
+     * @return String, l'email de l'utilisateur.
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email
+     *            : l'email de l'utilisateur
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return String, le jeton associé à l'utilisateur permettant la réinitialisation du mot de passe.
+     */
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    /**
+     * @param resetToken
+     *            : le jeton associé à l'utilisateur permettant la réinitialisation du mot de passe
+     */
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    /**
+     * @return String, la date d'expiration du jeton de réinitialisation du mot de passe associé à l'utilisateur.
+     */
+    public java.sql.Timestamp getTokenExpiry() {
+        return tokenExpiry;
+    }
+
+    /**
+     * @param tokenExpiry
+     *            : la date d'expiration du jeton de réinitialisation du mot de passe associé à l'utilisateur.
+     */
+    public void setTokenExpiry(java.sql.Timestamp tokenExpiry) {
+        this.tokenExpiry = tokenExpiry;
+    }
+
 	/**
 	 * @return userId : l'identifiant de l'utilisateur
 	 */
@@ -172,8 +235,11 @@ public abstract class Utilisateur {
 	 * @param male
 	 * @param userId
 	 * @param userPwd
+     * @param email
+     * @param resetToken
+     * @param tokenExpiry
 	 */
-	protected Utilisateur(String nom, String prenom, String adresse, boolean male, String userId, String userPwd) {
+	protected Utilisateur(String nom, String prenom, String adresse, boolean male, String userId, String userPwd, String email, String resetToken,  java.sql.Timestamp tokenExpiry) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
@@ -181,6 +247,9 @@ public abstract class Utilisateur {
 		this.male = male;
 		this.userId = userId;
 		this.userPwd = userPwd;
+        this.email = email;
+        this.resetToken = resetToken;
+        this.tokenExpiry = tokenExpiry;
 	}
 
 	/**
@@ -201,7 +270,7 @@ public abstract class Utilisateur {
 	@Override
 	public String toString() {
 		return "Utilisateur [userId=" + userId + ", nom=" + nom + ", prenom=" + prenom + ", adresse=" + adresse
-				+ ", male=" + male + ", userPwd=" + userPwd + "]";
+				+ ", male=" + male + ", userPwd=" + userPwd + ", email=" + email + "]";
 	}
 
 }

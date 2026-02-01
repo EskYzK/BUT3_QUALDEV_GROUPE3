@@ -150,7 +150,7 @@ public class DaoHibernate implements IDao {
 	 */
 	@Override
 	public Utilisateur createUser(String nom, String prenom, String adresse, boolean male, String userId,
-			String userPwd, boolean manager, String numClient)
+			String userPwd, String email, boolean manager, String numClient)
 			throws TechnicalException, IllegalArgumentException, IllegalFormatException {
 		Session session = sessionFactory.getCurrentSession();
 
@@ -161,9 +161,9 @@ public class DaoHibernate implements IDao {
 		String hashedPwd = PasswordHasher.hash(userPwd);
 
 		if (manager) {
-			user = new Gestionnaire(nom, prenom, adresse, male, userId, hashedPwd);
+			user = new Gestionnaire(nom, prenom, adresse, male, userId, hashedPwd, email);
 		} else {
-			user = new Client(nom, prenom, adresse, male, userId, hashedPwd, numClient);
+			user = new Client(nom, prenom, adresse, male, userId, hashedPwd, email, numClient);
 		}
 		session.save(user);
 
@@ -248,6 +248,21 @@ public class DaoHibernate implements IDao {
 		}
 		return ret;
 	}
+
+    public Utilisateur getUserByEmail(String email) {
+        Session session = sessionFactory.getCurrentSession();
+        // Utilisation de Criteria ou HQL
+        return (Utilisateur) session.createQuery("FROM Utilisateur u WHERE u.email = :email")
+                .setParameter("email", email)
+                .uniqueResult();
+    }
+
+    public Utilisateur getUserByToken(String token) {
+        Session session = sessionFactory.getCurrentSession();
+        return (Utilisateur) session.createQuery("FROM Utilisateur u WHERE u.resetToken = :token")
+                .setParameter("token", token)
+                .uniqueResult();
+    }
 
 	/**
 	 * {@inheritDoc}

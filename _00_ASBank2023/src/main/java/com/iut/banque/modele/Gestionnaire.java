@@ -21,8 +21,8 @@ public class Gestionnaire extends Utilisateur {
 	 * objet au lieu d'appeler ce constructeur.
 	 * @throws IllegalFormatException 
 	 */
-	public Gestionnaire(String nom, String prenom, String adresse, boolean homme, String usrId, String usrPwd) throws IllegalFormatException {
-		super(nom, prenom, adresse, homme, usrId, usrPwd);
+	public Gestionnaire(String nom, String prenom, String adresse, boolean homme, String usrId, String usrPwd, String email) throws IllegalFormatException {
+		super(nom, prenom, adresse, homme, usrId, usrPwd, email, null, null);
 		if ("".equals(usrId)) {
 			throw new IllegalArgumentException("L'identifiant ne peux être vide.");
 		}

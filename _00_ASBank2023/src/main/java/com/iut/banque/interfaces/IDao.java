@@ -108,7 +108,7 @@ public interface IDao {
 	 * @throws IllegalArgumentException 
 	 */
 	Utilisateur createUser(String nom, String prenom, String adresse,
-			boolean male, String usrId, String usrPwd, boolean manager,
+			boolean male, String usrId, String usrPwd, String email, boolean manager,
 			String numClient) throws TechnicalException, IllegalArgumentException, IllegalFormatException;
 
 	/**
@@ -191,4 +191,18 @@ public interface IDao {
      * @throws TechnicalException si l'utilisateur n'existe pas ou erreur technique
      */
     void updateUserPassword(String userId, String newPlainPassword) throws TechnicalException;
+
+    /**
+     * Récupère un utilisateur par son email.
+     * @param email L'email à chercher
+     * @return L'utilisateur correspondant ou null
+     */
+    Utilisateur getUserByEmail(String email);
+
+    /**
+     * Récupère un utilisateur par son token de réinitialisation.
+     * @param token Le token UUID
+     * @return L'utilisateur correspondant ou null
+     */
+    Utilisateur getUserByToken(String token);
 }
