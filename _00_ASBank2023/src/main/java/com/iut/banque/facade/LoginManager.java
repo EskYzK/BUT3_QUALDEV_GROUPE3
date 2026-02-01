@@ -6,6 +6,10 @@ import com.iut.banque.modele.Gestionnaire;
 import com.iut.banque.modele.Utilisateur;
 import com.iut.banque.security.PasswordHasher;
 
+import java.util.Properties;
+import javax.mail.*;
+import javax.mail.internet.*;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class LoginManager {
 
@@ -96,4 +100,105 @@ public class LoginManager {
 		dao.updateUser(user);
 		return true;
 	}
+
+    /**
+     * Étape 1 : Génère le lien
+     */
+    public boolean initiatePasswordReset(String email) {
+        Utilisateur user = dao.getUserByEmail(email);
+        if (user == null) return true;
+
+        // Générer un token unique (UUID)
+        String token = java.util.UUID.randomUUID().toString();
+        user.setResetToken(token);
+
+        // Expiration dans 15 minutes
+        long timeout = 15 * 60 * 1000;
+        user.setTokenExpiry(new java.sql.Timestamp(System.currentTimeMillis() + timeout));
+
+        dao.updateUser(user);
+
+        // Construction du lien
+        String link = "http://localhost:8080/_00_ASBank2023/resetPasswordForm.action?token=" + token;
+
+        // Envoi du mail
+        sendEmail(email, link);
+
+        return true;
+    }
+
+    /**
+     * Méthode privée pour envoyer le mail via SMTP (Gmail par défaut ici)
+     */
+    private void sendEmail(String recipientEmail, String resetLink) {
+        // 1. Charger le .env
+        // ignoreIfMissing() évite le crash si le fichier n'est pas là (ex: sur un serveur de prod qui utilise des vraies variables d'env)
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+
+        // 2. Récupérer les variables (avec une sécurité si c'est vide)
+        final String username = dotenv.get("MAIL_USER");
+        final String password = dotenv.get("MAIL_PASSWORD");
+
+        if (username == null || password == null) {
+            System.err.println("ERREUR : Les identifiants mail ne sont pas configurés dans le fichier .env !");
+            return;
+        }
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+            message.setSubject("ASBank - Réinitialisation de mot de passe");
+
+            String content = "Bonjour, <br><br>"
+                    + "Quelqu'un a effectué une demande de réinitialisation du mot de passe de votre compte.<br>"
+                    + "Si ce n'est pas vous, veuillez ignorer ce mail.<br>"
+                    + "Si c'est bien vous, veuillez cliquer sur le lien ci-dessous : <br><br>"
+                    + "<a href='" + resetLink + "'>Réinitialiser mon mot de passe</a><br><br>"
+                    + "Ce lien expire dans 15 minutes.";
+
+            message.setContent(content, "text/html; charset=utf-8");
+
+            Transport.send(message);
+            System.out.println("Email envoyé avec succès à " + recipientEmail);
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            // On log l'erreur mais on ne fait pas planter l'application
+            System.err.println("Erreur lors de l'envoi du mail : " + e.getMessage());
+        }
+    }
+
+    /**
+     * Étape 2 : Valide le token et change le mot de passe
+     */
+    public boolean usePasswordResetToken(String token, String newPassword) {
+        Utilisateur user = dao.getUserByToken(token);
+
+        // Vérifications : User existe ? Token expiré ?
+        if (user == null) return false;
+        if (user.getTokenExpiry().before(new java.sql.Timestamp(System.currentTimeMillis()))) return false;
+
+        // Tout est bon : Hash du mdp et nettoyage du token
+        String hashed = PasswordHasher.hash(newPassword);
+        user.setUserPwd(hashed);
+        user.setResetToken(null); // Invalide le token immédiatement
+        user.setTokenExpiry(null);
+
+        dao.updateUser(user);
+        return true;
+    }
 }

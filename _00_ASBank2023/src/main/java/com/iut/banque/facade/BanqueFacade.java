@@ -176,16 +176,17 @@ public class BanqueFacade {
 	 * @param prenom
 	 * @param adresse
 	 * @param male
+     * @param email
 	 * @throws TechnicalException
 	 *             : Si l'id fourni en param�tre est déjà assigné à un autre
 	 *             utilisateur de la base
 	 * @throws IllegalFormatException
 	 * @throws IllegalArgumentException
 	 */
-	public void createManager(String userId, String userPwd, String nom, String prenom, String adresse, boolean male)
+	public void createManager(String userId, String userPwd, String nom, String prenom, String adresse, boolean male, String email)
 			throws TechnicalException, IllegalArgumentException, IllegalFormatException {
 		if (loginManager.getConnectedUser() instanceof Gestionnaire) {
-			banqueManager.createManager(userId, userPwd, nom, prenom, adresse, male);
+			banqueManager.createManager(userId, userPwd, nom, prenom, adresse, male, email);
 		}
 	}
 
@@ -199,6 +200,7 @@ public class BanqueFacade {
 	 * @param prenom
 	 * @param adresse
 	 * @param male
+     * @param email
 	 * @param numeroClient
 	 * @throws IllegalOperationException
 	 *             : si le numeroClient founri en paramètre est déjà assigné à
@@ -209,11 +211,10 @@ public class BanqueFacade {
 	 * @throws IllegalFormatException
 	 * @throws IllegalArgumentException
 	 */
-	public void createClient(String userId, String userPwd, String nom, String prenom, String adresse, boolean male,
-			String numeroClient)
+	public void createClient(String userId, String userPwd, String nom, String prenom, String adresse, boolean male, String email, String numeroClient)
 			throws IllegalOperationException, TechnicalException, IllegalArgumentException, IllegalFormatException {
 		if (loginManager.getConnectedUser() instanceof Gestionnaire) {
-			banqueManager.createClient(userId, userPwd, nom, prenom, adresse, male, numeroClient);
+			banqueManager.createClient(userId, userPwd, nom, prenom, adresse, male, email, numeroClient);
 		}
 	}
 
@@ -278,5 +279,27 @@ public class BanqueFacade {
 
     public boolean changePassword(Utilisateur user, String oldPwd, String newPwd) {
         return loginManager.changePassword(user, oldPwd, newPwd);
+    }
+
+
+    /**
+     * Génère le lien permettant de réinitialiser le mot de passe d'un utilisateur l'ayant oublié
+     *
+     * @param email
+     * @return
+     */
+    public boolean initiatePasswordReset(String email) {
+        return loginManager.initiatePasswordReset(email);
+    }
+
+    /**
+     * Valide le jeton et modifie le mot de passe de l'utilisateur associé
+     *
+     * @param token
+     * @param newPassword
+     * @return
+     */
+    public boolean usePasswordResetToken(String token, String newPassword) {
+        return loginManager.usePasswordResetToken(token, newPassword);
     }
 }

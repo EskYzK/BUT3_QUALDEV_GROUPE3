@@ -207,9 +207,9 @@ public class BanqueManager {
 	 * @throws IllegalFormatException
 	 * @throws IllegalArgumentException
 	 */
-	public void createManager(String userId, String userPwd, String nom, String prenom, String adresse, boolean male)
+	public void createManager(String userId, String userPwd, String nom, String prenom, String adresse, boolean male, String email)
 			throws TechnicalException, IllegalArgumentException, IllegalFormatException {
-		dao.createUser(nom, prenom, adresse, male, userId, userPwd, true, null);
+		dao.createUser(nom, prenom, adresse, male, userId, userPwd, email, true, null);
 	}
 
 	/**
@@ -236,8 +236,7 @@ public class BanqueManager {
 	 * @throws IllegalFormatException
 	 * @throws IllegalArgumentException
 	 */
-	public void createClient(String userId, String userPwd, String nom, String prenom, String adresse, boolean male,
-			String numeroClient)
+	public void createClient(String userId, String userPwd, String nom, String prenom, String adresse, boolean male, String email, String numeroClient)
 			throws IllegalOperationException, TechnicalException, IllegalArgumentException, IllegalFormatException {
 		Map<String, Client> liste = this.getAllClients();
 		for (Map.Entry<String, Client> entry : liste.entrySet()) {
@@ -246,7 +245,7 @@ public class BanqueManager {
 						"Un client avec le numero de client " + numeroClient + " existe déjà");
 			}
 		}
-		dao.createUser(nom, prenom, adresse, male, userId, userPwd, false, numeroClient);
+		dao.createUser(nom, prenom, adresse, male, userId, userPwd, email, false, numeroClient);
 
 	}
 
