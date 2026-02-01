@@ -60,10 +60,13 @@ CREATE TABLE IF NOT EXISTS `Utilisateur` (
   `nom` varchar(45) NOT NULL,
   `prenom` varchar(45) NOT NULL,
   `adresse` varchar(100) NOT NULL,
-  `userPwd` varchar(45) DEFAULT NULL,
+  `userPwd` varchar(100) DEFAULT NULL,
   `male` bit(1) NOT NULL,
   `type` varchar(10) NOT NULL,
   `numClient` varchar(45) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `resetToken` varchar(255) DEFAULT NULL,
+  `tokenExpiry` DATETIME DEFAULT NULL,
   PRIMARY KEY (`userId`),
   UNIQUE KEY `numClient_UNIQUE` (`numClient`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -72,16 +75,16 @@ CREATE TABLE IF NOT EXISTS `Utilisateur` (
 -- Dumping data for table `Utilisateur`
 --
 
-INSERT INTO `Utilisateur` (`userId`, `nom`, `prenom`, `adresse`, `userPwd`, `male`, `type`, `numClient`) VALUES
-('a.lidell1', 'Lidell', 'Alice', '789, grande rue, Metz', 'toto', b'1', 'CLIENT', '9865432100'),
-('admin', 'Smith', 'Joe', '123, grande rue, Metz', 'adminpass', b'1', 'MANAGER', ''),
-('c.exist', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '0101010101'),
-('g.descomptes', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '1000000001'),
-('g.descomptesvides', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '0000000002'),
-('g.exist', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '1010101010'),
-('g.pasdecompte', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '5544554455'),
-('j.doe1', 'Doe', 'Jane', '456, grand boulevard, Brest', 'toto', b'1', 'CLIENT', '1234567890'),
-('j.doe2', 'Doe', 'John', '457, grand boulevard, Perpignan', 'toto', b'1', 'CLIENT', '0000000001');
+INSERT INTO `Utilisateur` (`userId`, `nom`, `prenom`, `adresse`, `userPwd`, `male`, `type`, `numClient`, `email`, `resetToken`, `tokenExpiry`) VALUES
+('a.lidell1', 'Lidell', 'Alice', '789, grande rue, Metz', 'toto', b'1', 'CLIENT', '9865432100', NULL, NULL, NULL),
+('admin', 'Smith', 'Joe', '123, grande rue, Metz', 'adminpass', b'1', 'MANAGER', '', "admin@test.com  ", NULL, NULL),
+('c.exist', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '0101010101', NULL, NULL, NULL),
+('g.descomptes', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '1000000001', NULL, NULL, NULL),
+('g.descomptesvides', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '0000000002', NULL, NULL, NULL),
+('g.exist', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '1010101010', NULL, NULL, NULL),
+('g.pasdecompte', 'TEST NOM', 'TEST PRENOM', 'TEST ADRESSE', 'TEST PASS', b'1', 'CLIENT', '5544554455', NULL, NULL, NULL),
+('j.doe1', 'Doe', 'Jane', '456, grand boulevard, Brest', 'toto', b'1', 'CLIENT', '1234567890', NULL, NULL, NULL),
+('j.doe2', 'Doe', 'John', '457, grand boulevard, Perpignan', 'toto', b'1', 'CLIENT', '0000000001', NULL, NULL, NULL);
 
 --
 -- Constraints for dumped tables
