@@ -16,7 +16,7 @@ public class TestsGestionnaire {
 
     @Before
     public void setUp() throws IllegalFormatException {
-        gestionnaire = new Gestionnaire("Dupont", "Jean", "Paris", true, "jdupont", "1234");
+        gestionnaire = new Gestionnaire("Dupont", "Jean", "Paris", true, "jdupont", "1234", "email@test.test");
     }
 
     /**
@@ -38,7 +38,7 @@ public class TestsGestionnaire {
     @Test
     public void testConstructeurCompletUsrIdVide() {
         try {
-            new Gestionnaire("Durand", "Paul", "Lyon", false, "", "azerty");
+            new Gestionnaire("Durand", "Paul", "Lyon", false, "", "azerty", "email@test.test");
             fail("Une IllegalArgumentException aurait dû être levée !");
         } catch (IllegalArgumentException e) {
             // OK attendu
