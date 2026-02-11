@@ -1,5 +1,6 @@
 package com.iut.banque.controller;
 
+import com.iut.banque.modele.Client;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -237,7 +238,11 @@ public class CreerUtilisateur extends ActionSupport {
 			this.result = "ERROR";
 			return "ERROR";
 		} catch (IllegalFormatException e) {
-			this.message = "Format du numéro de client incorrect.";
+            if (client && !Client.checkFormatNumeroClient(numClient)) {
+                this.message = "Le numéro de client est incorrect (doit contenir 10 chiffres).";
+            } else {
+                this.message = "L'identifiant utilisateur est incorrect (ex: j.dupont1).";
+            }
 			this.result = "ERROR";
 			return "ERROR";
 		}
