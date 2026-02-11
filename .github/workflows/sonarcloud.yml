@@ -2,9 +2,13 @@ name: SonarCloud
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - feature/dev
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
+      - feature/dev
   workflow_dispatch:
 
 permissions:
@@ -15,31 +19,42 @@ jobs:
     name: Build and analyze
     runs-on: ubuntu-latest
 
+    # 1️⃣ DÉFINITION DU SERVICE BDD
+    # On lance un conteneur MySQL accessible sur le port 3306 (localhost)
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          # On reprend les identifiants trouvés dans TestsDaoHibernate-context.xml
+          # pour minimiser les changements de configuration
+          MYSQL_DATABASE: chollet14u_bankiuttest
+          MYSQL_USER: chollet14u_appli
+          MYSQL_PASSWORD: '32301542' # Mettre entre quotes pour éviter les soucis de parsing
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        # Options pour attendre que MySQL soit prêt avant de lancer les steps
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
-      # 1️⃣ Checkout
+      # 2️⃣ Checkout
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           path: .   # clone dans le répertoire de travail racine
 
-      # 2️⃣ Setup Java
+      # 3️⃣ Setup Java
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: 'zulu'
-
-      # 3️⃣ Install OpenConnect for VPN
-      - name: Install OpenConnect
-        run: sudo apt-get update && sudo apt-get install -y openconnect
-
-      # 4️⃣ Connect to Cisco AnyConnect VPN
-      - name: Connect to VPN
-        env:
-          VPN_USER: ${{ secrets.VPN_USER }}
-          VPN_PASS: ${{ secrets.VPN_PASS }}
+      
+      # 4️⃣ INITIALISATION DE LA BDD
+      # On injecte le dumpSQL.sql dans la base fraîchement créée
+      - name: Initialize Database
         run: |
-          echo $VPN_PASS | sudo openconnect --user=$VPN_USER --passwd-on-stdin vpn.lothaire.net --background
+          mysql -h 127.0.0.1 -u chollet14u_appli -p32301542 chollet14u_bankiuttest < chollet14u_bankiuttest.sql
 
       # 5️⃣ Cache SonarCloud packages
       - name: Cache SonarCloud packages
@@ -60,6 +75,11 @@ jobs:
       # 7️⃣ Build Maven
       - name: Build with Maven
         run: mvn -B -f _00_ASBank2023/pom.xml verify
+        env:
+          # On force l'URL locale pour le CI (plus besoin de sed !)
+          DB_URL: jdbc:mysql://127.0.0.1:3306/chollet14u_bankiuttest?useSSL=false&serverTimezone=UTC
+          DB_USER: chollet14u_appli
+          DB_PASS: 32301542
 
       # 8️⃣ SonarCloud Scan
       - name: SonarCloud Scan
