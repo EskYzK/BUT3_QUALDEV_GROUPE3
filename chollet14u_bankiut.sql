@@ -46,7 +46,6 @@ INSERT INTO `Compte` (`numeroCompte`, `userId`, `solde`, `avecDecouvert`, `decou
 ('IO1010010001', 'client2', 6868, 'SANS', NULL),
 ('LA1021931215', 'client1', 150, 'SANS', NULL),
 ('MD8694030938', 'client1', 70, 'SANS', NULL),
-('PP1285735733', 'a', 37, 'SANS', NULL),
 ('TD0398455576', 'client2', 34, 'AVEC', 700),
 ('XD1829451029', 'client2', -93, 'AVEC', 100),
 ('XX7788778877', 'client2', 90, 'SANS', NULL),
