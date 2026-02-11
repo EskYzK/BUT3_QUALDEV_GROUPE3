@@ -72,20 +72,20 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('_00_ASBank2023/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # 7️⃣ Build Maven
-      - name: Build with Maven
-        run: mvn -B -f _00_ASBank2023/pom.xml verify
+      # 7️⃣ Build, Test, and Analyze with Maven
+      # On combine "verify" (tests) et "sonar:sonar" (analyse)
+      # Ainsi, Sonar profite de la compilation et de la BDD déjà prêtes.
+      - name: Build and analyze with Maven
+        run: |
+          mvn -B -f _00_ASBank2023/pom.xml verify sonar:sonar \
+            -Dsonar.projectKey=BANK_IUT_2023 \
+            -Dsonar.organization=eskyzk \
+            -Dsonar.host.url=https://sonarcloud.io
         env:
-          # On force l'URL locale pour le CI (plus besoin de sed !)
+          # Variables pour les Tests (BDD)
           DB_URL: jdbc:mysql://127.0.0.1:3306/chollet14u_bankiuttest?useSSL=false&serverTimezone=UTC
           DB_USER: chollet14u_appli
           DB_PASS: 32301542
-
-      # 8️⃣ SonarCloud Scan
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
-        env:
+          # Variables pour Sonar
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectBaseDir: ./_00_ASBank2023
-
