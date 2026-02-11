@@ -53,7 +53,7 @@
 		<input type="hidden" name="compte"
 			value="<s:property value='compte.numeroCompte' />">
 		<s:submit value="Crediter" />
-		<s:submit value="Debiter" action="debitActionEdit" />
+		<s:submit value="Debiter" onclick="this.form.action='debitActionEdit'; return true;" />
 	</s:form>
 
 	<s:if test="%{compte.className == \"CompteAvecDecouvert\"}">
