@@ -119,7 +119,7 @@ public class DetailCompte extends ActionSupport {
 	}
 
 	/**
-	 * Méthode débit pour débter le compte considéré en cours
+	 * Méthode débit pour débiter le compte considéré en cours
 	 * 
 	 * @return String : Message correspondant à l'état du débit (si il a réussi
 	 *         ou pas)

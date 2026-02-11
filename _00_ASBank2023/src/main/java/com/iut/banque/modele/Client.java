@@ -167,8 +167,8 @@ public class Client extends Utilisateur {
 	}
 
 	/**
-	 * Fonction qui va vérifier le string d'entrée si il correspond au format
-	 * attendu pour un identifiant de compte client. à savoir, une lettre, un
+	 * Fonction qui va vérifier le string d'entrée s'il correspond au format
+	 * attendu pour un identifiant de compte client. À savoir, une lettre, un
 	 * point, une lettre au moins, chiffre entre 1 et 9, et éventuellement une
 	 * succession de chiffres entre 0 et 9 supplémentaires (Par exemple :
 	 * d.dupont123)
@@ -184,7 +184,7 @@ public class Client extends Utilisateur {
 
 	/**
 	 * Fonction qui va vérifier le string d'entrée s'il correspond au format
-	 * attendu pour un numéro de client, à savoir, 9 chiffres successifs (Par
+	 * attendu pour un numéro de client, à savoir, 10 chiffres successifs (Par
 	 * exemple 1234567890)
 	 * 
 	 * @param s
