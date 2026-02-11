@@ -4,3 +4,4 @@ out/
 target/
 *.iml
 /_00_ASBank2023/.env
+.env
