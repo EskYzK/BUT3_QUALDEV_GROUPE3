@@ -6,7 +6,7 @@
 <html lang="fr" xml:lang="fr">
 <script type="text/javascript">
 	function DisplayMessage() {
-		alert('Ce TD a été donné pour les AS dans le cadre du cours de CO Avancé (Promotion 2017-2018)');
+		alert('Ce TD a été donné pour les RA dans le cadre du cours de Maintenance Applicative (Promotion 2025-2026)');
 	}
 </script>
 <link href="<s:url value='/style/favicon.ico'/>" rel="icon" type="image/x-icon" />
@@ -16,7 +16,7 @@
     <title>Application IUT Bank</title>
 </head>
 <body>
-	<h1>Bienvenue sur l'application IUT Bank 2023</h1>
+	<h1>Bienvenue sur l'application IUT Bank 2026</h1>
 	<p>
 		<img
 			src="<s:url value='/style/UL_IUT_MOSELLE_EST.png'/>"
