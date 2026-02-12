@@ -16,7 +16,7 @@
     <title>Application IUT Bank</title>
 </head>
 <body>
-	<h1>Bienvenue sur l'application IUT Bank 2026</h1>
+	<h1>Bienvenue sur l'application IUT Bank 2025</h1>
 	<p>
 		<img
 			src="<s:url value='/style/UL_IUT_MOSELLE_EST.png'/>"
