@@ -3,13 +3,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
-<s:set var="aDecouvertTag" value="aDecouvert" />
-<s:if test="%{#bool_val == true}">
-    TRUE</s:if>
-<s:else>
-    FALSE</s:else>-->
-
-
 
 
 <html lang="fr" xml:lang="fr">
@@ -96,9 +89,8 @@
 								</s:url>
 								<td><s:a href="%{editAccount}">
 										<img
-											src="http://freeflaticons.com/wp-content/uploads/2014/10/write-copy-14138051958gn4k.png"
-											style="width: 20px; height: 20px" alt="Editer ce compte"
-											title="Editer ce compte" />
+                                                src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png"
+                                                style="width: 20px; height: 20px" alt="Editer ce compte" title="Editer ce compte" />
 									</s:a></td>
 								<td><s:url action="deleteAccount" var="deleteAccount">
 										<s:param name="compte">

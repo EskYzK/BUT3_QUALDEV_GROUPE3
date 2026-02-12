@@ -1,5 +1,6 @@
 package com.iut.banque.controller;
 
+import com.iut.banque.modele.Client;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -216,6 +217,13 @@ public class CreerUtilisateur extends ActionSupport {
 	 */
 	public String creationUtilisateur() {
 		try {
+            if (email != null && !email.trim().isEmpty()) {
+                if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+                    this.message = "Le format de l'adresse email est incorrect.";
+                    this.result = "ERROR";
+                    return "ERROR";
+                }
+            }
 			if (client) {
 				banque.createClient(userId, userPwd, nom, prenom, adresse, male, email, numClient);
 			} else {
@@ -237,7 +245,11 @@ public class CreerUtilisateur extends ActionSupport {
 			this.result = "ERROR";
 			return "ERROR";
 		} catch (IllegalFormatException e) {
-			this.message = "Format du numéro de client incorrect.";
+            if (client && !Client.checkFormatNumeroClient(numClient)) {
+                this.message = "Le numéro de client est incorrect (doit contenir 10 chiffres).";
+            } else {
+                this.message = "L'identifiant utilisateur est incorrect (ex: j.dupont1).";
+            }
 			this.result = "ERROR";
 			return "ERROR";
 		}

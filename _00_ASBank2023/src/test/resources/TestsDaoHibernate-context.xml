@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
-        "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="file:.env" ignore-resource-not-found="true" />
     <!-- ************************************************************ -->
     <!-- * Fichier de configuration utilisé par le framework SPRING * -->
     <!-- ************************************************************ -->
@@ -33,9 +39,9 @@
     <bean id="dataSource" scope="singleton"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://devbdd.iutmetz.univ-lorraine.fr:3306/chollet14u_bankiuttest?useSSL=false&amp;serverTimezone=UTC" />
-        <property name="username" value="chollet14u_appli" />
-        <property name="password" value="32301542" />
+        <property name="url" value="${DB_URL}" />
+        <property name="username" value="${DB_USER}" />
+        <property name="password" value="${DB_PASS}" />
     </bean>
 
     <!-- ============= Gestion des transactions ============= -->

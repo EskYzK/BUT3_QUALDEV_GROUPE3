@@ -53,7 +53,7 @@
 		<input type="hidden" name="compte"
 			value="<s:property value='compte' />">
 		<s:submit value="Crediter" />
-		<s:submit value="Debiter" action="debitAction" />
+		<s:submit value="Debiter" onclick="this.form.action='debitAction'; return true;" />
 	</s:form>
 
 	<s:url action="urlDetail" var="urlDetail">
