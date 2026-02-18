@@ -217,6 +217,13 @@ public class CreerUtilisateur extends ActionSupport {
 	 */
 	public String creationUtilisateur() {
 		try {
+            if (email != null && !email.trim().isEmpty()) {
+                if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+                    this.message = "Le format de l'adresse email est incorrect.";
+                    this.result = "ERROR";
+                    return "ERROR";
+                }
+            }
 			if (client) {
 				banque.createClient(userId, userPwd, nom, prenom, adresse, male, email, numClient);
 			} else {

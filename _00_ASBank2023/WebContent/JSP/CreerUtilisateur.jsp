@@ -49,6 +49,7 @@
         <s:textfield label="Nom" name="nom" />
         <s:textfield label="Prenom" name="prenom" />
         <s:textfield label="Adresse" name="adresse" />
+        <s:textfield label="Email" name="email" placeholder="jeandupont@gmail.com (optionnel)" />
         <s:password label="Password" name="userPwd" />
         <s:radio label="Sexe" name="male" list="#{true:'Homme',false:'Femme'}"
                 value="true" />

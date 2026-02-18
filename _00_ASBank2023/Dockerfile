@@ -13,6 +13,7 @@ RUN mvn -B -f pom.xml dependency:resolve
 COPY src ./src
 COPY WebContent ./WebContent
 
+COPY .env .
 RUN mvn -U clean package
 
 FROM tomcat:9.0-jdk11
