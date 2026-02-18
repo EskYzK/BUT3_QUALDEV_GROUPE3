@@ -7,10 +7,10 @@ Ce projet consiste en la maintenance évolutive et l'amélioration qualitative d
 
 # 👥 Équipe — Groupe 3
 
-| Membre | Rôle |
-|--------|------|
-| **CHOLLET Thomas** | Scrum Master & Développeur |
-| **MORINON Lilian** | Développeur & Responsable Documentation |
+| Membre | Rôle        |
+|--------|-------------|
+| **CHOLLET Thomas** | Développeur |
+| **MORINON Lilian** | Développeur |
 | **AIT BAHA Said** | Développeur |
 | **KERBER Alexandre** | Développeur |
 
