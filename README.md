@@ -1,177 +1,100 @@
-# 💻 Projet Qualité de Développement – **ASBank**
+🏦 ASBank 2026 - Système de Gestion Bancaire
+📚 Projet de Qualité de Développement (R5.A08) IUT Informatique de Metz – Université de Lorraine
 
-📚 Projet réalisé dans le cadre du cours **R5.A08 – Qualité de Développement** (IUT Informatique de Metz).  
-Ce projet déploie une application Java EE avec **Spring**, **Hibernate**, **Tomcat 9** et une base **MySQL**.
+Ce projet consiste en la maintenance évolutive et l'amélioration qualitative d'une application Java EE. L'accent est mis sur l'industrialisation du déploiement via Docker, l'intégration continue (CI/CD) et le respect d'une charte graphique institutionnelle stricte.
 
----
+👥 L'Équipe (Groupe 3)
+Membre	Rôle
+CHOLLET Thomas	Scrum Master & Développeur
+MORINON Lilian	Développeur & Responsable Documentation
+AIT BAHA Said	Développeur
+KERBER Alexandre	Développeur
+🚀 1. Installation et Déploiement
+Le projet est entièrement conteneurisé. L'utilisation de Tomcat local est désormais obsolète au profit d'une infrastructure Docker.
 
-## 1. Pré-requis logiciels
+📦 Prérequis
 
-Avant toute installation, assurez-vous d’avoir les outils suivants installés et configurés :
+Docker Desktop (moteur de conteneurisation).
 
-### 🔹 Java JDK 11
+Java JDK 11 & Maven 3.9+ (pour le build initial).
 
-- Le projet fonctionne avec **Java 11**.  
-- Dans IntelliJ IDEA, allez dans :  
-  **File > Project Structure > Project**  
-  et téléchargez/configurez directement un **JDK 11** (exemple : *Microsoft OpenJDK 11*).  
-- Vérifiez que le projet utilise bien **Java 11** comme SDK.  
+Configuration BDD : Vérifiez que applicationContext.xml pointe sur db:3306.
 
-### 🔹 Apache Maven (≥ 3.9)
+🛠 Procédure de lancement
 
-* Téléchargez Maven [ici](https://maven.apache.org/download.cgi).
-* Décompressez-le dans un dossier stable (ex. `C:\apache-maven-3.9.x`).
-* Ajoutez le chemin `bin/` de Maven dans la variable d’environnement `PATH`.
-* Vérifiez l’installation avec :
+Build Maven : Générez l'artifact en ignorant les tests (nécessaire pour le build Docker).
 
-  ```bash
-  mvn -v
-  ```
-
-  Résultat attendu : la version de Maven + Java 11.
-
-### 🔹 Apache Tomcat 9.x
-
-* Téléchargez la version ZIP depuis [Tomcat 9 Downloads](https://tomcat.apache.org/download-90.cgi).
-* Décompressez-le dans un dossier (ex. `C:\apache-tomcat-9.0.xx`).
-* Vérifiez l’installation avec :
-
-  ```bash
-  catalina.bat version
-  ```
-
-### 🔹 MySQL / MariaDB
-
-* Téléchargez et installez [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) ou utilisez XAMPP/WAMP.
-* Vérifiez que le service MySQL est démarré.
-
-### 🔹 IntelliJ IDEA Ultimate
-
-* Utilisez la version **Ultimate** (car elle gère Tomcat et les projets Java EE nativement).
-
----
-
-## 2. Installation des bases de données
-
-1. Créez deux bases vides dans MySQL :
-
-   * `nomuser_bankiut` (base principale de l’application)
-   * `nomuser_bankiut_test` (base utilisée pour les tests)
-
-2. Importez les fichiers SQL fournis dans le dossier `script/` :
-
-   * `dumpSQL.sql` → pour la base principale
-   * `dumpSQL_JUnitTest.sql` → pour la base de test
-
----
-
-## 3. Configuration du projet
-
-### a) Récupération des dépendances
-
-Dans IntelliJ ou via un terminal, exécutez :
-
-```bash
+Bash
 mvn clean install -DskipTests
-```
+Build de l'image : Préparez l'image Docker de l'application.
 
-Cette commande permet de :
+Bash
+docker build -t mon-projet-java .
+Infrastructure & Réseau : Créez le réseau et lancez la base de données.
 
-* Nettoyer le projet,
-* Télécharger toutes les dépendances nécessaires,
-* Compiler et générer le WAR,
-* **Ignorer les tests unitaires** (qui nécessitent la configuration complète de la base de test).
+Bash
+docker network create asbank_network
+docker-compose up -d
+Import SQL : Accédez à http://localhost:8082, sélectionnez la base testdb et importez le fichier script/chollet14u_bankiut.sql.
 
-Résultat attendu : **BUILD SUCCESS**.
+Démarrage App : Lancez le conteneur avec vos variables d'environnement pour les mails.
 
-### b) Connexion à la base de données
+Bash
+docker run -d --name mon-projet-java --network asbank_network -p 8080:8080 -e MAIL_USER="votre_mail" -e MAIL_PASSWORD="votre_mot_de_passe_app" mon-projet-java
+Accès application : http://localhost:8080/_00_ASBank2023/
 
-Le projet utilise **Spring** et **Hibernate** pour accéder à la base MySQL.
+💳 2. Fonctionnalités & Règles Métier
+🔒 Gestion des Cartes Bancaires (Phase 2)
 
-* Le fichier `applicationContext.xml` contient la configuration pour la base principale.
-* Les fichiers `TestsBanqueManager-context.xml` et `TestsDaoHibernate-context.xml` définissent la configuration pour la base de test.
+L'implémentation suit des règles de gestion strictes validées avec le client :
 
-Vérifiez dans ces fichiers que :
+Autorité du Gestionnaire : Seul le gestionnaire peut créer une carte, définir le compte lié et modifier les plafonds.
 
-* Le nom de la base correspond bien à `nomuser_bankiut` (ou `nomuser_bankiut_test` pour les tests).
-* L’utilisateur et le mot de passe MySQL sont corrects (par défaut `root` / `root`, sauf si vous avez modifié votre configuration).
+Types de Débit : Choix entre débit immédiat ou différé défini à la création (non modifiable par la suite).
 
-En résumé :
+Plafond 30 jours glissants : La capacité de paiement est calculée sur une fenêtre mobile de 30 jours.
 
-* **applicationContext.xml** → doit pointer sur la base principale.
-* **fichiers de test** → doivent pointer sur la base de test.
+Sécurité : Le client peut bloquer sa carte en cas d'urgence, mais seul le gestionnaire peut la débloquer.
 
----
+🎨 Charte Graphique "Université de Lorraine"
 
-## 4. Déploiement avec Tomcat
+Conformément aux directives de l'UL, l'interface a été modernisée :
 
-1. Dans IntelliJ, ouvrez **Run > Edit Configurations**.
-2. Ajoutez une configuration **Tomcat Server > Local**.
-3. Dans l’onglet **Deployment**, ajoutez l’artifact généré par Maven :
+Intégration du logo officiel de l'Université de Lorraine sur la page de garde.
 
-   ```
-   _00_ASBank2023:war exploded
-   ```
-4. Conservez le **contexte par défaut** généré par IntelliJ (ex. `/_00_ASBank2023_war_exploded`).
-5. Cliquez sur **Apply**, puis **OK**.
+Respect des codes couleurs et des polices de la charte graphique institutionnelle.
 
----
+Mise à jour des mentions temporelles pour l'année 2025-2026 sur le footer et l'accueil.
 
-## 5. Lancement de l’application
+📈 3. Qualité du Code et Tests
+🧪 Tests et Couverture
 
-1. Lancez Tomcat depuis IntelliJ avec ▶️ **Run**.
-2. Surveillez la console et attendez le message :
+Tests Unitaires (JUnit) : Exécutables via mvn test.
 
-   ```
-   Artifact _00_ASBank2023:war exploded: Artifact is deployed successfully
-   ```
-3. Ouvrez un navigateur et accédez à l’URL :
+Couverture JaCoCo : Les rapports de couverture sont générés dans target/site/jacoco/index.html.
 
-   ```
-   http://localhost:8080/_00_ASBank2023_war_exploded
-   ```
+Tests Sélénium : Tests de recette automatisés pour valider les parcours critiques (en cours d'implémentation).
 
-Vous devriez voir la page d’accueil de l’application :
-**« Bienvenue sur l'application IUT Bank 2023 »** avec le lien vers la page de connexion.
+🔍 Analyse Statique
 
----
+SonarCloud : Suivi de la dette technique et des vulnérabilités. L'objectif est l'amélioration continue de la note globale sur le code legacy.
 
-## 🐙 Git & GitHub
+CI/CD : Pipeline GitHub Actions automatisant la compilation et les tests à chaque push.
 
-### Initialisation
-```bash
-cd "Documents/ANNEE 3/QualiteDev"
-git init
-git remote add origin https://github.com/EskYzK/BUT3_QUALDEV_GROUPE3.git
-```
+📂 Architecture du Projet
+Plaintext
+_00_ASBank2023/
+├── script/                 # Scripts SQL (Initialisation et Tests)
+├── src/main/java/          # Code source Java (Spring, Hibernate, Struts 2)
+├── src/main/resources/     # Configuration (applicationContext.xml)
+├── WebContent/
+│   ├── JSP/                # Vues (Index, ListeComptes, Footer...)
+│   └── style/              # Assets CSS et Images (Logo UL)
+├── Dockerfile              # Configuration de l'image application
+├── docker-compose.yml      # Orchestration (MySQL, Adminer)
+└── README.md               # Ce fichier
+🛠 Maintenance
+Pour réinitialiser complètement l'environnement (nettoyage des volumes et réseaux) :
 
-### `.gitignore`
-```gitignore
-apache-tomcat-9.0.109/
-.idea/
-out/
-target/
-*.iml
-```
-
-### Ajout & Push
-```bash
-git add .
-git commit -m "Ajout projet ASBank"
-git pull --rebase origin main   # récupérer le travail du groupe
-git push -u origin main
-```
-
----
-
-## ✅ État d’avancement
-
-* [x] Installation **IntelliJ IDEA Ultimate**
-* [x] Installation **JDK 11** 
-* [x] Installation **Apache Tomcat 9**
-* [x] Importation du projet **_00_ASBank2023** dans IntelliJ
-* [x] Création de l’**artifact WAR exploded**
-* [x] Déploiement sur **Tomcat** avec le contexte `/_00_ASBank2023_war_exploded`
-* [x] Connexion **MySQL** via **Spring / Hibernate**
-* [x] Vérification du rendu **CSS** dans l’application
-* [x] Dépôt **GitHub** initialisé et fonctionnel (`git add / commit / push`)
+Bash
+docker-compose down -v
