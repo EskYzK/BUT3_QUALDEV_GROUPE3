@@ -1,22 +1,29 @@
 version: "3.9"
 
 services:
+  # --- Base de données locale (pour l'application une fois lancée) ---
   db:
-    image: mysql:8
+    image: mysql:8.0
     container_name: mysql_db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: testdb        # base créée automatiquement
-      MYSQL_USER: chollet14u_appli # nouvel utilisateur
-      MYSQL_PASSWORD: 32301542     # mot de passe de l'utilisateur
+      MYSQL_DATABASE: testdb       # base créée automatiquement
+      MYSQL_USER: ${DB_USER}       # nouvel utilisateur
+      MYSQL_PASSWORD: ${DB_PASS}   # mot de passe de l'utilisateur
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      # Import automatique du script SQL au premier démarrage
+      - ./script/chollet14u_bankiut.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - asbank_network
-
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+  # --- PhpMyAdmin pour gérer la BDD via une interface web ---
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
@@ -24,12 +31,33 @@ services:
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
-      PMA_USER: chollet14u_appli
-      PMA_PASSWORD: 32301542
+      PMA_USER: ${DB_USER}
+      PMA_PASSWORD: ${DB_PASS}
     ports:
       - "8082:80"
     depends_on:
       - db
+    networks:
+      - asbank_network
+  # --- Application Java ---
+  app:
+    container_name: mon-projet-java
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      # On surcharge la config ici pour utiliser la BDD locale du Docker
+      # (Même si le build a utilisé une BDD en ligne pour les tests)
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASS}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - asbank_network
 
@@ -38,4 +66,4 @@ volumes:
 
 networks:
   asbank_network:
-    external: true
+    driver: bridge
