@@ -28,9 +28,9 @@ jobs:
           # On reprend les identifiants trouvés dans TestsDaoHibernate-context.xml
           # pour minimiser les changements de configuration
           MYSQL_DATABASE: chollet14u_bankiuttest
-          MYSQL_USER: chollet14u_appli
-          MYSQL_PASSWORD: '32301542' # Mettre entre quotes pour éviter les soucis de parsing
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: ${{ secrets.DB_USER }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASS }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASS }}
         ports:
           - 3306:3306
         # Options pour attendre que MySQL soit prêt avant de lancer les steps
@@ -51,10 +51,13 @@ jobs:
           distribution: 'zulu'
       
       # 4️⃣ INITIALISATION DE LA BDD
-      # On injecte le dumpSQL.sql dans la base fraîchement créée
+      # On injecte le chollet14u_bankiuttest.sql dans la base fraîchement créée
       - name: Initialize Database
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
         run: |
-          mysql -h 127.0.0.1 -u chollet14u_appli -p32301542 chollet14u_bankiuttest < chollet14u_bankiuttest.sql
+          mysql -h 127.0.0.1 -u "$DB_USER" -p"$DB_PASS" chollet14u_bankiuttest < _00_ASBank2023/script/chollet14u_bankiuttest.sql
 
       # 5️⃣ Cache SonarCloud packages
       - name: Cache SonarCloud packages
@@ -76,16 +79,16 @@ jobs:
       # On combine "verify" (tests) et "sonar:sonar" (analyse)
       # Ainsi, Sonar profite de la compilation et de la BDD déjà prêtes.
       - name: Build and analyze with Maven
+        env:
+          # Variables pour les Tests (BDD)
+          DB_URL: jdbc:mysql://127.0.0.1:3306/chollet14u_bankiuttest?useSSL=false&serverTimezone=UTC
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          # Variables pour Sonar
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
         run: |
           mvn -B -f _00_ASBank2023/pom.xml verify sonar:sonar \
             -Dsonar.projectKey=EskYzK_BUT3_QUALDEV_GROUPE3 \
             -Dsonar.organization=eskyzk \
             -Dsonar.host.url=https://sonarcloud.io
-        env:
-          # Variables pour les Tests (BDD)
-          DB_URL: jdbc:mysql://127.0.0.1:3306/chollet14u_bankiuttest?useSSL=false&serverTimezone=UTC
-          DB_USER: chollet14u_appli
-          DB_PASS: 32301542
-          # Variables pour Sonar
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
