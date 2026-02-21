@@ -1,83 +1,114 @@
-body
-{
-	font-family : 'Montserrat', 'Open Sans', 'Segoe UI', Arial, sans-serif;
-	text-align : center;
-	color: #4d4d4f;
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap');
+
+body {
+    font-family: 'Libre Franklin', 'Segoe UI', Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+    color: #333333;
+    margin: 0;
+    padding: 0;
 }
-h1
-{
-	text-align : center;
-	border : 5px solid #00aeef;
-	margin-left: 20px;
-	margin-right: 20px;
-	color: #00aeef;
+
+h1 {
+    text-align: center;
+    background-color: #333333;
+    color: #FFED45;
+    margin: 0 0 30px 0;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
-table
-{
-	margin-right: auto;
-	margin-left: auto;
-	padding : 5px;
-	text-align: center;
-	border: 3px solid #00aeef;
-	border-collapse: collapse;
+
+table {
+    margin-right: auto;
+    margin-left: auto;
+    padding: 0;
+    text-align: center;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    width: 80%;
+    max-width: 1000px;
 }
-td
-{
-	border : 1px solid #4d4d4f;
-	text-align: center;
+
+td {
+    border: 1px solid #e0e0e0;
+    text-align: center;
 }
-table>thead
-{
-	background-color: #00aeef;
-	color: #ffffff;
+
+table > thead {
+    background-color: #FFED45;
+    color: #333333;
 }
-table>thead>tr>td
-{
-	padding: 5px;
-	border: 3px solid #00aeef;
-	font-weight: bold;
-	font-size: 150%;
+
+table > thead > tr > td {
+    padding: 15px;
+    border: none;
+    font-weight: 700;
+    font-size: 120%;
+    text-transform: uppercase;
 }
-table>tbody>tr>td
-{
-	padding: 5px;
-	border: 1px solid #00aeef;
+
+table > tbody > tr > td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
 }
-.success
-{
-	background-color: #329d6e;
-	color: #ffffff;
+
+table > tbody > tr:last-child > td {
+    border-bottom: none;
 }
-.failure
-{
-	background-color: #d8515b;
-	color: #ffffff;
+
+table > tbody > tr:nth-of-type(even) {
+    background-color: #fbfbfb;
 }
-.soldeNegatif
-{
-	font-weight: bold;
-	color: #d8515b;
+
+.success {
+    background-color: #d4edda;
+    color: #155724;
+    font-weight: bold;
 }
-footer
-{
-	margin-top: 10px;
-	font-style: italic;
-	border: 1px solid #4d4d4f;
-	box-shadow: 3px 3px 5px rgba(77, 77, 79, 0.5);
+
+.failure {
+    background-color: #f8d7da;
+    color: #721c24;
+    font-weight: bold;
 }
-.btnLogout
-{
-	position: absolute;
-	top : 90px;
-	left : 30px;
-	background-color: #4d4d4f;
-	color: #ffffff;
-	border: none;
-	padding: 5px 15px;
-	cursor: pointer;
-	font-family: inherit;
+
+.soldeNegatif {
+    font-weight: bold;
+    color: #d9534f;
 }
-.btnLogout:hover
-{
-	background-color: #00aeef;
+
+footer {
+    margin-top: 40px;
+    padding: 20px;
+    font-style: italic;
+    background-color: #333333;
+    color: #ffffff;
+    box-shadow: 0 -3px 5px rgba(0,0,0,0.1);
+    font-size: 0.9em;
+}
+
+.btnLogout {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    background-color: #FFED45;
+    color: #333333;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.btnLogout:hover {
+    background-color: #e6d53e;
 }
