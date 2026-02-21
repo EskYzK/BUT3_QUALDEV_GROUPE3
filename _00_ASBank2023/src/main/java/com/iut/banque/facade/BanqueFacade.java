@@ -7,11 +7,7 @@ import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.IllegalOperationException;
 import com.iut.banque.exceptions.InsufficientFundsException;
 import com.iut.banque.exceptions.TechnicalException;
-import com.iut.banque.modele.Client;
-import com.iut.banque.modele.Compte;
-import com.iut.banque.modele.CompteAvecDecouvert;
-import com.iut.banque.modele.Gestionnaire;
-import com.iut.banque.modele.Utilisateur;
+import com.iut.banque.modele.*;
 
 public class BanqueFacade {
 
@@ -301,5 +297,73 @@ public class BanqueFacade {
      */
     public boolean usePasswordResetToken(String token, String newPassword) {
         return loginManager.usePasswordResetToken(token, newPassword);
+    }
+
+    // ------------------------------------------------------------------------
+    // GESTION DES CARTES BANCAIRES (Façade)
+    // ------------------------------------------------------------------------
+
+    /**
+     * Récupère une carte. Accessible à tout utilisateur connecté.
+     */
+    public CarteBancaire getCarte(String numeroCarte) {
+        return banqueManager.getCarte(numeroCarte);
+    }
+
+    /**
+     * Création de carte : RÉSERVÉ AU GESTIONNAIRE.
+     */
+    public void createCarte(String numeroCompte, double plafond, String typeDebit) throws TechnicalException, IllegalFormatException {
+        if (loginManager.getConnectedUser() instanceof Gestionnaire) {
+            banqueManager.creerCarte(numeroCompte, plafond, typeDebit);
+        }
+    }
+
+    /**
+     * Modification du plafond : RÉSERVÉ AU GESTIONNAIRE.
+     */
+    public void changerPlafondCarte(String numeroCarte, double nouveauPlafond) throws TechnicalException {
+        if (loginManager.getConnectedUser() instanceof Gestionnaire) {
+            banqueManager.changerPlafondCarte(numeroCarte, nouveauPlafond);
+        }
+    }
+
+    /**
+     * Modification du compte lié : RÉSERVÉ AU GESTIONNAIRE.
+     */
+    public void changerCompteLieCarte(String numeroCarte, String nouveauNumeroCompte) throws TechnicalException, IllegalOperationException {
+        if (loginManager.getConnectedUser() instanceof Gestionnaire) {
+            banqueManager.changerCompteLieCarte(numeroCarte, nouveauNumeroCompte);
+        }
+    }
+
+    /**
+     * Blocage de carte : ACCESSIBLE AU CLIENT ET AU GESTIONNAIRE.
+     * (Le client peut bloquer sa propre carte en cas de perte/vol).
+     */
+    public void bloquerCarte(String numeroCarte, boolean definitif) throws TechnicalException {
+        // Pas de vérification "instanceof Gestionnaire" ici car le client a le droit de bloquer.
+        // Idéalement, on devrait vérifier que la carte appartient bien au client connecté,
+        // mais pour l'instant on laisse passer l'ordre vers le Manager.
+        banqueManager.bloquerCarte(numeroCarte, definitif);
+    }
+
+    /**
+     * Déblocage de carte : RÉSERVÉ AU GESTIONNAIRE.
+     * (Règle de gestion : le client ne peut pas débloquer lui-même).
+     */
+    public void debloquerCarte(String numeroCarte) throws TechnicalException, IllegalOperationException {
+        if (loginManager.getConnectedUser() instanceof Gestionnaire) {
+            banqueManager.debloquerCarte(numeroCarte);
+        }
+    }
+
+    /**
+     * Effectue un paiement par carte (vérifie le plafond et le solde).
+     */
+    public void payerParCarte(String numeroCarte, double montant, String libelle)
+            throws TechnicalException, IllegalOperationException, InsufficientFundsException, IllegalFormatException {
+        // Pas de restriction de rôle : un client peut payer avec sa carte, un manager peut simuler.
+        banqueManager.effectuerPaiementCarte(numeroCarte, montant, libelle);
     }
 }
