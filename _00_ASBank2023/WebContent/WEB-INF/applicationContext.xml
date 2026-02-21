@@ -87,6 +87,6 @@
     <task:scheduler id="monPlanificateur" pool-size="1"/>
 
     <task:scheduled-tasks scheduler="monPlanificateur">
-        <task:scheduled ref="batchClotureService" method="lancerClotureMensuelle" cron="0 * * * * ?" />
+        <task:scheduled ref="batchClotureService" method="lancerClotureMensuelle" cron="0 0 3 1 * ?" />
     </task:scheduled-tasks>
 </beans>
