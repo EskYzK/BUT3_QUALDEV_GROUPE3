@@ -84,6 +84,51 @@ INSERT INTO `Utilisateur` (`userId`, `nom`, `prenom`, `adresse`, `userPwd`, `mal
 ('t.manag1', 'mang', 'test', 'Saulcy', '$2a$12$0UxivWTCSge8.GycxC3g3evmKAkx7SKnLUakT3Dmd5BrD19f55E7S', b'1', 'MANAGER', NULL, NULL, NULL, NULL);
 
 --
+-- Structure de la table `CarteBancaire`
+--
+
+CREATE TABLE `CarteBancaire` (
+  `numeroCarte` varchar(16) NOT NULL,
+  `numeroCompte` varchar(50) NOT NULL,
+  `plafond` double NOT NULL,
+  `typeDebit` varchar(10) NOT NULL, -- Valeurs : 'IMMEDIAT' ou 'DIFFERE'
+  `bloquee` bit(1) NOT NULL DEFAULT b'0', -- 1 = Blocage temporaire (réversible)
+  `supprimee` bit(1) NOT NULL DEFAULT b'0' -- 1 = Blocage définitif (irréversible)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Déchargement des données de la table `CarteBancaire`
+--
+
+INSERT INTO `CarteBancaire` (`numeroCarte`, `numeroCompte`, `plafond`, `typeDebit`, `bloquee`, `supprimee`) VALUES
+('1111222233334444', 'BD4242424242', 1500, 'IMMEDIAT', b'0', b'0'), -- Carte active
+('5555666677778888', 'AB7328887341', 2000, 'DIFFERE', b'1', b'0'),  -- Carte bloquée temporairement
+('9999888877776666', 'XX7788778877', 1000, 'IMMEDIAT', b'0', b'1'); -- Carte supprimée (blocage définitif)
+
+--
+-- Structure de la table `Operation`
+--
+
+CREATE TABLE `Operation` (
+  `idOperation` int(11) NOT NULL,
+  `numeroCompte` varchar(50) NOT NULL,
+  `numeroCarte` varchar(16) DEFAULT NULL, -- Peut être NULL pour les opérations sans carte (ex: virement, dépôt)
+  `montant` double NOT NULL, -- Négatif pour une dépense, Positif pour un dépôt
+  `dateOperation` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `libelle` varchar(100) NOT NULL,
+  `typeOperation` varchar(20) NOT NULL -- Ex: 'CB', 'VIREMENT', 'DEPOT'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Déchargement des données de la table `Operation`
+--
+
+INSERT INTO `Operation` (`idOperation`, `numeroCompte`, `numeroCarte`, `montant`, `dateOperation`, `libelle`, `typeOperation`) VALUES
+(1, 'BD4242424242', '1111222233334444', -50.00, NOW(), 'Achat Supermarché', 'CB'),
+(2, 'BD4242424242', '1111222233334444', -20.00, DATE_SUB(NOW(), INTERVAL 2 DAY), 'Achat Livre', 'CB'),
+(3, 'BD4242424242', '1111222233334444', -100.00, DATE_SUB(NOW(), INTERVAL 40 DAY), 'Vieux Achat', 'CB'); -- Celui-ci ne devrait pas compter dans le plafond
+
+--
 -- Index pour les tables déchargées
 --
 
@@ -102,6 +147,26 @@ ALTER TABLE `Utilisateur`
   ADD UNIQUE KEY `numClient_UNIQUE` (`numClient`);
 
 --
+-- Index pour la table `CarteBancaire`
+--
+ALTER TABLE `CarteBancaire`
+  ADD PRIMARY KEY (`numeroCarte`),
+  ADD KEY `fk_Carte_Compte` (`numeroCompte`);
+
+--
+-- Index pour la table `Operation`
+--
+ALTER TABLE `Operation`
+  ADD PRIMARY KEY (`idOperation`),
+  ADD KEY `fk_Operation_Compte` (`numeroCompte`);
+
+--
+-- AUTO_INCREMENT pour la table `Operation`
+--
+ALTER TABLE `Operation`
+  MODIFY `idOperation` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- Contraintes pour les tables déchargées
 --
 
@@ -110,6 +175,19 @@ ALTER TABLE `Utilisateur`
 --
 ALTER TABLE `Compte`
   ADD CONSTRAINT `fk_Compte_userId` FOREIGN KEY (`userId`) REFERENCES `Utilisateur` (`userId`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `CarteBancaire`
+--
+ALTER TABLE `CarteBancaire`
+  ADD CONSTRAINT `fk_Carte_Compte` FOREIGN KEY (`numeroCompte`) REFERENCES `Compte` (`numeroCompte`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contraintes pour la table `Operation` (à mettre à la fin avec les autres)
+--
+ALTER TABLE `Operation`
+  ADD CONSTRAINT `fk_Operation_Compte` FOREIGN KEY (`numeroCompte`) REFERENCES `Compte` (`numeroCompte`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_Operation_Carte` FOREIGN KEY (`numeroCarte`) REFERENCES `CarteBancaire` (`numeroCarte`) ON DELETE SET NULL ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

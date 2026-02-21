@@ -92,6 +92,51 @@ INSERT INTO `Utilisateur` (`userId`, `nom`, `prenom`, `adresse`, `userPwd`, `mal
 ('j.doe1', 'Doe', 'Jane', '456, grand boulevard, Brest', '$2a$12$LtVZ3i2cQdwjJo4avabACegnamMS.H64NlQY34enCM9ywhHF8eXTu', b'1', 'CLIENT', '1234567890', NULL, NULL, NULL),
 ('j.doe2', 'Doe', 'John', '457, grand boulevard, Perpignan', '$2a$12$K3HjpoqOF.krT8K/am2le.tuGF3hwHwg6WQz0ltMsfrtpDUB1C3ze', b'1', 'CLIENT', '0000000001', NULL, NULL, NULL);
 
+
+--
+-- Création de la table CarteBancaire
+--
+CREATE TABLE `CarteBancaire` (
+  `numeroCarte` varchar(16) NOT NULL, 
+  `plafond` double NOT NULL,
+  `bloquee` tinyint(1) NOT NULL DEFAULT 0,
+  `supprimee` tinyint(1) NOT NULL DEFAULT 0,
+  `typeDebit` varchar(20) NOT NULL, -- C'est la colonne Discriminator (IMMEDIAT/DIFFERE)
+  `numeroCompte` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Déchargement des données de la table `CarteBancaire`
+--
+
+INSERT INTO `CarteBancaire` (`numeroCarte`, `plafond`, `bloquee`, `supprimee`, `typeDebit`, `numeroCompte`) VALUES
+('1111222233334444', 1500, 0, 0, 'IMMEDIAT', 'BD4242424242'),
+('5555666677778888', 2000, 0, 0, 'DIFFERE', 'CADV000000'),
+('9999000011112222', 500, 1, 0, 'IMMEDIAT', 'AB7328887341'),
+('1234567890123456', 1000, 0, 1, 'DIFFERE', 'TD0398455576');
+
+--
+-- Création de la table Operation
+--
+CREATE TABLE `Operation` (
+  `idOperation` int(11) NOT NULL,
+  `libelle` varchar(100) DEFAULT NULL,
+  `montant` double NOT NULL,
+  `dateOperation` datetime NOT NULL,
+  `typeOperation` varchar(20) DEFAULT NULL,
+  `numeroCompte` varchar(50) NOT NULL,
+  `numeroCarte` varchar(16) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Déchargement des données de la table `Operation`
+--
+
+INSERT INTO `Operation` (`idOperation`, `libelle`, `montant`, `dateOperation`, `typeOperation`, `numeroCompte`, `numeroCarte`) VALUES
+(1, 'Achat Supermarche', -50.50, '2026-02-15 10:00:00', 'CB', 'BD4242424242', '1111222233334444'),
+(2, 'Paiement en ligne', -120.00, '2026-02-18 14:30:00', 'CB', 'CADV000000', '6666777788889999'),
+(3, 'Remboursement', 20.00, '2026-02-10 09:15:00', 'VIREMENT', 'BD4242424242', NULL);
+
 --
 -- Index pour les tables déchargées
 --
@@ -111,6 +156,30 @@ ALTER TABLE `Utilisateur`
   ADD UNIQUE KEY `numClient_UNIQUE` (`numClient`);
 
 --
+-- Index pour la table `CarteBancaire`
+--
+ALTER TABLE `CarteBancaire`
+  ADD PRIMARY KEY (`numeroCarte`),
+  ADD KEY `fk_CarteBancaire_Compte` (`numeroCompte`);
+
+--
+-- Index pour la table `Operation`
+--
+ALTER TABLE `Operation`
+  ADD PRIMARY KEY (`idOperation`),
+  ADD KEY `fk_Operation_Compte` (`numeroCompte`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `Operation`
+--
+ALTER TABLE `Operation`
+  MODIFY `idOperation` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- Contraintes pour les tables déchargées
 --
 
@@ -119,6 +188,19 @@ ALTER TABLE `Utilisateur`
 --
 ALTER TABLE `Compte`
   ADD CONSTRAINT `fk_Compte_userId` FOREIGN KEY (`userId`) REFERENCES `Utilisateur` (`userId`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Contrainte pour la table CarteBancaire
+--
+ALTER TABLE `CarteBancaire`
+  ADD CONSTRAINT `fk_CarteBancaire_Compte` FOREIGN KEY (`numeroCompte`) REFERENCES `Compte` (`numeroCompte`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contrainte pour la table Operation
+--
+ALTER TABLE `Operation`
+  ADD CONSTRAINT `fk_Operation_Compte` FOREIGN KEY (`numeroCompte`) REFERENCES `Compte` (`numeroCompte`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_Operation_Carte` FOREIGN KEY (`numeroCarte`) REFERENCES `CarteBancaire` (`numeroCarte`) ON DELETE SET NULL ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

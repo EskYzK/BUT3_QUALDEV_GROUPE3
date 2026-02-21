@@ -12,6 +12,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
 
 import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.InsufficientFundsException;
@@ -199,4 +203,28 @@ public abstract class Compte {
 	public static boolean checkFormatNumeroCompte(String s) {
 		return Pattern.matches("[A-Z]{2}\\d{10}", s);
 	}
+
+    /**
+     * Liste des cartes bancaires associées à ce compte.
+     * mappedBy = "compte" fait référence à l'attribut 'compte' dans la classe CarteBancaire.
+     * fetch = EAGER signifie qu'on charge les cartes en même temps que le compte (plus simple pour l'affichage).
+     */
+    @OneToMany(mappedBy = "compte", fetch = FetchType.EAGER)
+    private Set<CarteBancaire> cartes = new HashSet<>();
+
+    public Set<CarteBancaire> getCartes() {
+        return cartes;
+    }
+
+    public void setCartes(Set<CarteBancaire> cartes) {
+        this.cartes = cartes;
+    }
+
+    /**
+     * Méthode technique pour les opérations de gestion (Batch).
+     * Permet de débiter sans vérifier le découvert autorisé.
+     */
+    public void debitTechnique(double montant) {
+        this.solde -= montant;
+    }
 }
