@@ -324,5 +324,73 @@
             <result name="reset_success">/JSP/ChangePasswordSuccess.jsp</result>
             <result name="show_form">/JSP/ResetPasswordForm.jsp</result> </action>
 
+        <action name="creerCarte_input" class="com.iut.banque.controller.GestionCartes" method="formulaireCreation">
+            <result name="success">/JSP/CreerCarte.jsp</result>
+            <result name="error" type="redirectAction">
+                <param name="actionName">editAccount</param>
+                <param name="compte">%{numeroCompte}</param>
+            </result>
+        </action>
+
+        <action name="creerCarte" class="com.iut.banque.controller.GestionCartes" method="creerCarte">
+            <result name="success" type="redirectAction">
+                <param name="actionName">editAccount</param>
+                <param name="compte">%{numeroCompte}</param>
+                <param name="message">%{message}</param>
+            </result>
+            <result name="input">/JSP/CreerCarte.jsp</result>
+            <result name="error">/JSP/CreerCarte.jsp</result>
+        </action>
+
+        <action name="modifierCarte_input" class="com.iut.banque.controller.GestionCartes" method="formulaireModification">
+            <result name="success">/JSP/ModifierCarte.jsp</result>
+            <result name="error" type="redirectAction">
+                <param name="actionName">editAccount</param>
+                <param name="compte">%{numeroCompte}</param>
+            </result>
+        </action>
+
+        <action name="modifierCarte" class="com.iut.banque.controller.GestionCartes" method="modifierCarte">
+            <result name="success" type="redirectAction">
+                <param name="actionName">editAccount</param>
+                <param name="compte">%{carte.compte.numeroCompte}</param>
+            </result>
+            <result name="input">/JSP/ModifierCarte.jsp</result>
+            <result name="error">/JSP/ModifierCarte.jsp</result>
+        </action>
+
+        <action name="bloquerCarte" class="com.iut.banque.controller.GestionCartes" method="bloquerCarte">
+            <result name="success" type="redirectAction">
+                <param name="actionName">editAccount</param>
+                <param name="compte">%{numeroCompte}</param>
+            </result>
+            <result name="error">/JSP/DetailCompteEdit.jsp</result>
+        </action>
+
+        <action name="bloquerCarteClient" class="com.iut.banque.controller.GestionCartes" method="bloquerCarte">
+            <result name="success" type="redirectAction">
+                <param name="actionName">urlDetail</param>
+                <param name="compte">%{numeroCompte}</param>
+            </result>
+            <result name="error">/JSP/DetailCompte.jsp</result>
+        </action>
+
+        <action name="debloquerCarte" class="com.iut.banque.controller.GestionCartes" method="debloquerCarte">
+            <result name="success" type="redirectAction">
+                <param name="actionName">editAccount</param>
+                <param name="compte">%{numeroCompte}</param>
+            </result>
+            <result name="error">/JSP/DetailCompteEdit.jsp</result>
+        </action>
+
+        <action name="payerParCarte" class="com.iut.banque.controller.GestionCartes" method="payer">
+            <result name="success" type="redirectAction">
+                <param name="actionName">urlDetail</param> <param name="compte">%{numeroCompte}</param> <param name="message">%{message}</param> </result>
+            <result name="error" type="redirectAction">
+                <param name="actionName">urlDetail</param>
+                <param name="compte">%{numeroCompte}</param>
+                <param name="error">%{message}</param> </result>
+        </action>
+
 	</package>
 </struts>

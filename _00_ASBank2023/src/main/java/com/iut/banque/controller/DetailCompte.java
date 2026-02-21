@@ -1,5 +1,12 @@
 package com.iut.banque.controller;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.struts2.ServletActionContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -7,6 +14,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.InsufficientFundsException;
 import com.iut.banque.facade.BanqueFacade;
+import com.iut.banque.modele.CarteBancaire;
 import com.iut.banque.modele.Client;
 import com.iut.banque.modele.Compte;
 import com.iut.banque.modele.Gestionnaire;
@@ -18,6 +26,7 @@ public class DetailCompte extends ActionSupport {
 	protected BanqueFacade banque;
 	private String montant;
 	private String error;
+    private String message;
 	protected Compte compte;
 
 	/**
@@ -42,11 +51,22 @@ public class DetailCompte extends ActionSupport {
 	 * @return String, le string avec le détail du message d'erreur
 	 */
 	public String getError() {
+        // On évite le NullPointerException
+        if (error == null || error.equals("EMPTY") || error.isEmpty()) {
+            return "";
+        }
+
 		switch (error) {
 		case "TECHNICAL":
 			return "Erreur interne. Verifiez votre saisie puis réessayer. Contactez votre conseiller si le problème persiste.";
 		case "BUSINESS":
 			return "Fonds insuffisants.";
+        case "OVER_LIMIT":
+            return "Paiement refusé : Le plafond de la carte (sur 30 jours) ou le solde du compte est dépassé.";
+        case "MISSING_ACCOUNT":
+            return "Numéro de compte manquant.";
+        case "CARD_NOT_FOUND":
+            return "Carte introuvable.";
 		case "NEGATIVEAMOUNT":
 			return "Veuillez rentrer un montant positif.";
 		case "NEGATIVEOVERDRAFT":
@@ -54,7 +74,7 @@ public class DetailCompte extends ActionSupport {
 		case "INCOMPATIBLEOVERDRAFT":
 			return "Le nouveau découvert est incompatible avec le solde actuel.";
 		default:
-			return "";
+			return "Erreur inconnue";
 		}
 	}
 
@@ -93,6 +113,15 @@ public class DetailCompte extends ActionSupport {
 	public void setMontant(String montant) {
 		this.montant = montant;
 	}
+
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
 	/**
 	 * Getter du compte actuellement sélectionné. Récupère la liste des comptes
@@ -156,8 +185,40 @@ public class DetailCompte extends ActionSupport {
 			nfe.printStackTrace();
 			return "ERROR";
 		} catch (IllegalFormatException e) {
-			e.printStackTrace();
 			return "NEGATIVEAMOUNT";
 		}
 	}
+
+    /**
+     * Récupère les cartes du compte et les trie par numéro croissant.
+     * Utilise les imports pour un code lisible.
+     */
+    public List<CarteBancaire> getCartesTriees() {
+        Compte c = getCompte();
+
+        // Sécurité si le compte ou la liste est null
+        if (c == null || c.getCartes() == null) {
+            return new ArrayList<>();
+        }
+
+        List<CarteBancaire> listeCartes;
+        Object rawCartes = c.getCartes();
+
+        // Conversion propre selon qu'Hibernate renvoie une Map ou une Collection
+        if (rawCartes instanceof Map) {
+            listeCartes = new ArrayList<>(((Map<?, CarteBancaire>) rawCartes).values());
+        } else {
+            listeCartes = new ArrayList<>((Collection<CarteBancaire>) rawCartes);
+        }
+
+        // Tri propre avec Comparator
+        Collections.sort(listeCartes, new Comparator<CarteBancaire>() {
+            @Override
+            public int compare(CarteBancaire c1, CarteBancaire c2) {
+                return c1.getNumeroCarte().compareTo(c2.getNumeroCarte());
+            }
+        });
+
+        return listeCartes;
+    }
 }
