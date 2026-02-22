@@ -159,9 +159,9 @@ public class DetailCompte extends ActionSupport {
 	 *         ou pas)
 	 */
 	public String debit() {
-		Compte compte = getCompte();
+		Compte compte2 = getCompte();
 		try {
-			banque.debiter(compte, Double.parseDouble(montant.trim()));
+			banque.debiter(compte2, Double.parseDouble(montant.trim()));
             logger.info("Débit effectué avec succès");
 			return "SUCCESS";
 		} catch (NumberFormatException e) {
@@ -183,9 +183,9 @@ public class DetailCompte extends ActionSupport {
 	 *         ou pas)
 	 */
 	public String credit() {
-		Compte compte = getCompte();
+		Compte compte1 = getCompte();
 		try {
-			banque.crediter(compte, Double.parseDouble(montant.trim()));
+			banque.crediter(compte1, Double.parseDouble(montant.trim()));
             logger.info("Crédit effectué avec succès");
 			return "SUCCESS";
 		} catch (NumberFormatException nfe) {
@@ -219,12 +219,7 @@ public class DetailCompte extends ActionSupport {
         }
 
         // Tri propre avec Comparator
-        Collections.sort(listeCartes, new Comparator<CarteBancaire>() {
-            @Override
-            public int compare(CarteBancaire c1, CarteBancaire c2) {
-                return c1.getNumeroCarte().compareTo(c2.getNumeroCarte());
-            }
-        });
+        listeCartes.sort(Comparator.comparing(CarteBancaire::getNumeroCarte));
 
         return listeCartes;
     }

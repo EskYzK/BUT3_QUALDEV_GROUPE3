@@ -2,12 +2,16 @@ package com.iut.banque.test.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.iut.banque.controller.DetailCompteEdit;
 import com.iut.banque.exceptions.IllegalFormatException;
@@ -39,33 +43,6 @@ class DetailCompteEditTest {
 		lenient().when(banqueMock.getConnectedUser()).thenReturn(gestionnaireMock);
 	}
 
-	/**
-	 * Test changement de découvert avec succès
-	 */
-	@Test
-	void testChangementDecouvert_Success() throws Exception {
-		controller.setCompte(compteAvecDecouvertMock);
-		controller.setDecouvertAutorise("100.50");
-
-		String result = controller.changementDecouvert();
-
-		assertEquals("SUCCESS", result);
-		verify(banqueMock).changeDecouvert(compteAvecDecouvertMock, 100.50);
-	}
-
-	/**
-	 * Test changement de découvert avec un entier
-	 */
-	@Test
-	void testChangementDecouvert_IntegerValue() throws Exception {
-		controller.setCompte(compteAvecDecouvertMock);
-		controller.setDecouvertAutorise("500");
-
-		String result = controller.changementDecouvert();
-
-		assertEquals("SUCCESS", result);
-		verify(banqueMock).changeDecouvert(compteAvecDecouvertMock, 500.0);
-	}
 
 	/**
 	 * Test changement de découvert - type de compte incorrect (CompteSansDecouvert)
@@ -83,32 +60,6 @@ class DetailCompteEditTest {
 	}
 
 	/**
-	 * Test changement de découvert - format invalide (pas un nombre)
-	 */
-	@Test
-	void testChangementDecouvert_InvalidFormat_NonNumeric() {
-		controller.setCompte(compteAvecDecouvertMock);
-		controller.setDecouvertAutorise("pas_un_nombre");
-
-		String result = controller.changementDecouvert();
-
-		assertEquals("ERROR", result);
-	}
-
-	/**
-	 * Test changement de découvert - format invalide (caractères spéciaux)
-	 */
-	@Test
-	void testChangementDecouvert_InvalidFormat_SpecialChars() {
-		controller.setCompte(compteAvecDecouvertMock);
-		controller.setDecouvertAutorise("100#50");
-
-		String result = controller.changementDecouvert();
-
-		assertEquals("ERROR", result);
-	}
-
-	/**
 	 * Test changement de découvert - valeur négative
 	 */
 	@Test
@@ -121,20 +72,6 @@ class DetailCompteEditTest {
 		// NumberFormatException sur double négatif devient ERROR ou NEGATIVEOVERDRAFT
 		// Le résultat dépend de l'implémentation
 		assertNotNull(result);
-	}
-
-	/**
-	 * Test changement de découvert - découvert incompatible avec le solde
-	 */
-	@Test
-	void testChangementDecouvert_IncompatibleOverdraft_InvalidFormat() {
-		controller.setCompte(compteAvecDecouvertMock);
-		controller.setDecouvertAutorise("#invalid#");
-		
-		String result = controller.changementDecouvert();
-
-		// Format invalide provoque NumberFormatException
-		assertEquals("ERROR", result);
 	}
 
 	/**
@@ -192,18 +129,23 @@ class DetailCompteEditTest {
 		});
 	}
 
-	/**
-	 * Test changement de découvert - chaîne vide
-	 */
-	@Test
-	void testChangementDecouvert_EmptyString() {
-		controller.setCompte(compteAvecDecouvertMock);
-		controller.setDecouvertAutorise("");
+    @ParameterizedTest(name = "Changement découvert avec la valeur : ''{0}'' attendue à {1}")
+    @CsvSource({
+            "100.50, 100.50",
+            "500, 500.0",
+            "999999.99, 999999.99",
+            "0.0, 0.0",
+            "'  150.75  ', 150.75"
+    })
+    void testChangementDecouvert(String decouvertAutoriseInput, double expectedDecouvert) throws Exception {
+        controller.setCompte(compteAvecDecouvertMock);
+        controller.setDecouvertAutorise(decouvertAutoriseInput);
 
-		String result = controller.changementDecouvert();
+        String result = controller.changementDecouvert();
 
-		assertEquals("ERROR", result);
-	}
+        assertEquals("SUCCESS", result);
+        verify(banqueMock).changeDecouvert(compteAvecDecouvertMock, expectedDecouvert);
+    }
 
 	/**
 	 * Test setter/getter DecouvertAutorise

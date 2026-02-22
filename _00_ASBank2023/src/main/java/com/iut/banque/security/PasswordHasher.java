@@ -8,11 +8,14 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.hibernate.Session;
 import org.hibernate.HibernateException;
 
+import java.util.logging.Logger;
+
 /**
  * PasswordHasher — utilitaire simple pour hashage et vérification de mots de passe.
  * Utilise BCrypt (lib org.mindrot:jbcrypt).
  */
 public class PasswordHasher {
+    private static final Logger logger = Logger.getLogger(PasswordHasher.class.getName());
     private static final int LOG_ROUNDS = 12;
 
     public static String hash(String password) {
@@ -45,9 +48,9 @@ public class PasswordHasher {
             }
 
             tx.commit(); // Commit des changements
-        } catch (HibernateException e) { // plus précis que Exception
+        } catch (HibernateException e) { // plus précis qu'Exception
             if (tx != null) tx.rollback();
-            System.err.println("Erreur lors du rehash des mots de passe : " + e.getMessage());
+            logger.info("Erreur lors du rehash des mots de passe : " + e.getMessage());
         } finally {
             session.close();
         }

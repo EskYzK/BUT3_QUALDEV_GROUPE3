@@ -29,7 +29,9 @@ public class CreerUtilisateur extends ActionSupport {
     private String email;
 	private String message;
 	private String result;
-    Logger logger = Logger.getLogger(getClass().getName());
+    private static final Logger logger = Logger.getLogger(CreerUtilisateur.class.getName());
+    private static final java.util.regex.Pattern emailPattern =
+            java.util.regex.Pattern.compile("^[\\w\\.-]++@([\\w-]++\\.)++[\\w-]{2,4}$");
 
     /**
 	 * @return the userId
@@ -236,10 +238,10 @@ public class CreerUtilisateur extends ActionSupport {
 	public String creationUtilisateur() {
         String mess="Error";
 		try {
-            if ((email != null && !email.trim().isEmpty())&&(!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"))) {
-                    this.message = "Le format de l'adresse email est incorrect.";
-                    this.result = mess;
-                    return this.result;
+            if (email != null && !email.trim().isEmpty() && !emailPattern.matcher(email).matches()) {
+                this.message = "Le format de l'adresse email est incorrect.";
+                this.result = mess;
+                return this.result;
             }
 			if (client) {
 				banque.createClient(userId, userPwd, nom, prenom, adresse, male, email, numClient);
