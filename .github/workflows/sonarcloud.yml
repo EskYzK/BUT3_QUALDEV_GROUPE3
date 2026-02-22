@@ -91,5 +91,5 @@ jobs:
           mvn -B -f _00_ASBank2023/pom.xml verify sonar:sonar \
             -Dsonar.projectKey=EskYzK_BUT3_QUALDEV_GROUPE3 \
             -Dsonar.organization=eskyzk \
-            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
