@@ -11,9 +11,6 @@
 </head>
 
 <body>
-<s:form action="retourTableauDeBordClient" method="POST">
-    <s:submit value="Annuler" />
-</s:form>
 <h1>Définir un nouveau mot de passe</h1>
 
 <div style="color: red">
@@ -25,6 +22,10 @@
 
     <s:password label="Nouveau mot de passe" name="newPassword" required="true" />
     <s:submit value="Valider le changement"/>
+</s:form>
+
+<s:form action="redirectionLogin" method="POST">
+    <s:submit value="Annuler" />
 </s:form>
 
 </body>
