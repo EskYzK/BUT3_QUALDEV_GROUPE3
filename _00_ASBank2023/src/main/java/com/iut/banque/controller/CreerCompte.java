@@ -23,7 +23,7 @@ public class CreerCompte extends ActionSupport {
 	private String message;
 	private boolean error;
 	private boolean result;
-	private BanqueFacade banque;
+	private BanqueFacade banqueFacade;
 	private Compte compte;
 
 	/**
@@ -79,10 +79,12 @@ public class CreerCompte extends ActionSupport {
 	 */
 	public CreerCompte() {
 		System.out.println("In Constructor from CreerCompte class ");
-		ApplicationContext context = WebApplicationContextUtils
-				.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-		this.banque = (BanqueFacade) context.getBean("banqueFacade");
 	}
+
+    // Le setter indispensable pour l'injection
+    public void setBanqueFacade(BanqueFacade banqueFacade) {
+        this.banqueFacade = banqueFacade;
+    }
 
 	/**
 	 * @return the numeroCompte
@@ -188,14 +190,14 @@ public class CreerCompte extends ActionSupport {
 		try {
 			if (avecDecouvert) {
 				try {
-					banque.createAccount(numeroCompte, client, decouvertAutorise);
+					banqueFacade.createAccount(numeroCompte, client, decouvertAutorise);
 				} catch (IllegalOperationException e) {
 					e.printStackTrace();
 				}
 			} else {
-				banque.createAccount(numeroCompte, client);
+				banqueFacade.createAccount(numeroCompte, client);
 			}
-			this.compte = banque.getCompte(numeroCompte);
+			this.compte = banqueFacade.getCompte(numeroCompte);
 			return "SUCCESS";
 		} catch (TechnicalException e) {
 			return "NONUNIQUEID";

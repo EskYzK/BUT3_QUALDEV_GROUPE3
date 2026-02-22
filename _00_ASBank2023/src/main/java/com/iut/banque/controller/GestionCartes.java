@@ -41,11 +41,12 @@ public class GestionCartes extends ActionSupport {
      */
     public GestionCartes() {
         super();
-        ApplicationContext context = WebApplicationContextUtils
-                .getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-        this.banqueFacade = (BanqueFacade) context.getBean("banqueFacade");
     }
 
+    // Un Setter pour permettre aux tests d'injecter un Mock
+    public void setBanqueFacade(BanqueFacade banqueFacade) {
+        this.banqueFacade = banqueFacade;
+    }
     // -------------------------------------------------------------------
     // ACTION 1 : Création de carte
     // -------------------------------------------------------------------
@@ -215,7 +216,6 @@ public class GestionCartes extends ActionSupport {
             return ERROR;
         } catch (Exception e) {
             // Toute autre erreur inattendue
-            e.printStackTrace(); // A SUPPRIMER !!!
             message = "TECHNICAL";
             return ERROR;
         }
