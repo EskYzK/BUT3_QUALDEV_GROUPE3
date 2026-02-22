@@ -167,9 +167,23 @@ public class CreerUtilisateur extends ActionSupport {
 	 */
 	public CreerUtilisateur() {
 		System.out.println("In Constructor from CreerUtilisateur class ");
-		ApplicationContext context = WebApplicationContextUtils
-				.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-		this.banque = (BanqueFacade) context.getBean("banqueFacade");
+		try {
+			ApplicationContext context = WebApplicationContextUtils
+					.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
+			this.banque = (BanqueFacade) context.getBean("banqueFacade");
+		} catch (Exception e) {
+			System.out.println("Mode test : BanqueFacade sera injectée via le setter.");
+		}
+	}
+
+	/**
+	 * Setter pour injecter BanqueFacade (utilisé pour les tests unitaires)
+	 * 
+	 * @param banque
+	 *            : BanqueFacade à injecter
+	 */
+	public void setBanque(BanqueFacade banque) {
+		this.banque = banque;
 	}
 
 	/**

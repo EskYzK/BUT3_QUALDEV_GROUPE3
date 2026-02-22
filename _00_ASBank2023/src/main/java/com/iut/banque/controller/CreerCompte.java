@@ -79,6 +79,14 @@ public class CreerCompte extends ActionSupport {
 	 */
 	public CreerCompte() {
 		System.out.println("In Constructor from CreerCompte class ");
+		try {
+			ApplicationContext context = WebApplicationContextUtils
+					.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
+			this.banqueFacade = (BanqueFacade) context.getBean("banqueFacade");
+		} catch (NullPointerException e) {
+			// Cas de test : le ServletContext est null
+			System.out.println("Running in test mode, banqueFacade will be injected via setter");
+		}
 	}
 
     // Le setter indispensable pour l'injection

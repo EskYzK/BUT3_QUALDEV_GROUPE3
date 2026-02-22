@@ -39,9 +39,13 @@ public class DetailCompte extends ActionSupport {
 	 */
 	public DetailCompte() {
 		System.out.println("In Constructor from DetailCompte class ");
-		ApplicationContext context = WebApplicationContextUtils
-				.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-		this.banque = (BanqueFacade) context.getBean("banqueFacade");
+		try {
+			ApplicationContext context = WebApplicationContextUtils
+					.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
+			this.banque = (BanqueFacade) context.getBean("banqueFacade");
+		} catch (Exception e) {
+			System.out.println("Mode test : BanqueFacade sera injectée via le setter.");
+		}
 	}
 
 	/**
@@ -145,6 +149,15 @@ public class DetailCompte extends ActionSupport {
 
 	public void setCompte(Compte compte) {
 		this.compte = compte;
+	}
+
+	/**
+	 * Setter pour injection de la BanqueFacade (utilisé en test)
+	 * 
+	 * @param banque la BanqueFacade à injecter
+	 */
+	public void setBanque(BanqueFacade banque) {
+		this.banque = banque;
 	}
 
 	/**
