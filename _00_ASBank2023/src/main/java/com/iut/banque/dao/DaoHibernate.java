@@ -9,6 +9,8 @@ import com.iut.banque.modele.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.IllegalOperationException;
@@ -19,27 +21,25 @@ import com.iut.banque.security.PasswordHasher;
 
 /**
  * Implémentation de IDao utilisant Hibernate.
- *
- * Les transactions sont gerés par Spring et utilise le transaction manager
+ * Les transactions sont gérées par Spring et utilisent la transaction manager
  * défini dans l'application Context.
- *
  * Par défaut, la propagation des transactions est REQUIRED, ce qui signifie que
- * si une transaction est déjà commencé elle va être réutilisée. Cela est util
+ * si une transaction est déjà commencée, elle va être réutilisée. Cela est util
  * pour les tests unitaires de la DAO.
  */
 @Transactional
 public class DaoHibernate implements IDao {
 
+    private static final Logger logger = LoggerFactory.getLogger(DaoHibernate.class);
 	private SessionFactory sessionFactory;
 
 	public DaoHibernate() {
-		System.out.println("==================");
-		System.out.println("Création de la Dao");
+        logger.info("==================");
+        logger.info("Création de la Dao");
 	}
 
 	/**
 	 * Setter pour la SessionFactory.
-	 *
 	 * Cette méthode permet à Spring d'injecter la factory au moment de la
 	 * construction de la DAO.
 	 *
@@ -265,7 +265,7 @@ public class DaoHibernate implements IDao {
 	 */
 	@Override
 	public void disconnect() {
-		System.out.println("Déconnexion de la DAO.");
+        logger.info("Déconnexion de la DAO.");
 	}
 
     @Override
@@ -298,8 +298,7 @@ public class DaoHibernate implements IDao {
         try {
             this.sessionFactory.getCurrentSession().save(carte);
         } catch (Exception e) {
-            // Gestion basique, on pourrait logger l'erreur ici
-            e.printStackTrace();
+            logger.error("Erreur lors de la création de la carte bancaire", e);
             return null;
         }
         return carte;
@@ -330,7 +329,7 @@ public class DaoHibernate implements IDao {
         try {
             this.sessionFactory.getCurrentSession().save(operation);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Erreur lors de la création de l'opération", e);
             return null;
         }
         return operation;

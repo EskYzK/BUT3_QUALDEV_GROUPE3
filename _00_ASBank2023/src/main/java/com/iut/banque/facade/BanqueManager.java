@@ -21,9 +21,12 @@ import com.iut.banque.modele.CarteBancaire;
 import com.iut.banque.modele.CarteDebitDiffere;
 import com.iut.banque.modele.CarteDebitImmediat;
 import com.iut.banque.modele.Operation;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 public class BanqueManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(BanqueManager.class);
 	private Banque bank;
 	private IDao dao;
 
@@ -93,8 +96,7 @@ public class BanqueManager {
         try {
             dao.createOperation(op);
         } catch (Exception e) {
-            System.err.println("Erreur lors de la création de l'historique crédit");
-            e.printStackTrace();
+            logger.error("Erreur lors de la création de l'historique crédit", e);
         }
 	}
 
@@ -109,7 +111,8 @@ public class BanqueManager {
 	 * @param montant
 	 *            : un double correspondant au montant à créditer
 	 * @throws IllegalFormatException
-	 *             : si le param montant est négatif; InsufficientFundsException
+	 *             : si le param montant est négatif
+     * @throws InsufficientFundsException
 	 *             : si les fonds sont insuffisants
 	 */
 	public void debiter(Compte compte, double montant) throws InsufficientFundsException, IllegalFormatException {
@@ -126,8 +129,7 @@ public class BanqueManager {
         try {
             dao.createOperation(op);
         } catch (Exception e) {
-            System.err.println("Erreur lors de la création de l'historique débit");
-            e.printStackTrace();
+            logger.error("Erreur lors de la création de l'historique débit", e);
         }
 	}
 
@@ -195,7 +197,7 @@ public class BanqueManager {
 	 *            nouveau compte
 	 * @throws TechnicalException
 	 * @throws IllegalFormatException
-	 * @throws IllegalOperationException 
+	 * @throws IllegalOperationException
 	 */
 	public void createAccount(String numeroCompte, Client client, double decouvertAutorise)
 			throws TechnicalException, IllegalFormatException, IllegalOperationException {
@@ -210,7 +212,7 @@ public class BanqueManager {
 	 *            Compte correspondant à l'objet à supprimer
 	 * @throws IllegalOperationException
 	 *             quand on essaie la suppression d'un compte avec un solde
-	 *             différent de 0
+	 *             différent de 0.
 	 * @throws TechnicalException
 	 *             si le compte est null ou si le compte n'est pas un compte
 	 *             persistant.
@@ -498,7 +500,7 @@ public class BanqueManager {
     }
 
     public void cloturerComptesDifferes() {
-        System.out.println(">>> Début Clôture Mensuelle (Basée sur les opérations)");
+        logger.info(">>> Début Clôture Mensuelle (Basée sur les opérations)");
 
         // 1. Calcul des dates (Mois dernier)
         Calendar cal = Calendar.getInstance();
@@ -542,13 +544,13 @@ public class BanqueManager {
                 try {
                     totalADebiter = dao.getMontantTotalDepensesDifferees(compte.getNumeroCompte(), debut, fin);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Erreur lors du calcul du débit différé pour le compte {}", compte.getNumeroCompte(), e);
                     continue;
                 }
 
                 // 4. Si on a trouvé des dépenses différées, on prélève
                 if (totalADebiter > 0) {
-                    System.out.println("Prélèvement de " + totalADebiter + "€ sur le compte " + compte.getNumeroCompte());
+                    logger.info("Prélèvement de {}€ sur le compte {}", totalADebiter, compte.getNumeroCompte());
 
                     // A. On force le débit
                     compte.debitTechnique(totalADebiter);
@@ -567,6 +569,6 @@ public class BanqueManager {
                 }
             }
         }
-        System.out.println(">>> Fin Clôture");
+        logger.info(">>> Fin Clôture");
     }
 }
