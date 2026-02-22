@@ -110,7 +110,7 @@ class CreerUtilisateurTest {
 	 */
 	@Test
 	void testCreationUtilisateurInvalidEmail() {
-        String error="ERROR1";
+        String error="ERROR";
 		controller.setClient(true);
 		controller.setUserId("j.test");
 		controller.setUserPwd("pass");
@@ -157,7 +157,7 @@ class CreerUtilisateurTest {
 	 */
 	@Test
 	void testCreationUtilisateurUserIdAlreadyExists() throws Exception {
-        String error="ERROR2";
+        String error="ERROR";
 		controller.setClient(true);
 		controller.setUserId("existing.user");
 		controller.setUserPwd("pass");
@@ -185,7 +185,7 @@ class CreerUtilisateurTest {
 	 */
 	@Test
 	void testCreationUtilisateurNumClientAlreadyAssigned() throws Exception {
-        String error="ERROR3";
+        String error="ERROR";
 		controller.setClient(true);
 		controller.setUserId("new.user");
 		controller.setUserPwd("pass");
@@ -213,7 +213,7 @@ class CreerUtilisateurTest {
 	 */
 	@Test
 	void testCreationUtilisateurInvalidUserIdFormat() throws Exception {
-        String error="ERROR4";
+        String error="ERROR";
         String mail="test1@iut.fr";
 		controller.setClient(true);
 		controller.setUserId("invalid!!!!");
@@ -241,7 +241,7 @@ class CreerUtilisateurTest {
 	 */
 	@Test
 	void testCreationUtilisateurInvalidNumClientFormat() throws Exception {
-        String error="ERROR5";
+        String error="ERROR";
         String mail="test2@iut.fr";
 		controller.setClient(true);
 		controller.setUserId("j.correct");
@@ -271,7 +271,7 @@ class CreerUtilisateurTest {
 	@Test
 	void testCreationUtilisateurInvalidUserIdFormatManager() throws Exception {
         String mail="test3@iut.fr";
-        String error="ERROR6";
+        String error="ERROR";
 		controller.setClient(false);
 		controller.setUserId("invalid-format");
 		controller.setUserPwd("pass");

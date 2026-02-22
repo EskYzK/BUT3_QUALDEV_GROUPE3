@@ -23,16 +23,16 @@ public class TestsClient {
 	 */
 	@Test
 	public void testMethodeCheckFormatUserIdClientCorrect() {
-		String strClient = "String a.utilisateur928";
+		String strClient = "a.utilisateur928";
 		if (!Client.checkFormatUserIdClient(strClient)) {
-			fail(strClient + " refusé dans le test");
+			fail("String " +strClient + " refusé dans le test");
 		}
 	}
 	@Test
 	public void testMethodeCheckFormatUserIdClientAvecUneSeuleLettreApresLePointSeparateur() {
-		String strClient = "String a.a1";
+		String strClient = "a.a1";
 		if (!Client.checkFormatUserIdClient(strClient)) {
-			fail(strClient + " refusé dans le test");
+			fail("String " + strClient + " refusé dans le test");
 		}
 	}
 
