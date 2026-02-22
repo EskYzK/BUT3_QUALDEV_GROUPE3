@@ -36,7 +36,7 @@
             <s:a href="%{urlAjoutUtilisateur}">Ajout d'un utilisateur</s:a>
         </p>
         <p>
-            <s:url action="changePassword" var="urlChangePassword"></s:url>
+            <s:url action="changePasswordManager" var="urlChangePassword"></s:url>
             <s:a href="%{urlChangePassword}">Changer mon mot de passe</s:a>
         </p>
     </body>

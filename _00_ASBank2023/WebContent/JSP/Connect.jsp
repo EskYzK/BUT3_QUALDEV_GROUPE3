@@ -21,7 +21,7 @@
 				value="connectedUser.nom" /></b> !
 	</p>
     <p>
-        <s:url action="changePassword" var="urlChangePassword"></s:url>
+        <s:url action="changePasswordClient" var="urlChangePassword"></s:url>
         <s:a href="%{urlChangePassword}">Changer mon mot de passe</s:a>
     </p>
     <p>Voici l'état de vos comptes :</p>
