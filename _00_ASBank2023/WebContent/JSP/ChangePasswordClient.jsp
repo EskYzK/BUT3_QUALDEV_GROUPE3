@@ -19,7 +19,7 @@
 
 	<p>Veuillez entrer votre ancien mot de passe et votre nouveau mot de passe.</p>
 
-	<s:form action="changePassword" method="POST">
+	<s:form action="changePasswordClient" method="POST">
 		<s:password name="oldPassword" label="Ancien mot de passe" required="true"/>
 		<s:password name="newPassword" label="Nouveau mot de passe" required="true"/>
 		<s:password name="confirmPassword" label="Confirmer le mot de passe" required="true"/>
