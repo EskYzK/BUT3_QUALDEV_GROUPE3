@@ -169,6 +169,8 @@
 			<s:property value="error" />
 		</div>
 	</s:if>
+<br/>
+<br/>
 </body>
 <jsp:include page="/JSP/Footer.jsp" />
 </html>
