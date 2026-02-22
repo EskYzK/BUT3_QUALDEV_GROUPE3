@@ -18,7 +18,7 @@ import com.iut.banque.modele.Client;
 import com.iut.banque.modele.Compte;
 
 @ExtendWith(MockitoExtension.class)
-public class CreerCompteTest {
+class CreerCompteTest {
 
 	private CreerCompte controller;
 

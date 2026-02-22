@@ -26,7 +26,7 @@ import com.iut.banque.modele.Compte;
 import com.iut.banque.modele.Gestionnaire;
 
 @ExtendWith(MockitoExtension.class)
-public class DetailCompteTest {
+class DetailCompteTest {
 
 	private DetailCompte controller;
 

@@ -106,21 +106,21 @@ public class TestsDaoHibernate {
 		}
 	}
 
-	@Test
-	public void testCreateCompteSansDecouvert() {
-		Client client = (Client) daoHibernate.getUserById("c.exist");
-		String id = "NW1010010001";
-		try {
-			Compte compte = daoHibernate.createCompteSansDecouvert(0, id, client);
-			assertEquals(0, compte.getSolde(), 0.001);
-			assertEquals(id, compte.getNumeroCompte());
-			assertEquals("c.exist", compte.getOwner().getUserId());
-			assertTrue(compte instanceof CompteSansDecouvert);
-		} catch (TechnicalException | IllegalFormatException e) {
-			e.printStackTrace();
-			fail("Le compte aurait du être crée.");
-		}
-	}
+        @Test
+        public void testCreateCompteSansDecouvert() {
+            Client client = (Client) daoHibernate.getUserById("c.exist");
+            String id = "NW1010010001";
+            try {
+                Compte compte = daoHibernate.createCompteSansDecouvert(0, id, client);
+                assertEquals(0, compte.getSolde(), 0.001);
+                assertEquals(id, compte.getNumeroCompte());
+                assertEquals("c.exist", compte.getOwner().getUserId());
+                assertTrue(compte instanceof CompteSansDecouvert);
+            } catch (TechnicalException | IllegalFormatException e) {
+                e.printStackTrace();
+                fail("Le compte aurait du être crée.");
+            }
+        }
 
 	@Test
 	public void testCreateCompteSansDecouvertExistingId() {
@@ -213,9 +213,7 @@ public class TestsDaoHibernate {
         try {
             try {
                 daoHibernate.createUser("NOM", "PRENOM", "ADRESSE", true, "c.new1", "PASS", "EMAIL", false, "5544554455");
-            } catch (IllegalArgumentException e) {
-                fail("Il ne devrait pas y avoir d'exception ici");
-            } catch (IllegalFormatException e) {
+            } catch (IllegalArgumentException|IllegalFormatException e) {
                 fail("Il ne devrait pas y avoir d'exception ici");
             }
 
@@ -345,8 +343,4 @@ public class TestsDaoHibernate {
 		assertEquals(false, daoHibernate.isUserAllowed("    ", "TEST PASS"));
 	}
 
-	// TODO À implémenter lorsque disconnect() le sera
-	/*
-	 * @Test public void testDisconnect() { fail("Not yet implemented"); }
-	 */
 }

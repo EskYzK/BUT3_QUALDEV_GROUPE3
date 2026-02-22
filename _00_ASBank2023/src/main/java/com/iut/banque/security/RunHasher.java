@@ -2,8 +2,11 @@ package com.iut.banque.security;
 
 import com.iut.banque.dao.DaoHibernate;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.util.logging.Logger;
+
 
 public class RunHasher {
+    private static final Logger logger = Logger.getLogger(RunHasher.class.getName());
     public static void main(String[] args) {
         // Charge le contexte Spring pour récupérer le bean DaoHibernate
         ClassPathXmlApplicationContext context =
@@ -15,6 +18,6 @@ public class RunHasher {
         PasswordHasher.rehashAllUsers(dao);
 
         context.close();
-        System.out.println("Tous les mots de passe ont été rehashés !");
+        logger.info("Tous les mots de passe ont été rehashés !");
     }
 }

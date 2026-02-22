@@ -108,18 +108,18 @@ public class LoginManager {
      * Étape 1 : Génère le lien
      */
     public boolean initiatePasswordReset(String email) {
-        Utilisateur user = dao.getUserByEmail(email);
-        if (user == null) return false;
+        Utilisateur user1 = dao.getUserByEmail(email);
+        if (user1 == null) return false;
 
         // Générer un token unique (UUID)
         String token = java.util.UUID.randomUUID().toString();
-        user.setResetToken(token);
+        user1.setResetToken(token);
 
         // Expiration dans 15 minutes
         long timeout = 15 * 60 * 1000;
-        user.setTokenExpiry(new java.sql.Timestamp(System.currentTimeMillis() + timeout));
+        user1.setTokenExpiry(new java.sql.Timestamp(System.currentTimeMillis() + timeout));
 
-        dao.updateUser(user);
+        dao.updateUser(user1);
 
         // Construction du lien
         String link = "http://localhost:8080/_00_ASBank2023/resetPasswordForm.action?token=" + token;
@@ -187,19 +187,19 @@ public class LoginManager {
      * Étape 2 : Valide le token et change le mot de passe
      */
     public boolean usePasswordResetToken(String token, String newPassword) {
-        Utilisateur user = dao.getUserByToken(token);
+        Utilisateur user2 = dao.getUserByToken(token);
 
         // Vérifications : User existe ? Token expiré ?
-        if (user == null) return false;
-        if (user.getTokenExpiry().before(new java.sql.Timestamp(System.currentTimeMillis()))) return false;
+        if (user2 == null) return false;
+        if (user2.getTokenExpiry().before(new java.sql.Timestamp(System.currentTimeMillis()))) return false;
 
         // Tout est bon : Hash du mdp et nettoyage du token
         String hashed = PasswordHasher.hash(newPassword);
-        user.setUserPwd(hashed);
-        user.setResetToken(null); // Invalide le token immédiatement
-        user.setTokenExpiry(null);
+        user2.setUserPwd(hashed);
+        user2.setResetToken(null); // Invalide le token immédiatement
+        user2.setTokenExpiry(null);
 
-        dao.updateUser(user);
+        dao.updateUser(user2);
         return true;
     }
 }

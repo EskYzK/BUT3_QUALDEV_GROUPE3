@@ -31,10 +31,11 @@ public class TestsLoginManager {
 
     @Test
     public void testTryLoginUserSuccess() {
-        when(mockDao.isUserAllowed("user1", "pwd")).thenReturn(true);
-        when(mockDao.getUserById("user1")).thenReturn(user);
+        String usrId="user1";
+        when(mockDao.isUserAllowed(usrId, "pwd")).thenReturn(true);
+        when(mockDao.getUserById(usrId)).thenReturn(user);
 
-        int result = loginManager.tryLogin("user1", "pwd");
+        int result = loginManager.tryLogin(usrId, "pwd");
 
         assertEquals(LoginConstants.USER_IS_CONNECTED, result);
         assertEquals(user, loginManager.getConnectedUser());
@@ -76,29 +77,29 @@ public class TestsLoginManager {
         String newPwd = "new";
 
         // Création d'un utilisateur concret
-        Gestionnaire user = new Gestionnaire();
+        Gestionnaire user3 = new Gestionnaire();
         String hashedOld = PasswordHasher.hash(oldPwd);
-        user.setUserPwd(hashedOld);
+        user3.setUserPwd(hashedOld);
 
         // DAO mock
         IDao dao = mock(IDao.class);
-        doNothing().when(dao).updateUser(user);
+        doNothing().when(dao).updateUser(user3);
 
         // LoginManager réel
-        LoginManager manager = new LoginManager();
-        manager.setDao(dao);
+        LoginManager manager1 = new LoginManager();
+        manager1.setDao(dao);
 
         // Execution
-        boolean changed = manager.changePassword(user, oldPwd, newPwd);
+        boolean changed = manager1.changePassword(user3, oldPwd, newPwd);
 
         assertTrue(changed);
-        verify(dao).updateUser(user);
+        verify(dao).updateUser(user3);
 
         // On ne compare pas avec PasswordHasher.hash(oldPwd) car chaque hash est unique
         assertFalse("Le hash après changement doit être différent de l'ancien",
-                hashedOld.equals(user.getUserPwd()));
+                hashedOld.equals(user3.getUserPwd()));
 
-        assertTrue(PasswordHasher.verify(newPwd, user.  getUserPwd()));
+        assertTrue(PasswordHasher.verify(newPwd, user3.  getUserPwd()));
     }
 
     @Test

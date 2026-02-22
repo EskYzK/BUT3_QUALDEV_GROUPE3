@@ -9,6 +9,8 @@ import com.opensymphony.xwork2.conversion.TypeConversionException;
 import com.iut.banque.interfaces.IDao;
 import com.iut.banque.modele.Client;
 
+import java.util.logging.Logger;
+
 /**
  * Cette classe contient des méthodes permettant de convertir un client en
  * string et vice-versa. Elle est déclarée dans
@@ -31,6 +33,7 @@ public class ClientConverter extends StrutsTypeConverter {
 	 * instanciés et seulement le premier a une DAO injectée correctement.
 	 */
 	private static IDao dao;
+    Logger logger = Logger.getLogger(getClass().getName());
 
 	/**
 	 * Constructeur avec paramêtre pour le ClientConverter.
@@ -40,8 +43,8 @@ public class ClientConverter extends StrutsTypeConverter {
 	 * @param dao
 	 */
 	public ClientConverter(IDao dao) {
-		System.out.println("=========================");
-		System.out.println("Création du convertisseur de client");
+        logger.info("=========================");
+        logger.info("Création du convertisseur de client");
 		ClientConverter.dao = dao;
 	}
 
@@ -49,8 +52,8 @@ public class ClientConverter extends StrutsTypeConverter {
 	 * Constructeur sans paramêtre pour le ClientConverter
 	 */
 	public ClientConverter() {
-		System.out.println("=========================");
-		System.out.println("Création du convertisseur de client");
+        logger.info("=========================");
+        logger.info("Création du convertisseur de client");
 	}
 
 	/**

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.iut.banque.constants.LoginConstants;
 import com.iut.banque.controller.Connect;
@@ -16,7 +18,7 @@ import com.iut.banque.modele.Client;
 import com.iut.banque.modele.Utilisateur;
 
 @ExtendWith(MockitoExtension.class)
-public class ConnectTest {
+class ConnectTest {
 
 	private Connect connectController;
 
@@ -38,94 +40,77 @@ public class ConnectTest {
 	 * Test du login réussi pour un utilisateur normal (USER_IS_CONNECTED)
 	 */
 	@Test
-	void testLogin_Success_User() {
+	void testLoginSuccessUser() {
+        String userPwd="password123";
+        String userCde="user123";
 		// Configuration du mock : quand on appelle tryLogin, retourner USER_IS_CONNECTED
-		when(banqueMock.tryLogin("user123", "password123")).thenReturn(LoginConstants.USER_IS_CONNECTED);
+		when(banqueMock.tryLogin(userCde, userPwd)).thenReturn(LoginConstants.USER_IS_CONNECTED);
 
-		connectController.setUserCde("user123");
-		connectController.setUserPwd("password123");
+		connectController.setUserCde(userCde);
+		connectController.setUserPwd(userPwd);
 
 		String result = connectController.login();
 
 		assertEquals("SUCCESS", result);
-		verify(banqueMock).tryLogin("user123", "password123");
+		verify(banqueMock).tryLogin(userCde, userPwd);
 	}
 
 	/**
 	 * Test du login réussi pour un gestionnaire (MANAGER_IS_CONNECTED)
 	 */
 	@Test
-	void testLogin_Success_Manager() {
-		when(banqueMock.tryLogin("manager456", "securePass")).thenReturn(LoginConstants.MANAGER_IS_CONNECTED);
+	void testLoginSuccessManager() {
+        String userPwd="securePass";
+        String userCde="manager456";
+		when(banqueMock.tryLogin(userCde, userPwd)).thenReturn(LoginConstants.MANAGER_IS_CONNECTED);
 
-		connectController.setUserCde("manager456");
-		connectController.setUserPwd("securePass");
+		connectController.setUserCde(userCde);
+		connectController.setUserPwd(userPwd);
 
 		String result = connectController.login();
 
 		assertEquals("SUCCESSMANAGER", result);
-		verify(banqueMock).tryLogin("manager456", "securePass");
+		verify(banqueMock).tryLogin(userCde, userPwd);
 	}
 
 	/**
 	 * Test du login échoué (paramètres invalides)
 	 */
 	@Test
-	void testLogin_Failed() {
-		when(banqueMock.tryLogin("wrong", "user")).thenReturn(LoginConstants.LOGIN_FAILED);
+	void testLoginFailed() {
+        String userCde="wrong";
+		when(banqueMock.tryLogin(userCde, "user")).thenReturn(LoginConstants.LOGIN_FAILED);
 
-		connectController.setUserCde("wrong");
+		connectController.setUserCde(userCde);
 		connectController.setUserPwd("user");
 
 		String result = connectController.login();
 
 		assertEquals("ERROR", result);
-		verify(banqueMock).tryLogin("wrong", "user");
+		verify(banqueMock).tryLogin(userCde, "user");
 	}
 
-	/**
-	 * Test du login avec paramètres null (short-circuit avant l'appel à la
-	 * façade)
-	 */
-	@Test
-	void testLogin_NullParameters() {
-		connectController.setUserCde(null);
-		connectController.setUserPwd(null);
+    /**
+     * Test du login avec un ou plusieurs paramètres null.
+     * Remplace les tests testLogin_NullParameters, testLogin_NullUserCde et testLogin_NullUserPwd.
+     */
+    @ParameterizedTest(name = "Test login échoué avec userCde={0} et userPwd={1}")
+    @CsvSource(value = {
+            "NULL, NULL",
+            "NULL, password",
+            "user, NULL"
+    }, nullValues = "NULL")
+    void testLoginNullValues(String cde, String pwd) {
+        connectController.setUserCde(cde);
+        connectController.setUserPwd(pwd);
 
-		String result = connectController.login();
+        String result = connectController.login();
 
-		assertEquals("ERROR", result);
-		// Vérifier que la banque n'a pas été interrogée
-		verifyNoInteractions(banqueMock);
-	}
+        assertEquals("ERROR", result);
 
-	/**
-	 * Test du login avec userCde null
-	 */
-	@Test
-	void testLogin_NullUserCde() {
-		connectController.setUserCde(null);
-		connectController.setUserPwd("password");
-
-		String result = connectController.login();
-
-		assertEquals("ERROR", result);
-		verifyNoInteractions(banqueMock);
-	}
-
-	/**
-	 * Test du login avec userPwd null
-	 */
-	@Test
-	void testLogin_NullUserPwd() {
-		connectController.setUserCde("user");
-		connectController.setUserPwd(null);
-
-		String result = connectController.login();
-
-		assertEquals("ERROR", result);
-		verifyNoInteractions(banqueMock);
-	}
+        // Vérifier que la banque n'a pas été interrogée
+        verifyNoInteractions(banqueMock);
+    }
 
 	/**
 	 * Test du logout
@@ -142,7 +127,7 @@ public class ConnectTest {
 	 * Test du setter et getter pour userCde
 	 */
 	@Test
-	void testSetterGetter_UserCde() {
+	void testSetterGetterUserCode() {
 		connectController.setUserCde("testUser");
 		assertEquals("testUser", connectController.getUserCde());
 	}
@@ -151,7 +136,7 @@ public class ConnectTest {
 	 * Test du setter et getter pour userPwd
 	 */
 	@Test
-	void testSetterGetter_UserPwd() {
+	void testSetterGetterUserPwd() {
 		connectController.setUserPwd("testPassword");
 		assertEquals("testPassword", connectController.getUserPwd());
 	}
@@ -160,7 +145,7 @@ public class ConnectTest {
 	 * Test du setter et getter pour Retour
 	 */
 	@Test
-	void testSetterGetter_Retour() {
+	void testSetterGetterRetour() {
 		connectController.setRetour("testRetour");
 		assertEquals("testRetour", connectController.getRetour());
 	}
@@ -169,7 +154,7 @@ public class ConnectTest {
 	 * Test du setter et getter pour BanqueFacade
 	 */
 	@Test
-	void testSetterGetter_Banque() {
+	void testSetterGetterBanque() {
 		connectController.setBanque(banqueMock);
 		// Vérifier que le setter fonctionne en appelant une méthode
 		verify(banqueMock, never()).logout();

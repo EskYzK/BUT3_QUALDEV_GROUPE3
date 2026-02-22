@@ -8,6 +8,13 @@ import com.iut.banque.modele.Client;
 import com.iut.banque.modele.CompteAvecDecouvert;
 import com.iut.banque.modele.CompteSansDecouvert;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 public class TestsClient {
 
 	/**
@@ -18,50 +25,9 @@ public class TestsClient {
 	public void testMethodeCheckFormatUserIdClientCorrect() {
 		String strClient = "a.utilisateur928";
 		if (!Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " refusé dans le test");
+			fail("String " +strClient + " refusé dans le test");
 		}
 	}
-
-	@Test
-	public void testMethodeCheckFormatUserIdClientCommencantParUnChiffre() {
-		String strClient = "32a.abc1";
-		if (Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " validé dans le test");
-		}
-	}
-
-	@Test
-	public void testMethodeCheckFormatUserIdClientCommencantParPlusieursLettres() {
-		String strClient = "aaa.abc1";
-		if (Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " validé dans le test");
-		}
-	}
-
-	@Test
-	public void testMethodeCheckFormatUserIdClientSansPointSeparateur() {
-		String strClient = "abc1";
-		if (Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " validé dans le test");
-		}
-	}
-
-	@Test
-	public void testMethodeCheckFormatUserIdClientChaineVide() {
-		String strClient = "";
-		if (Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " validé dans le test");
-		}
-	}
-
-	@Test
-	public void testMethodeCheckFormatUserIdClientSansLettresApresLePointSeparateur() {
-		String strClient = "a.138";
-		if (Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " validé dans le test");
-		}
-	}
-
 	@Test
 	public void testMethodeCheckFormatUserIdClientAvecUneSeuleLettreApresLePointSeparateur() {
 		String strClient = "a.a1";
@@ -70,29 +36,25 @@ public class TestsClient {
 		}
 	}
 
-	@Test
-	public void testMethodeCheckFormatUserIdClientAvecCaractereSpecial() {
-		String strClient = "a.bcdé1";
-		if (Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " validé dans le test");
-		}
-	}
-
-	@Test
-	public void testMethodeCheckFormatUserIdClientAvecTrailingZeros() {
-		String strClient = "a.abc01";
-		if (Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " validé dans le test");
-		}
-	}
-
-	@Test
-	public void testMethodeCheckFormatUserIdClientAvecPlusieursPointsSeparateurs() {
-		String strClient = "a.ab.c1";
-		if (Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " validé dans le test");
-		}
-	}
+    /**
+     * Teste divers formats d'identifiants client invalides.
+     * La méthode checkFormatUserIdClient doit renvoyer false pour chacun d'eux.
+     */
+    @ParameterizedTest(name = "L'identifiant invalide ''{0}'' doit être refusé")
+    @ValueSource(strings = {
+            "32a.abc1",
+            "aaa.abc1",
+            "abc1",
+            "",
+            "a.138",
+            "a.bcdé1",
+            "a.abc01",
+            "a.ab.c1"
+    })
+    void testMethodeCheckFormatUserIdClientInvalide(String strClient) {
+        assertFalse(Client.checkFormatUserIdClient(strClient),
+                "String " + strClient + " a été validée à tort dans le test");
+    }
 
 	/**
 	 * Tests successifs de la méthode de vérification du format du numéro de
@@ -151,7 +113,7 @@ public class TestsClient {
 				fail("La méthode aurait du renvoyer faux");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 
@@ -163,7 +125,7 @@ public class TestsClient {
 				fail("La méthode aurait du renvoyer faux");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 
@@ -179,7 +141,7 @@ public class TestsClient {
 				fail("La méthode aurait du renvoyer vrai");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 
@@ -197,7 +159,7 @@ public class TestsClient {
 				fail("La méthode aurait du renvoyer vrai");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 
@@ -211,7 +173,7 @@ public class TestsClient {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 	
@@ -227,7 +189,7 @@ public class TestsClient {
 				fail("La méthode a renvoyé un ou plusieurs comptes aveec un solde nul");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 	@Test
@@ -240,7 +202,7 @@ public class TestsClient {
 				fail("La méthode n'a pas renvoyé dans le map le compte avec solde non nul");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 	@Test
@@ -253,7 +215,7 @@ public class TestsClient {
 				fail("La méthode n'a pas renvoyé dans le map le compte avec solde non nul");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 

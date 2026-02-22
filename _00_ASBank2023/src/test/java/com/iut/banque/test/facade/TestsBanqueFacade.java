@@ -26,7 +26,6 @@ public class TestsBanqueFacade {
     private Client mockClient;
     private Gestionnaire mockGestionnaire;
     private Compte mockCompte;
-    private CompteAvecDecouvert mockCompteDecouvert;
 
     @Before
     public void setUp() {
@@ -37,7 +36,6 @@ public class TestsBanqueFacade {
         mockClient = mock(Client.class);
         mockGestionnaire = mock(Gestionnaire.class);
         mockCompte = mock(Compte.class);
-        mockCompteDecouvert = mock(CompteAvecDecouvert.class);
     }
 
     @Test

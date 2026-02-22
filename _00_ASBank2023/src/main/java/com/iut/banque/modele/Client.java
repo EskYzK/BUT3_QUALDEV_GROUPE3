@@ -103,7 +103,7 @@ public class Client extends Utilisateur implements Serializable {
 		super(nom, prenom, adresse, homme, null, usrPwd, email, null, null);
 		setUserId(usrId);
 		setNumeroClient(numeroClient);
-		this.accounts = new HashMap<String, Compte>();
+		this.accounts = new HashMap<>();
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class Client extends Utilisateur implements Serializable {
 	 */
 	public Map<String, Compte> getComptesAvecSoldeNonNul() {
 		Map<String, Compte> comptes = this.getAccounts();
-		Map<String, Compte> res = new HashMap<String, Compte>();
+		Map<String, Compte> res = new HashMap<>();
 		for (Map.Entry<String, Compte> entry : comptes.entrySet()) {
 			if (entry.getValue().getSolde() != 0) {
 				res.put(entry.getKey(), entry.getValue());

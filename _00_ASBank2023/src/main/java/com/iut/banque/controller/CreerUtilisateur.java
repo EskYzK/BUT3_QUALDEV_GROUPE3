@@ -11,6 +11,9 @@ import com.iut.banque.exceptions.TechnicalException;
 import com.iut.banque.facade.BanqueFacade;
 import com.opensymphony.xwork2.ActionSupport;
 
+import java.util.logging.Logger;
+
+
 public class CreerUtilisateur extends ActionSupport {
 
 	private static final long serialVersionUID = 1L;
@@ -26,8 +29,11 @@ public class CreerUtilisateur extends ActionSupport {
     private String email;
 	private String message;
 	private String result;
+    private static final Logger logger = Logger.getLogger(CreerUtilisateur.class.getName());
+    private static final java.util.regex.Pattern emailPattern =
+            java.util.regex.Pattern.compile("^[\\w\\.-]++@([\\w-]++\\.)++[\\w-]{2,4}$");
 
-	/**
+    /**
 	 * @return the userId
 	 */
 	public String getUserId() {
@@ -166,13 +172,13 @@ public class CreerUtilisateur extends ActionSupport {
 	 * Constructeur sans paramêtre de CreerUtilisateur
 	 */
 	public CreerUtilisateur() {
-		System.out.println("In Constructor from CreerUtilisateur class ");
+        logger.info("In Constructor from CreerUtilisateur class ");
 		try {
 			ApplicationContext context = WebApplicationContextUtils
 					.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
 			this.banque = (BanqueFacade) context.getBean("banqueFacade");
 		} catch (Exception e) {
-			System.out.println("Mode test : BanqueFacade sera injectée via le setter.");
+            logger.info("Mode test : BanqueFacade sera injectée via le setter.");
 		}
 	}
 
@@ -230,13 +236,12 @@ public class CreerUtilisateur extends ActionSupport {
 	 * @return String : le status de l'action
 	 */
 	public String creationUtilisateur() {
+        String mess="Error";
 		try {
-            if (email != null && !email.trim().isEmpty()) {
-                if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
-                    this.message = "Le format de l'adresse email est incorrect.";
-                    this.result = "ERROR";
-                    return "ERROR";
-                }
+            if (email != null && !email.trim().isEmpty() && !emailPattern.matcher(email).matches()) {
+                this.message = "Le format de l'adresse email est incorrect.";
+                this.result = mess;
+                return this.result;
             }
 			if (client) {
 				banque.createClient(userId, userPwd, nom, prenom, adresse, male, email, numClient);
@@ -248,24 +253,24 @@ public class CreerUtilisateur extends ActionSupport {
 			return "SUCCESS";
 		} catch (IllegalOperationException e) {
 			this.message = "L'identifiant à déjà été assigné à un autre utilisateur de la banque.";
-			this.result = "ERROR";
-			return "ERROR";
+            this.result = mess;
+            return this.result;
 		} catch (TechnicalException e) {
 			this.message = "Le numéro de client est déjà assigné à un autre client.";
-			this.result = "ERROR";
-			return "ERROR";
+            this.result = mess;
+            return this.result;
 		} catch (IllegalArgumentException e) {
 			this.message = "Le format de l'identifiant est incorrect.";
-			this.result = "ERROR";
-			return "ERROR";
+            this.result = mess;
+            return this.result;
 		} catch (IllegalFormatException e) {
             if (client && !Client.checkFormatNumeroClient(numClient)) {
                 this.message = "Le numéro de client est incorrect (doit contenir 10 chiffres).";
             } else {
                 this.message = "L'identifiant utilisateur est incorrect (ex: j.dupont1).";
             }
-			this.result = "ERROR";
-			return "ERROR";
+            this.result = mess;
+            return this.result;
 		}
 	}
 }

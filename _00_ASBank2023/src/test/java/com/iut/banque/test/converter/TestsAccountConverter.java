@@ -26,7 +26,7 @@ public class TestsAccountConverter {
     }
 
     @Test
-    public void testConvertFromString_Success() {
+    public void testConvertFromStringSuccess() {
         when(mockDao.getAccountById("123")).thenReturn(mockCompte);
 
         Object result = converter.convertFromString(new HashMap<>(), new String[]{"123"}, Compte.class);
@@ -36,14 +36,14 @@ public class TestsAccountConverter {
     }
 
     @Test(expected = TypeConversionException.class)
-    public void testConvertFromString_Failure() {
+    public void testConvertFromStringFailure() {
         when(mockDao.getAccountById("999")).thenReturn(null);
 
         converter.convertFromString(new HashMap<>(), new String[]{"999"}, Compte.class);
     }
 
     @Test
-    public void testConvertToString_Success() {
+    public void testConvertToStringSuccess() {
         when(mockCompte.getNumeroCompte()).thenReturn("ABC123");
 
         String result = converter.convertToString(new HashMap<>(), mockCompte);
@@ -53,7 +53,7 @@ public class TestsAccountConverter {
     }
 
     @Test
-    public void testConvertToString_NullCompte() {
+    public void testConvertToStringNullCompte() {
         String result = converter.convertToString(new HashMap<>(), null);
 
         assertNull(result);
