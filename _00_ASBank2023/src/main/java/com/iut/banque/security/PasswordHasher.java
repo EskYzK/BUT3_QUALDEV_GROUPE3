@@ -15,6 +15,7 @@ import java.util.logging.Logger;
  * Utilise BCrypt (lib org.mindrot:jbcrypt).
  */
 public class PasswordHasher {
+    private PasswordHasher() {}
     private static final Logger logger = Logger.getLogger(PasswordHasher.class.getName());
     private static final int LOG_ROUNDS = 12;
 
