@@ -51,9 +51,8 @@ public class ResetFlowActionTest {
 
 		String result = action.sendLink();
 
-		assertEquals("error", result);
-		assertTrue(action.hasActionErrors());
-		verify(banqueMock).initiatePasswordReset("nonexistent@unknown.fr");
+		assertEquals("link_sent", result);
+        assertEquals("Lien envoyé à l'adresse mail renseignée si elle existe.", action.getMessage());
 	}
 
 	/**
@@ -62,12 +61,10 @@ public class ResetFlowActionTest {
 	@Test
 	void testSendLink_NullEmail() {
 		action.setEmail(null);
-		when(banqueMock.initiatePasswordReset(null)).thenReturn(false);
-
 		String result = action.sendLink();
 
 		assertEquals("error", result);
-		assertTrue(action.hasActionErrors());
+        assertEquals("Veuillez renseigner une adresse email.", action.getMessage());
 	}
 
 	/**
@@ -76,12 +73,10 @@ public class ResetFlowActionTest {
 	@Test
 	void testSendLink_EmptyEmail() {
 		action.setEmail("");
-		when(banqueMock.initiatePasswordReset("")).thenReturn(false);
-
 		String result = action.sendLink();
 
 		assertEquals("error", result);
-		assertTrue(action.hasActionErrors());
+        assertEquals("Veuillez renseigner une adresse email.", action.getMessage());
 	}
 
 	/**
@@ -372,15 +367,24 @@ public class ResetFlowActionTest {
 	 */
 	@Test
 	void testSendLink_ErrorMessage() {
-		action.setEmail("error@test.fr");
-		when(banqueMock.initiatePasswordReset("error@test.fr")).thenReturn(false);
-		
-		String result = action.sendLink();
-		
-		assertEquals("error", result);
-		assertTrue(action.hasActionErrors());
-		String errorMessage = action.getActionErrors().iterator().next();
-		assertEquals("Erreur.", errorMessage);
+        // 1. On configure le Mock pour qu'il échoue (simule erreur technique ou user introuvable)
+        action.setEmail("error@test.fr");
+        when(banqueMock.initiatePasswordReset("error@test.fr")).thenReturn(false);
+
+        // 2. On exécute l'action
+        String result = action.sendLink();
+
+        // 3. VÉRIFICATIONS DE SÉCURITÉ
+
+        // A. On vérifie qu'on retourne bien "link_sent" (le succès apparent)
+        // C'est ici que vous aviez "error" avant.
+        assertEquals("link_sent", result);
+
+        // B. On vérifie qu'on affiche le message générique (et pas un message d'erreur technique)
+        assertEquals("Lien envoyé à l'adresse mail renseignée si elle existe.", action.getMessage());
+
+        // C. On vérifie qu'il n'y a PAS d'erreurs Struts (pour ne pas afficher de rouge à l'écran)
+        assertFalse(action.hasActionErrors(), "Il ne doit pas y avoir d'erreurs Struts visibles");
 	}
 
 	/**

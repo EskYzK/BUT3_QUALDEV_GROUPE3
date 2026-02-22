@@ -38,7 +38,19 @@ public class ResetFlowAction extends ActionSupport {
      * Appelé depuis le formulaire "Mot de passe oublié"
      */
     public String sendLink() {
+        // 1. Vérification de surface (Input Validation)
+        // Si l'utilisateur n'a rien écrit, on le lui dit (c'est une erreur de saisie, pas de sécurité)
+        if (email == null || email.trim().isEmpty()) {
+            message = "Veuillez renseigner une adresse email.";
+            return "error";
+        }
+
+        // 2. Appel du métier
+        // On appelle la façade, mais on IGNORE le résultat (true/false) volontairement
         banque.initiatePasswordReset(email);
+
+        // 3. Réponse générique (Security)
+        // Qu'il existe ou non, on affiche le même message de succès
         message = "Lien envoyé à l'adresse mail renseignée si elle existe.";
         return "link_sent";
     }
