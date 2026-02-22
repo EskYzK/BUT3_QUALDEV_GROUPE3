@@ -33,9 +33,11 @@ class CreerUtilisateurTest {
 	 * Test création d'un client avec succès
 	 */
 	@Test
-	void testCreationClient_Success() throws Exception {
+	void testCreationClientSuccess() throws Exception {
+        String success="SUCCESS";
+        String userId="j.dupont1";
 		controller.setClient(true);
-		controller.setUserId("j.dupont1");
+		controller.setUserId(userId);
 		controller.setUserPwd("password123");
 		controller.setNom("Dupont");
 		controller.setPrenom("Jean");
@@ -46,10 +48,10 @@ class CreerUtilisateurTest {
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("SUCCESS", result);
-		assertEquals("SUCCESS", controller.getResult());
-		assertTrue(controller.getMessage().contains("j.dupont1"));
-		verify(banqueMock).createClient("j.dupont1", "password123", "Dupont", "Jean", "123 Rue de la Paix", 
+		assertEquals(success, result);
+		assertEquals(success, controller.getResult());
+		assertTrue(controller.getMessage().contains(userId));
+		verify(banqueMock).createClient(userId, "password123", "Dupont", "Jean", "123 Rue de la Paix",
 			true, "jean.dupont@iut.fr", "1234567890");
 	}
 
@@ -57,8 +59,9 @@ class CreerUtilisateurTest {
 	 * Test création d'un client sans email
 	 */
 	@Test
-	void testCreationClient_Success_NoEmail() throws Exception {
+	void testCreationClientSuccessNoEmail() throws Exception {
 		controller.setClient(true);
+        String success="SUCCESS";
 		controller.setUserId("j.martin");
 		controller.setUserPwd("pass");
 		controller.setNom("Martin");
@@ -70,8 +73,8 @@ class CreerUtilisateurTest {
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("SUCCESS", result);
-		assertEquals("SUCCESS", controller.getResult());
+		assertEquals(success, result);
+		assertEquals(success, controller.getResult());
 		verify(banqueMock).createClient("j.martin", "pass", "Martin", "Julie", "456 Avenue Paul", 
 			false, null, "0987654321");
 	}
@@ -80,22 +83,25 @@ class CreerUtilisateurTest {
 	 * Test création d'un manager avec succès
 	 */
 	@Test
-	void testCreationManager_Success() throws Exception {
+	void testCreationManagerSuccess() throws Exception {
+        String userId="m.admin";
+        String prenom="Manager";
+        String success="SUCCESS";
 		controller.setClient(false);
-		controller.setUserId("m.admin");
+		controller.setUserId(userId);
 		controller.setUserPwd("secure123");
 		controller.setNom("Admin");
-		controller.setPrenom("Manager");
+		controller.setPrenom(prenom);
 		controller.setAdresse("789 Rue Centrale");
 		controller.setMale(true);
 		controller.setEmail("admin@iut.fr");
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("SUCCESS", result);
-		assertEquals("SUCCESS", controller.getResult());
-		assertTrue(controller.getMessage().contains("m.admin"));
-		verify(banqueMock).createManager("m.admin", "secure123", "Admin", "Manager", "789 Rue Centrale", 
+		assertEquals(success, result);
+		assertEquals(success, controller.getResult());
+		assertTrue(controller.getMessage().contains(userId));
+		verify(banqueMock).createManager(userId, "secure123", "Admin", prenom, "789 Rue Centrale",
 			true, "admin@iut.fr");
 	}
 
@@ -103,7 +109,8 @@ class CreerUtilisateurTest {
 	 * Test email invalide (regex fail)
 	 */
 	@Test
-	void testCreationUtilisateur_InvalidEmail() {
+	void testCreationUtilisateurInvalidEmail() {
+        String error="ERROR1";
 		controller.setClient(true);
 		controller.setUserId("j.test");
 		controller.setUserPwd("pass");
@@ -116,8 +123,8 @@ class CreerUtilisateurTest {
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("ERROR", result);
-		assertEquals("ERROR", controller.getResult());
+		assertEquals(error, result);
+		assertEquals(error, controller.getResult());
 		assertEquals("Le format de l'adresse email est incorrect.", controller.getMessage());
 		verifyNoInteractions(banqueMock);
 	}
@@ -126,8 +133,9 @@ class CreerUtilisateurTest {
 	 * Test email vide (n'est pas considéré comme erreur)
 	 */
 	@Test
-	void testCreationUtilisateur_EmptyEmail() throws Exception {
+	void testCreationUtilisateurEmptyEmail() throws Exception {
 		controller.setClient(true);
+        String success="SUCCESS";
 		controller.setUserId("j.empty");
 		controller.setUserPwd("pass");
 		controller.setNom("Empty");
@@ -139,7 +147,7 @@ class CreerUtilisateurTest {
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("SUCCESS", result);
+		assertEquals(success, result);
 		verify(banqueMock).createClient("j.empty", "pass", "Empty", "Email", "Addr", 
 			false, "   ", "2222222222");
 	}
@@ -148,7 +156,8 @@ class CreerUtilisateurTest {
 	 * Test UserID déjà existant - IllegalOperationException
 	 */
 	@Test
-	void testCreationUtilisateur_UserIdAlreadyExists() throws Exception {
+	void testCreationUtilisateurUserIdAlreadyExists() throws Exception {
+        String error="ERROR2";
 		controller.setClient(true);
 		controller.setUserId("existing.user");
 		controller.setUserPwd("pass");
@@ -165,8 +174,8 @@ class CreerUtilisateurTest {
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("ERROR", result);
-		assertEquals("ERROR", controller.getResult());
+		assertEquals(error, result);
+		assertEquals(error, controller.getResult());
 		assertEquals("L'identifiant à déjà été assigné à un autre utilisateur de la banque.", 
 			controller.getMessage());
 	}
@@ -175,7 +184,8 @@ class CreerUtilisateurTest {
 	 * Test NumClient déjà assigné - TechnicalException
 	 */
 	@Test
-	void testCreationUtilisateur_NumClientAlreadyAssigned() throws Exception {
+	void testCreationUtilisateurNumClientAlreadyAssigned() throws Exception {
+        String error="ERROR3";
 		controller.setClient(true);
 		controller.setUserId("new.user");
 		controller.setUserPwd("pass");
@@ -192,8 +202,8 @@ class CreerUtilisateurTest {
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("ERROR", result);
-		assertEquals("ERROR", controller.getResult());
+		assertEquals(error, result);
+		assertEquals(error, controller.getResult());
 		assertEquals("Le numéro de client est déjà assigné à un autre client.", 
 			controller.getMessage());
 	}
@@ -202,7 +212,9 @@ class CreerUtilisateurTest {
 	 * Test format UserID invalide - IllegalArgumentException
 	 */
 	@Test
-	void testCreationUtilisateur_InvalidUserIdFormat() throws Exception {
+	void testCreationUtilisateurInvalidUserIdFormat() throws Exception {
+        String error="ERROR4";
+        String mail="test1@iut.fr";
 		controller.setClient(true);
 		controller.setUserId("invalid!!!!");
 		controller.setUserPwd("pass");
@@ -210,7 +222,7 @@ class CreerUtilisateurTest {
 		controller.setPrenom("Format");
 		controller.setAdresse("Addr");
 		controller.setMale(true);
-		controller.setEmail("test@iut.fr");
+		controller.setEmail(mail);
 		controller.setNumClient("4444444444");
 
 		doThrow(new IllegalArgumentException("Format invalide"))
@@ -219,8 +231,8 @@ class CreerUtilisateurTest {
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("ERROR", result);
-		assertEquals("ERROR", controller.getResult());
+		assertEquals(error, result);
+		assertEquals(error, controller.getResult());
 		assertEquals("Le format de l'identifiant est incorrect.", controller.getMessage());
 	}
 
@@ -228,7 +240,9 @@ class CreerUtilisateurTest {
 	 * Test format NumClient invalide - IllegalFormatException (client)
 	 */
 	@Test
-	void testCreationUtilisateur_InvalidNumClientFormat() throws Exception {
+	void testCreationUtilisateurInvalidNumClientFormat() throws Exception {
+        String error="ERROR5";
+        String mail="test2@iut.fr";
 		controller.setClient(true);
 		controller.setUserId("j.correct");
 		controller.setUserPwd("pass");
@@ -236,7 +250,7 @@ class CreerUtilisateurTest {
 		controller.setPrenom("NumClient");
 		controller.setAdresse("Addr");
 		controller.setMale(true);
-		controller.setEmail("test@iut.fr");
+		controller.setEmail(mail);
 		controller.setNumClient("123");
 
 		doThrow(new IllegalFormatException("Format incorrect"))
@@ -245,8 +259,8 @@ class CreerUtilisateurTest {
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("ERROR", result);
-		assertEquals("ERROR", controller.getResult());
+		assertEquals(error, result);
+		assertEquals(error, controller.getResult());
 		assertEquals("Le numéro de client est incorrect (doit contenir 10 chiffres).", 
 			controller.getMessage());
 	}
@@ -255,7 +269,9 @@ class CreerUtilisateurTest {
 	 * Test format UserID invalide - IllegalFormatException (manager)
 	 */
 	@Test
-	void testCreationUtilisateur_InvalidUserIdFormat_Manager() throws Exception {
+	void testCreationUtilisateurInvalidUserIdFormatManager() throws Exception {
+        String mail="test3@iut.fr";
+        String error="ERROR6";
 		controller.setClient(false);
 		controller.setUserId("invalid-format");
 		controller.setUserPwd("pass");
@@ -263,7 +279,7 @@ class CreerUtilisateurTest {
 		controller.setPrenom("Manager");
 		controller.setAdresse("Addr");
 		controller.setMale(true);
-		controller.setEmail("test@iut.fr");
+		controller.setEmail(mail);
 
 		doThrow(new IllegalFormatException("Format invalide"))
 			.when(banqueMock).createManager(anyString(), anyString(), anyString(), anyString(), 
@@ -271,8 +287,8 @@ class CreerUtilisateurTest {
 
 		String result = controller.creationUtilisateur();
 
-		assertEquals("ERROR", result);
-		assertEquals("ERROR", controller.getResult());
+		assertEquals(error, result);
+		assertEquals(error, controller.getResult());
 		assertEquals("L'identifiant utilisateur est incorrect (ex: j.dupont1).", 
 			controller.getMessage());
 	}
@@ -281,7 +297,7 @@ class CreerUtilisateurTest {
 	 * Test email valide avec plusieurs formats
 	 */
 	@Test
-	void testCreationUtilisateur_ValidEmailFormats() throws Exception {
+	void testCreationUtilisateurValidEmailFormats() throws Exception {
 		// Format 1: simple@domain.com
 		controller.setClient(true);
 		controller.setUserId("u1");
@@ -323,7 +339,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters
 	 */
 	@Test
-	void testSettersGetters_UserId() {
+	void testSettersGettersUserId() {
 		controller.setUserId("test.id");
 		assertEquals("test.id", controller.getUserId());
 	}
@@ -332,7 +348,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters Nom
 	 */
 	@Test
-	void testSettersGetters_Nom() {
+	void testSettersGettersNom() {
 		controller.setNom("TestNom");
 		assertEquals("TestNom", controller.getNom());
 	}
@@ -341,7 +357,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters Prenom
 	 */
 	@Test
-	void testSettersGetters_Prenom() {
+	void testSettersGettersPrenom() {
 		controller.setPrenom("TestPrenom");
 		assertEquals("TestPrenom", controller.getPrenom());
 	}
@@ -350,7 +366,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters Adresse
 	 */
 	@Test
-	void testSettersGetters_Adresse() {
+	void testSettersGettersAdresse() {
 		controller.setAdresse("123 Test Street");
 		assertEquals("123 Test Street", controller.getAdresse());
 	}
@@ -359,7 +375,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters UserPwd
 	 */
 	@Test
-	void testSettersGetters_UserPwd() {
+	void testSettersGettersUserPwd() {
 		controller.setUserPwd("secret");
 		assertEquals("secret", controller.getUserPwd());
 	}
@@ -368,7 +384,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters Male
 	 */
 	@Test
-	void testSettersGetters_Male() {
+	void testSettersGettersMale() {
 		controller.setMale(true);
 		assertTrue(controller.isMale());
 		controller.setMale(false);
@@ -379,7 +395,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters Client
 	 */
 	@Test
-	void testSettersGetters_Client() {
+	void testSettersGettersClient() {
 		controller.setClient(true);
 		assertTrue(controller.isClient());
 		controller.setClient(false);
@@ -390,7 +406,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters NumClient
 	 */
 	@Test
-	void testSettersGetters_NumClient() {
+	void testSettersGettersNumClient() {
 		controller.setNumClient("9876543210");
 		assertEquals("9876543210", controller.getNumClient());
 	}
@@ -399,7 +415,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters Email
 	 */
 	@Test
-	void testSettersGetters_Email() {
+	void testSettersGettersEmail() {
 		controller.setEmail("test@example.com");
 		assertEquals("test@example.com", controller.getEmail());
 	}
@@ -408,7 +424,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters Message
 	 */
 	@Test
-	void testSettersGetters_Message() {
+	void testSettersGettersMessage() {
 		controller.setMessage("Test message");
 		assertEquals("Test message", controller.getMessage());
 	}
@@ -417,7 +433,7 @@ class CreerUtilisateurTest {
 	 * Test getters/setters Result
 	 */
 	@Test
-	void testSettersGetters_Result() {
+	void testSettersGettersResult() {
 		controller.setResult("SUCCESS");
 		assertEquals("SUCCESS", controller.getResult());
 	}

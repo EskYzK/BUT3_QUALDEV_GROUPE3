@@ -10,6 +10,9 @@ import com.iut.banque.modele.CompteSansDecouvert;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TestsClient {
@@ -20,16 +23,16 @@ public class TestsClient {
 	 */
 	@Test
 	public void testMethodeCheckFormatUserIdClientCorrect() {
-		String strClient = "a.utilisateur928";
+		String strClient = "String a.utilisateur928";
 		if (!Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " refusé dans le test");
+			fail(strClient + " refusé dans le test");
 		}
 	}
 	@Test
 	public void testMethodeCheckFormatUserIdClientAvecUneSeuleLettreApresLePointSeparateur() {
-		String strClient = "a.a1";
+		String strClient = "String a.a1";
 		if (!Client.checkFormatUserIdClient(strClient)) {
-			fail("String " + strClient + " refusé dans le test");
+			fail(strClient + " refusé dans le test");
 		}
 	}
 
@@ -110,7 +113,7 @@ public class TestsClient {
 				fail("La méthode aurait du renvoyer faux");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 
@@ -122,7 +125,7 @@ public class TestsClient {
 				fail("La méthode aurait du renvoyer faux");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 
@@ -138,7 +141,7 @@ public class TestsClient {
 				fail("La méthode aurait du renvoyer vrai");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 
@@ -156,7 +159,7 @@ public class TestsClient {
 				fail("La méthode aurait du renvoyer vrai");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 
@@ -170,7 +173,7 @@ public class TestsClient {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 	
@@ -186,7 +189,7 @@ public class TestsClient {
 				fail("La méthode a renvoyé un ou plusieurs comptes aveec un solde nul");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 	@Test
@@ -199,7 +202,7 @@ public class TestsClient {
 				fail("La méthode n'a pas renvoyé dans le map le compte avec solde non nul");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 	@Test
@@ -212,7 +215,7 @@ public class TestsClient {
 				fail("La méthode n'a pas renvoyé dans le map le compte avec solde non nul");
 			}
 		} catch (Exception e) {
-			fail("Exception récupérée -> " + e.getStackTrace().toString());
+			fail("Exception récupérée -> " + Arrays.toString(e.getStackTrace()));
 		}
 	}
 

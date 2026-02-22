@@ -40,49 +40,54 @@ class ConnectTest {
 	 * Test du login réussi pour un utilisateur normal (USER_IS_CONNECTED)
 	 */
 	@Test
-	void testLogin_Success_User() {
+	void testLoginSuccessUser() {
+        String userPwd="password123";
+        String userCde="user123";
 		// Configuration du mock : quand on appelle tryLogin, retourner USER_IS_CONNECTED
-		when(banqueMock.tryLogin("user123", "password123")).thenReturn(LoginConstants.USER_IS_CONNECTED);
+		when(banqueMock.tryLogin(userCde, userPwd)).thenReturn(LoginConstants.USER_IS_CONNECTED);
 
-		connectController.setUserCde("user123");
-		connectController.setUserPwd("password123");
+		connectController.setUserCde(userCde);
+		connectController.setUserPwd(userPwd);
 
 		String result = connectController.login();
 
 		assertEquals("SUCCESS", result);
-		verify(banqueMock).tryLogin("user123", "password123");
+		verify(banqueMock).tryLogin(userCde, userPwd);
 	}
 
 	/**
 	 * Test du login réussi pour un gestionnaire (MANAGER_IS_CONNECTED)
 	 */
 	@Test
-	void testLogin_Success_Manager() {
-		when(banqueMock.tryLogin("manager456", "securePass")).thenReturn(LoginConstants.MANAGER_IS_CONNECTED);
+	void testLoginSuccessManager() {
+        String userPwd="securePass";
+        String userCde="manager456";
+		when(banqueMock.tryLogin(userCde, userPwd)).thenReturn(LoginConstants.MANAGER_IS_CONNECTED);
 
-		connectController.setUserCde("manager456");
-		connectController.setUserPwd("securePass");
+		connectController.setUserCde(userCde);
+		connectController.setUserPwd(userPwd);
 
 		String result = connectController.login();
 
 		assertEquals("SUCCESSMANAGER", result);
-		verify(banqueMock).tryLogin("manager456", "securePass");
+		verify(banqueMock).tryLogin(userCde, userPwd);
 	}
 
 	/**
 	 * Test du login échoué (paramètres invalides)
 	 */
 	@Test
-	void testLogin_Failed() {
-		when(banqueMock.tryLogin("wrong", "user")).thenReturn(LoginConstants.LOGIN_FAILED);
+	void testLoginFailed() {
+        String userCde="wrong";
+		when(banqueMock.tryLogin(userCde, "user")).thenReturn(LoginConstants.LOGIN_FAILED);
 
-		connectController.setUserCde("wrong");
+		connectController.setUserCde(userCde);
 		connectController.setUserPwd("user");
 
 		String result = connectController.login();
 
 		assertEquals("ERROR", result);
-		verify(banqueMock).tryLogin("wrong", "user");
+		verify(banqueMock).tryLogin(userCde, "user");
 	}
 
     /**
@@ -95,7 +100,7 @@ class ConnectTest {
             "NULL, password",
             "user, NULL"
     }, nullValues = "NULL")
-    void testLogin_NullValues(String cde, String pwd) {
+    void testLoginNullValues(String cde, String pwd) {
         connectController.setUserCde(cde);
         connectController.setUserPwd(pwd);
 
@@ -122,7 +127,7 @@ class ConnectTest {
 	 * Test du setter et getter pour userCde
 	 */
 	@Test
-	void testSetterGetter_UserCde() {
+	void testSetterGetterUserCode() {
 		connectController.setUserCde("testUser");
 		assertEquals("testUser", connectController.getUserCde());
 	}
@@ -131,7 +136,7 @@ class ConnectTest {
 	 * Test du setter et getter pour userPwd
 	 */
 	@Test
-	void testSetterGetter_UserPwd() {
+	void testSetterGetterUserPwd() {
 		connectController.setUserPwd("testPassword");
 		assertEquals("testPassword", connectController.getUserPwd());
 	}
@@ -140,7 +145,7 @@ class ConnectTest {
 	 * Test du setter et getter pour Retour
 	 */
 	@Test
-	void testSetterGetter_Retour() {
+	void testSetterGetterRetour() {
 		connectController.setRetour("testRetour");
 		assertEquals("testRetour", connectController.getRetour());
 	}
@@ -149,7 +154,7 @@ class ConnectTest {
 	 * Test du setter et getter pour BanqueFacade
 	 */
 	@Test
-	void testSetterGetter_Banque() {
+	void testSetterGetterBanque() {
 		connectController.setBanque(banqueMock);
 		// Vérifier que le setter fonctionne en appelant une méthode
 		verify(banqueMock, never()).logout();

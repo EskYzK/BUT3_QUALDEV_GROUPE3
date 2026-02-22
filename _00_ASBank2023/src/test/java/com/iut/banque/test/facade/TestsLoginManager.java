@@ -31,10 +31,11 @@ public class TestsLoginManager {
 
     @Test
     public void testTryLoginUserSuccess() {
-        when(mockDao.isUserAllowed("user1", "pwd")).thenReturn(true);
-        when(mockDao.getUserById("user1")).thenReturn(user);
+        String usrId="user1";
+        when(mockDao.isUserAllowed(usrId, "pwd")).thenReturn(true);
+        when(mockDao.getUserById(usrId)).thenReturn(user);
 
-        int result = loginManager.tryLogin("user1", "pwd");
+        int result = loginManager.tryLogin(usrId, "pwd");
 
         assertEquals(LoginConstants.USER_IS_CONNECTED, result);
         assertEquals(user, loginManager.getConnectedUser());
