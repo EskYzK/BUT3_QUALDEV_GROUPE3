@@ -13,6 +13,11 @@
 </head>
 
 <body>
+    <div class="btnLogout">
+		<s:form name="myForm" action="logout" method="POST">
+			<s:submit name="Retour" value="Déconnexion" />
+		</s:form>
+	</div>
 	<h1>Créer un nouveau compte</h1>
 
 	<p>

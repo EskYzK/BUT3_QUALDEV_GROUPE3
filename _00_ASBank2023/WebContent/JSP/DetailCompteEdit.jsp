@@ -11,7 +11,7 @@
 <body>
 	<div class="btnLogout">
 		<s:form name="myForm" action="logout" method="POST">
-			<s:submit name="Retour" value="Logout" />
+			<s:submit name="Retour" value="Déconnexion" />
 		</s:form>
 	</div>
 	<h1>
@@ -67,6 +67,97 @@
 		</s:form>
 	</s:if>
 
+    <hr />
+    <h3>Cartes Bancaires associées</h3>
+
+    <s:if test="%{compte.cartes.size() > 0}">
+        <table class="tabDonnees" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+            <tr style="background-color: #eee;">
+                <th style="padding: 8px; border: 1px solid #ddd;">Numéro</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Type</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Plafond</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Statut</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <s:iterator value="cartesTriees" var="carte">
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        <s:property value="#carte.numeroCarte" />
+                    </td>
+
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        <s:property value="#carte.typeDeCarte" />
+                    </td>
+
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        <s:property value="#carte.plafond" /> &euro;
+                    </td>
+
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                        <s:if test="#carte.supprimee">
+                            <span style="color:red; font-weight:bold;">SUPPRIMÉE</span>
+                        </s:if>
+                        <s:elseif test="#carte.bloquee">
+                            <span style="color:orange; font-weight:bold;">BLOQUÉE (Temp)</span>
+                        </s:elseif>
+                        <s:else>
+                            <span style="color:green; font-weight:bold;">ACTIVE</span>
+                        </s:else>
+                    </td>
+
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                        <s:if test="!#carte.supprimee">
+                            <s:url action="modifierCarte_input" var="urlModif">
+                                <s:param name="numeroCarte" value="#carte.numeroCarte" />
+                                <s:param name="numeroCompte" value="compte.numeroCompte" /> </s:url>
+                            <a href="${urlModif}">Modifier</a>
+
+                            <s:if test="#carte.bloquee">
+                                &nbsp;|&nbsp;
+                                <s:url action="debloquerCarte" var="urlDebloque">
+                                    <s:param name="numeroCarte" value="#carte.numeroCarte" />
+                                    <s:param name="numeroCompte" value="compte.numeroCompte" /> </s:url>
+                                <a href="${urlDebloque}" style="color:green;">Activer</a>
+                            </s:if>
+                            <s:else>
+                                &nbsp;|&nbsp;
+                                <s:url action="bloquerCarte" var="urlBloque">
+                                    <s:param name="numeroCarte" value="#carte.numeroCarte" />
+                                    <s:param name="definitif" value="false" />
+                                    <s:param name="numeroCompte" value="compte.numeroCompte" /> </s:url>
+                                <a href="${urlBloque}" style="color:orange;">Bloquer</a>
+                            </s:else>
+
+                            &nbsp;|&nbsp;
+                            <s:url action="bloquerCarte" var="urlSuppr">
+                                <s:param name="numeroCarte" value="#carte.numeroCarte" />
+                                <s:param name="definitif" value="true" />
+                                <s:param name="numeroCompte" value="compte.numeroCompte" /> </s:url>
+                            <a href="${urlSuppr}" style="color:red;" onclick="return confirm('Attention : Cette action est irréversible. Confirmer la suppression ?');">X</a>
+                        </s:if>
+                    </td>
+                </tr>
+            </s:iterator>
+            </tbody>
+        </table>
+    </s:if>
+    <s:else>
+        <p><i>Aucune carte bancaire pour ce compte.</i></p>
+    </s:else>
+
+    <div style="margin-top: 10px;">
+        <s:url action="creerCarte_input" var="urlCreer">
+            <s:param name="numeroCompte" value="compte.numeroCompte" />
+        </s:url>
+        <a href="${urlCreer}" class="btn">
+            [+] Ajouter une Carte Bancaire
+        </a>
+    </div>
+    <br/>
+
 	<s:url action="urlDetail" var="urlDetail">
 		<s:param name="idCompte">
 			<s:property value="key" />
@@ -78,6 +169,8 @@
 			<s:property value="error" />
 		</div>
 	</s:if>
+<br/>
+<br/>
 </body>
 <jsp:include page="/JSP/Footer.jsp" />
 </html>

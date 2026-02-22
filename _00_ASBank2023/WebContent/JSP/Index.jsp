@@ -18,9 +18,11 @@
 <body>
 	<h1>Bienvenue sur l'application IUT Bank 2025</h1>
 	<p>
-		<img
-			src="<s:url value='/style/UL_IUT_MOSELLE_EST.png'/>"
-			alt="logo" />
+		<a href="https://www.univ-lorraine.fr/">
+			<img
+				src="<s:url value='/style/UL_IUT_MOSELLE_EST.png'/>"
+				alt="logo" />
+		</a>
 	</p>
 	<input type="button" value="Information" name="info"
 		onClick="DisplayMessage()" />

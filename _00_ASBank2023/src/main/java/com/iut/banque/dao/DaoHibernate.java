@@ -1,52 +1,48 @@
 package com.iut.banque.dao;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.iut.banque.modele.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.IllegalOperationException;
 import com.iut.banque.exceptions.TechnicalException;
 import com.iut.banque.interfaces.IDao;
-import com.iut.banque.modele.Client;
-import com.iut.banque.modele.Compte;
-import com.iut.banque.modele.CompteAvecDecouvert;
-import com.iut.banque.modele.CompteSansDecouvert;
-import com.iut.banque.modele.Gestionnaire;
-import com.iut.banque.modele.Utilisateur;
 import com.iut.banque.security.PasswordHasher;
 
 
 /**
  * Implémentation de IDao utilisant Hibernate.
- * 
- * Les transactions sont gerés par Spring et utilise le transaction manager
+ * Les transactions sont gérées par Spring et utilisent la transaction manager
  * défini dans l'application Context.
- * 
  * Par défaut, la propagation des transactions est REQUIRED, ce qui signifie que
- * si une transaction est déjà commencé elle va être réutilisée. Cela est util
+ * si une transaction est déjà commencée, elle va être réutilisée. Cela est util
  * pour les tests unitaires de la DAO.
  */
 @Transactional
 public class DaoHibernate implements IDao {
 
+    private static final Logger logger = LoggerFactory.getLogger(DaoHibernate.class);
 	private SessionFactory sessionFactory;
 
 	public DaoHibernate() {
-		System.out.println("==================");
-		System.out.println("Création de la Dao");
+        logger.info("==================");
+        logger.info("Création de la Dao");
 	}
 
 	/**
 	 * Setter pour la SessionFactory.
-	 * 
 	 * Cette méthode permet à Spring d'injecter la factory au moment de la
 	 * construction de la DAO.
-	 * 
+	 *
 	 * @param sessionFactory
 	 *            : la session factory nécessaire à la gestion des sessions
 	 */
@@ -56,7 +52,7 @@ public class DaoHibernate implements IDao {
 
 	/**
 	 * {@inheritDoc}
-	 * @throws IllegalOperationException 
+	 * @throws IllegalOperationException
 	 */
 	@Override
 	public CompteAvecDecouvert createCompteAvecDecouvert(double solde, String numeroCompte, double decouvertAutorise,
@@ -144,7 +140,7 @@ public class DaoHibernate implements IDao {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @throws IllegalFormatException
 	 * @throws IllegalArgumentException
 	 */
@@ -269,7 +265,7 @@ public class DaoHibernate implements IDao {
 	 */
 	@Override
 	public void disconnect() {
-		System.out.println("Déconnexion de la DAO.");
+        logger.info("Déconnexion de la DAO.");
 	}
 
     @Override
@@ -292,5 +288,92 @@ public class DaoHibernate implements IDao {
         user.setUserPwd(hashed);
 
         session.update(user); // transaction gérée par Spring/@Transactional
+    }
+
+    /**
+     * Implémentation de la création de carte.
+     */
+    @Override
+    public CarteBancaire createCarteBancaire(CarteBancaire carte) {
+        try {
+            this.sessionFactory.getCurrentSession().save(carte);
+        } catch (Exception e) {
+            logger.error("Erreur lors de la création de la carte bancaire", e);
+            return null;
+        }
+        return carte;
+    }
+
+    /**
+     * Implémentation de la récupération de carte.
+     */
+    @Override
+    public CarteBancaire getCarteBancaire(String numeroCarte) {
+        // On utilise get() qui renvoie null si l'objet n'existe pas
+        return (CarteBancaire) this.sessionFactory.getCurrentSession().get(CarteBancaire.class, numeroCarte);
+    }
+
+    /**
+     * Implémentation de la mise à jour.
+     */
+    @Override
+    public void updateCarteBancaire(CarteBancaire carte) {
+        this.sessionFactory.getCurrentSession().update(carte);
+    }
+
+    /**
+     * Implémentation de la création d'opération.
+     */
+    @Override
+    public Operation createOperation(Operation operation) {
+        try {
+            this.sessionFactory.getCurrentSession().save(operation);
+        } catch (Exception e) {
+            logger.error("Erreur lors de la création de l'opération", e);
+            return null;
+        }
+        return operation;
+    }
+
+    /**
+     * Implémentation du calcul des dépenses sur 30 jours.
+     */
+    @Override
+    public double getMontantTotalDepensesCarte(String numeroCarte, java.util.Date dateDebut) {
+        Session session = sessionFactory.getCurrentSession();
+        // On somme les montants négatifs (dépenses) depuis la date donnée
+        String hql = "SELECT sum(o.montant) FROM Operation o " +
+                     "WHERE o.carte.numeroCarte = :numCarte " +
+                     "AND o.dateOperation >= :date " +
+                     "AND o.montant < 0";
+
+        Double resultat = (Double) session.createQuery(hql)
+                .setParameter("numCarte", numeroCarte)
+                .setParameter("date", dateDebut)
+                .uniqueResult();
+
+        // Si aucune dépense, retourne 0. Sinon, retourne la valeur positive (Math.abs)
+        return resultat == null ? 0.0 : Math.abs(resultat);
+    }
+
+    /**
+     * Calcule le total des dépenses en attente (Différé) pour un compte sur une période.
+     * On ne filtre QUE sur le type 'CB_DIFF'.
+     */
+    public double getMontantTotalDepensesDifferees(String numeroCompte, Date debut, Date fin) {
+        // On somme les opérations 'CB_DIFF' sur la période donnée
+        String hql = "SELECT sum(op.montant) FROM Operation op " +
+                "WHERE op.compte.numeroCompte = :numCompte " +
+                "AND op.dateOperation BETWEEN :debut AND :fin " +
+                "AND op.typeOperation = 'CB_DIFF'";
+
+        Double somme = (Double) sessionFactory.getCurrentSession()
+                .createQuery(hql)
+                .setParameter("numCompte", numeroCompte)
+                .setParameter("debut", debut)
+                .setParameter("fin", fin)
+                .uniqueResult();
+
+        return (somme == null) ? 0.0 : Math.abs(somme);
     }
 }

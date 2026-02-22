@@ -2,9 +2,6 @@ package com.iut.banque.controller;
 
 import com.iut.banque.facade.BanqueFacade;
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.struts2.ServletActionContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class ResetFlowAction extends ActionSupport {
 
@@ -12,6 +9,7 @@ public class ResetFlowAction extends ActionSupport {
     private String token;
     private String newPassword;
     private String message;
+    private transient BanqueFacade banque;
 
     // --- Getters & Setters ---
 
@@ -27,6 +25,12 @@ public class ResetFlowAction extends ActionSupport {
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
+    public void setBanque(BanqueFacade banque) { this.banque = banque; }
+
+    // Un Setter pour permettre aux tests d'injecter un Mock
+    public void setBanqueFacade(BanqueFacade banqueFacade) {
+        this.banque = banqueFacade;
+    }
 
     // --- Actions ---
 
@@ -34,18 +38,21 @@ public class ResetFlowAction extends ActionSupport {
      * Appelé depuis le formulaire "Mot de passe oublié"
      */
     public String sendLink() {
-        // Récupération de la façade à la demande (comme dans ChangePassword)
-        ApplicationContext context = WebApplicationContextUtils
-                .getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-        BanqueFacade banque = (BanqueFacade) context.getBean("banqueFacade");
-
-        if (banque.initiatePasswordReset(email)) {
-            message = "Lien envoyé à l'adresse mail renseignée si elle existe.";
-            return "link_sent";
-        } else {
-            addActionError("Erreur.");
-            return ERROR;
+        // 1. Vérification de surface (Input Validation)
+        // Si l'utilisateur n'a rien écrit, on le lui dit (c'est une erreur de saisie, pas de sécurité)
+        if (email == null || email.trim().isEmpty()) {
+            message = "Veuillez renseigner une adresse email.";
+            return "error";
         }
+
+        // 2. Appel du métier
+        // On appelle la façade, mais on IGNORE le résultat (true/false) volontairement
+        banque.initiatePasswordReset(email);
+
+        // 3. Réponse générique (Security)
+        // Qu'il existe ou non, on affiche le même message de succès
+        message = "Lien envoyé à l'adresse mail renseignée si elle existe.";
+        return "link_sent";
     }
 
     /**
@@ -64,10 +71,6 @@ public class ResetFlowAction extends ActionSupport {
      * Appelé quand l'utilisateur soumet son nouveau mot de passe
      */
     public String processReset() {
-        ApplicationContext context = WebApplicationContextUtils
-                .getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-        BanqueFacade banque = (BanqueFacade) context.getBean("banqueFacade");
-
         if (banque.usePasswordResetToken(token, newPassword)) {
             return "reset_success";
         } else {

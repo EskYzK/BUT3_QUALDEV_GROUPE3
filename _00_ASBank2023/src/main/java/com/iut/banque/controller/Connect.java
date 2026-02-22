@@ -2,10 +2,6 @@ package com.iut.banque.controller;
 
 import java.util.Map;
 
-import org.apache.struts2.ServletActionContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import com.opensymphony.xwork2.ActionSupport;
 
 import com.iut.banque.constants.LoginConstants;
@@ -13,43 +9,44 @@ import com.iut.banque.facade.BanqueFacade;
 import com.iut.banque.modele.Client;
 import com.iut.banque.modele.Compte;
 import com.iut.banque.modele.Utilisateur;
-
-import javax.servlet.http.HttpSession;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 public class Connect extends ActionSupport {
 
+    private static final String ERROR_ERROR = "ERROR";
+    private static final Logger logger = LoggerFactory.getLogger(Connect.class);
 	private static final long serialVersionUID = 1L;
 	private String userCde;
 	private String userPwd;
     private String Retour;
-	private BanqueFacade banque;
+	private transient BanqueFacade banque;
 
 	/**
 	 * Constructeur de la classe Connect
-	 * 
-	 * @return Un objet de type Connect avec façade BanqueFacade provenant de sa
-	 *         factory
-	 */
+	 *
+     */
 	public Connect() {
-		System.out.println("In Constructor from Connect class ");
-		ApplicationContext context = WebApplicationContextUtils
-				.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-		this.banque = (BanqueFacade) context.getBean("banqueFacade");
-
+        logger.debug("Tentative de création de l'objet de connexion {}", this);
 	}
+
+    // Un Setter pour permettre aux tests d'injecter un Mock
+    public void setBanqueFacade(BanqueFacade banqueFacade) {
+        this.banque = banqueFacade;
+    }
 
 	/**
 	 * Méthode pour vérifier la connexion de l'utilisateur basé sur les
-	 * paramêtres userCde et userPwd de cette classe
+	 * paramètres userCde et userPwd de cette classe
 	 * 
 	 * @return String, le resultat du login; "SUCCESS" si réussi, "ERROR" si
 	 *         échec
 	 */
 	public String login() {
-		System.out.println("Essai de login");
+        logger.debug("Tentative de connexion login");
 
 		if (userCde == null || userPwd == null) {
-			return "ERROR";
+			return ERROR_ERROR;
 		}
 		userCde = userCde.trim();
 
@@ -57,25 +54,23 @@ public class Connect extends ActionSupport {
 		try {
 			loginResult = banque.tryLogin(userCde, userPwd);
 		} catch (Exception e) {
-			e.printStackTrace();
+            logger.error("Erreur technique lors de la connexion", e);
 			loginResult = LoginConstants.ERROR;
 		}
 
-        HttpSession session = ServletActionContext.getRequest().getSession();
-
-        switch (loginResult) {
+		switch (loginResult) {
 		case LoginConstants.USER_IS_CONNECTED:
-			System.out.println("user logged in");
+            logger.info("Utilisateur connecté avec succès");
 			return "SUCCESS";
 		case LoginConstants.MANAGER_IS_CONNECTED:
-			System.out.println("manager logged in");
+            logger.info("Gestionnaire connecté avec succès");
 			return "SUCCESSMANAGER";
 		case LoginConstants.LOGIN_FAILED:
-			System.out.println("login failed");
-			return "ERROR";
+            logger.error("Connexion échouée");
+			return ERROR_ERROR;
 		default:
-			System.out.println("error");
-			return "ERROR";
+            logger.error("Erreur technique lors de la connexion");
+			return ERROR_ERROR;
 		}
 	}
 
@@ -118,7 +113,7 @@ public class Connect extends ActionSupport {
 	}
 
 	/**
-	 * Getter du champ utilisateur (uilisé pour récupérer l'utilisateur
+	 * Getter du champ utilisateur (utilisé pour récupérer l'utilisateur
 	 * actuellement connecté à l'application)
 	 * 
 	 * @return Utilisateur, l'utilisateur de la classe
@@ -132,16 +127,26 @@ public class Connect extends ActionSupport {
 	 * actuellement connecté à l'application
 	 * 
 	 * @return Map<String, Compte> correspondant à l'ID du compte et l'objet
-	 *         Compte associé
+	 *         Compte qui y est associé
 	 */
 	public Map<String, Compte> getAccounts() {
 		return ((Client) banque.getConnectedUser()).getAccounts();
 	}
 
 	public String logout() {
-		System.out.println("Logging out");
+        logger.info("Utilisateur déconnecté avec succès");
 		banque.logout();
 		return "SUCCESS";
+	}
+
+	/**
+	 * Setter pour injecter BanqueFacade (utilisé pour les tests unitaires)
+	 * 
+	 * @param banque
+	 *            : BanqueFacade à injecter
+	 */
+	public void setBanque(BanqueFacade banque) {
+		this.banque = banque;
 	}
 
     public String getRetour() { return Retour; }

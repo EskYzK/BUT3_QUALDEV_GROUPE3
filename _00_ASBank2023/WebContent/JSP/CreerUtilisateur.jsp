@@ -28,17 +28,17 @@
 
     <div class="btnLogout">
         <s:form name="myForm" action="logout" method="POST">
-            <s:submit name="Retour" value="Logout" />
+            <s:submit name="Retour" value="Déconnexion" />
         </s:form>
     </div>
     <h1>Créer un nouvel utilisateur</h1>
 
     <div class="info-format">
         <strong>Formats obligatoires pour les Clients :</strong><br/>
-        <ul>
-            <li><strong>Code utilisateur :</strong> doit être au format <em>lettre.lettresNombre ou Nombre doit obligatoirement commencer par un chiffre de 1 à 9</em> (ex: <code>j.dupont107</code>).</li>
-            <li><strong>Numéro de client :</strong> doit comporter exactement <strong>10 chiffres</strong>.</li>
-        </ul>
+        <strong>Code utilisateur :</strong> doit être au format <em>lettre.lettresNombre ou Nombre doit obligatoirement commencer par un chiffre de 1 à 9</em> (ex: <code>j.dupont107</code>).
+        <br/>
+        <br/>
+        <strong>Numéro de client :</strong> doit comporter exactement <strong>10 chiffres</strong>.
     </div>
 
     <s:form id="myForm" name="myForm" action="ajoutUtilisateur"

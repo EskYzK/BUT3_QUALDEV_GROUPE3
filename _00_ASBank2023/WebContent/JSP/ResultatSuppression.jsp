@@ -10,7 +10,11 @@
     <link rel="stylesheet" href="<s:url value='/style/style.css'/>" />
 </head>
 <body>
-
+    <div class="btnLogout">
+		<s:form name="myForm" action="logout" method="POST">
+			<s:submit name="Retour" value="Déconnexion" />
+		</s:form>
+	</div>
 	<h1>Résultat de la suppression</h1>
 
 	<s:if test="!error">

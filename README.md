@@ -1,177 +1,182 @@
-# 💻 Projet Qualité de Développement – **ASBank**
+# 💻 Projet Qualité de Développement – ASBank 2026
+📚 **R5.A08 – IUT Informatique de Metz | Université de Lorraine**
 
-📚 Projet réalisé dans le cadre du cours **R5.A08 – Qualité de Développement** (IUT Informatique de Metz).  
-Ce projet déploie une application Java EE avec **Spring**, **Hibernate**, **Tomcat 9** et une base **MySQL**.
+Ce projet consiste en la maintenance évolutive et l'amélioration qualitative d'une application Java EE. L’accent est mis sur l’industrialisation du déploiement via Docker, l’intégration continue (CI/CD) et le respect d’une charte graphique institutionnelle stricte.
 
----
+# 👥 Équipe — Groupe 3
 
-## 1. Pré-requis logiciels
+| Membre | Rôle        |
+|--------|-------------|
+| **CHOLLET Thomas** | Développeur |
+| **MORINON Lilian** | Développeur |
+| **AIT BAHA Said** | Développeur |
+| **KERBER Alexandre** | Développeur |
+
+# 🚀 1. Installation et Déploiement
+
+Le projet est entièrement conteneurisé. L’utilisation de Tomcat local est désormais obsolète : tout le cycle de vie (Build, Tests, Déploiement) est géré automatiquement par Docker.
+
+## 📦 Pré-requis
 
 Avant toute installation, assurez-vous d’avoir les outils suivants installés et configurés :
 
-### 🔹 Java JDK 11
+### 🔹 VPN
+**Vous devez être connecté au réseau de l'IUT de Metz.**  
+Pourquoi ? Le build Docker lance les tests unitaires qui se connectent à la base de données de développement de l'IUT. Sans VPN, la construction de l'image échouera.
 
-- Le projet fonctionne avec **Java 11**.  
-- Dans IntelliJ IDEA, allez dans :  
-  **File > Project Structure > Project**  
-  et téléchargez/configurez directement un **JDK 11** (exemple : *Microsoft OpenJDK 11*).  
-- Vérifiez que le projet utilise bien **Java 11** comme SDK.  
+### 🔹 Docker Desktop
+Le moteur de conteneurisation doit être installé et lancé.
 
-### 🔹 Apache Maven (≥ 3.9)
+### 🔹 Un comte Google (pour les emails)
+Un compte avec la validation en deux étapes, ainsi qu'un mot de passe d'application généré.
 
-* Téléchargez Maven [ici](https://maven.apache.org/download.cgi).
-* Décompressez-le dans un dossier stable (ex. `C:\apache-maven-3.9.x`).
-* Ajoutez le chemin `bin/` de Maven dans la variable d’environnement `PATH`.
-* Vérifiez l’installation avec :
+## 🛠 Procédure de lancement
 
-  ```bash
-  mvn -v
-  ```
+> [!IMPORTANT]
+> **Avant de commencer :**
+> 1. Assurez-vous que l'application **Docker Desktop est lancée** sur votre machine.
+> 2. Activez le **VPN** et connectez-vous au réseau de l'**IUT de Metz**.
+> 2. Ouvrez votre terminal dans le répertoire racine du projet : `BUT3_QUALDEV_GROUPE3/_00_ASBank2023/`.
 
-  Résultat attendu : la version de Maven + Java 11.
+### 1️⃣ Configuration des secrets (.env)
 
-### 🔹 Apache Tomcat 9.x
+Créez un fichier nommé `.env` dans le répertoire (`BUT3_QUALDEV_GROUPE3/_00_ASBank2023/`) et insérez vos identifiants :
 
-* Téléchargez la version ZIP depuis [Tomcat 9 Downloads](https://tomcat.apache.org/download-90.cgi).
-* Décompressez-le dans un dossier (ex. `C:\apache-tomcat-9.0.xx`).
-* Vérifiez l’installation avec :
+```
+# Configuration E-mail (Gmail)
+MAIL_USER=votre.email@gmail.com
+MAIL_PASSWORD=votre_mot_de_passe_application
 
-  ```bash
-  catalina.bat version
-  ```
+# Configuration Base de données (Utilisateurs)
+DB_URL=jdbc:mysql://devbdd.iutmetz.univ-lorraine.fr:3306/chollet14u_bankiuttest?useSSL=false&serverTimezone=UTC
+DB_USER=chollet14u_appli
+DB_PASS=32301542
+```
 
-### 🔹 MySQL / MariaDB
+Créez un second fichier nommé `.env` à la racine du projet (`BUT3_QUALDEV_GROUPE3/`) et copiez ce contenu :
 
-* Téléchargez et installez [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) ou utilisez XAMPP/WAMP.
-* Vérifiez que le service MySQL est démarré.
+```
+# Configuration Base de données
+DB_URL=jdbc:mysql://devbdd.iutmetz.univ-lorraine.fr:3306/chollet14u_bankiuttest?useSSL=false&serverTimezone=UTC
+DB_USER=chollet14u_appli
+DB_PASS=32301542
 
-### 🔹 IntelliJ IDEA Ultimate
+# Configuration Sonar
+SONAR_PROJECT_KEY=BANK_IUT_2023
+SONAR_HOST_URL=http://localhost:9000
+SONAR_LOGIN=sqp_c55e85adf298ef5ffae40c13ec282dfc9482301b
+```
 
-* Utilisez la version **Ultimate** (car elle gère Tomcat et les projets Java EE nativement).
+### 2️⃣ Lancement automatisé
 
----
-
-## 2. Installation des bases de données
-
-1. Créez deux bases vides dans MySQL :
-
-   * `nomuser_bankiut` (base principale de l’application)
-   * `nomuser_bankiut_test` (base utilisée pour les tests)
-
-2. Importez les fichiers SQL fournis dans le dossier `script/` :
-
-   * `dumpSQL.sql` → pour la base principale
-   * `dumpSQL_JUnitTest.sql` → pour la base de test
-
----
-
-## 3. Configuration du projet
-
-### a) Récupération des dépendances
-
-Dans IntelliJ ou via un terminal, exécutez :
+Lancez l'unique commande nécessaire dans votre terminal :
 
 ```bash
-mvn clean install -DskipTests
+docker-compose up -d --build
 ```
 
-Cette commande permet de :
+**Ce que fait cette commande automatiquement :**
+1. Compile le projet avec Maven (dans un conteneur isolé).
+2. Exécute les tests unitaires (connectés à la BDD IUT).
+3. Construit l'image Tomcat optimisée.
+4. Lance une base de données MySQL locale et importe automatiquement les données (bankiut.sql).
+5. Démarre l'application sur le port 8080.
+6. Lance phpMyAdmin sur le port 8082 afin d'avoir un accès à la base de données locale via une interface utilisateur.
 
-* Nettoyer le projet,
-* Télécharger toutes les dépendances nécessaires,
-* Compiler et générer le WAR,
-* **Ignorer les tests unitaires** (qui nécessitent la configuration complète de la base de test).
+### 🌐 Accès application
 
-Résultat attendu : **BUILD SUCCESS**.
+Une fois le déploiement terminé (attendre ~30 secondes), l'application est accessible ici :
 
-### b) Connexion à la base de données
+http://localhost:8080/_00_ASBank2023/
 
-Le projet utilise **Spring** et **Hibernate** pour accéder à la base MySQL.
+### 🗃️ Accès Base de Données (Interface Web)
 
-* Le fichier `applicationContext.xml` contient la configuration pour la base principale.
-* Les fichiers `TestsBanqueManager-context.xml` et `TestsDaoHibernate-context.xml` définissent la configuration pour la base de test.
+Pour visualiser et administrer la base de données sans ligne de commande :
 
-Vérifiez dans ces fichiers que :
+http://localhost:8082
 
-* Le nom de la base correspond bien à `nomuser_bankiut` (ou `nomuser_bankiut_test` pour les tests).
-* L’utilisateur et le mot de passe MySQL sont corrects (par défaut `root` / `root`, sauf si vous avez modifié votre configuration).
+(La connexion est automatique avec les identifiants du fichier .env)
 
-En résumé :
+# 🛠 Arrêt et Maintenance
 
-* **applicationContext.xml** → doit pointer sur la base principale.
-* **fichiers de test** → doivent pointer sur la base de test.
+Pour arrêter l'application et supprimer les conteneurs :
 
----
+```
+docker-compose down
+```
 
-## 4. Déploiement avec Tomcat
+Pour tout réinitialiser (supprimer aussi la base de données locale pour forcer une réimportation propre au prochain lancement) :
 
-1. Dans IntelliJ, ouvrez **Run > Edit Configurations**.
-2. Ajoutez une configuration **Tomcat Server > Local**.
-3. Dans l’onglet **Deployment**, ajoutez l’artifact généré par Maven :
-
-   ```
-   _00_ASBank2023:war exploded
-   ```
-4. Conservez le **contexte par défaut** généré par IntelliJ (ex. `/_00_ASBank2023_war_exploded`).
-5. Cliquez sur **Apply**, puis **OK**.
-
----
-
-## 5. Lancement de l’application
-
-1. Lancez Tomcat depuis IntelliJ avec ▶️ **Run**.
-2. Surveillez la console et attendez le message :
-
-   ```
-   Artifact _00_ASBank2023:war exploded: Artifact is deployed successfully
-   ```
-3. Ouvrez un navigateur et accédez à l’URL :
-
-   ```
-   http://localhost:8080/_00_ASBank2023_war_exploded
-   ```
-
-Vous devriez voir la page d’accueil de l’application :
-**« Bienvenue sur l'application IUT Bank 2023 »** avec le lien vers la page de connexion.
-
----
-
-## 🐙 Git & GitHub
-
-### Initialisation
 ```bash
-cd "Documents/ANNEE 3/QualiteDev"
-git init
-git remote add origin https://github.com/EskYzK/BUT3_QUALDEV_GROUPE3.git
+docker-compose down -v
 ```
 
-### `.gitignore`
-```gitignore
-apache-tomcat-9.0.109/
-.idea/
-out/
-target/
-*.iml
-```
+# 💳 2. Fonctionnalités & Règles Métier
 
-### Ajout & Push
+## 🔒 Gestion des Cartes Bancaires
+
+L’implémentation suit des règles de gestion strictes validées avec le client :
+
+- **Autorité du gestionnaire** : Seul le gestionnaire peut créer une carte, définir le compte lié et modifier les plafonds.
+- **Types de débit** : Choix entre débit immédiat ou différé défini à la création (non modifiable par la suite).
+- **Plafond 30 jours glissants** : La capacité de paiement est calculée sur une fenêtre mobile de 30 jours.
+- **Sécurité** : Le client peut bloquer sa carte en cas d’urgence, mais seul le gestionnaire peut la débloquer.
+- **Débit différé** : Les débits différés sont gérés par un Task Scheduler tous les 1er jours du mois, à 3h du matin.
+
+## 🎨 Charte Graphique — Université de Lorraine
+
+Conformément aux directives UL, l’interface a été modernisée :
+
+- Intégration du logo officiel de l’Université de Lorraine sur la page de garde.
+- Respect des codes couleurs et des polices de la charte graphique institutionnelle.
+- Mise à jour des mentions temporelles pour l’année 2025-2026 sur le footer et l’accueil.
+
+# 📈 3. Qualité du Code et Tests
+
+## 🧪 Tests et Couverture
+
+**Tests Unitaires (JUnit)**
 ```bash
-git add .
-git commit -m "Ajout projet ASBank"
-git pull --rebase origin main   # récupérer le travail du groupe
-git push -u origin main
+mvn test
+```
+
+**Couverture JaCoCo**  
+Rapport généré dans : `target/site/jacoco/index.html`
+
+**Tests Selenium**  
+Tests de recette automatisés pour valider les parcours critiques (en cours d’implémentation).
+
+## 🔍 Analyse Statique & CI/CD
+
+- **SonarCloud** : Suivi de la dette technique et des vulnérabilités, amélioration continue de la note globale du code legacy.
+- **CI/CD GitHub Actions** : Pipeline automatisant la compilation et les tests à chaque push.
+
+# 📂 Architecture du Projet
+
+```plaintext
+.
+├── .github/workflows/
+│   └── sonarcloud.yml          # Pipeline CI/CD GitHub Actions
+├── _00_ASBank2023/
+│   ├── script/                 # Scripts SQL (Initialisation et Tests)
+│   ├── src/main/java/          # Code source Java (Spring, Hibernate, Struts 2)
+│   ├── src/main/resources/     # Configuration Struts (struts.xml)
+│   ├── WebContent/
+│   │   ├── JSP/                # Vues (Index, ListeComptes, Footer...)
+│   │   ├── WEB-INF/            # Configuration Spring (applicationContext.xml) et web.xml
+│   │   └── style/              # Assets CSS et Images (Logo UL)
+│   ├── Dockerfile              # Configuration de l'image application
+│   ├── docker-compose.yml      # Orchestration (MySQL, phpMyAdmin)
+│   ├── pom.xml                 # Dépendances Maven
+│   └── RunSonar.bat            # Script de lancement SonarQube local (Windows)
+├── Sprint2/                    # Documentation et preuves du Sprint 2
+├── Diagramme_UML_ASBank...     # Documentation technique
+├── Fonctionnalités et bugs...  # Documentation fonctionnelle
+├── .gitignore                  # Fichiers ignorés par Git
+└── README.md                   # Ce fichier
 ```
 
 ---
 
-## ✅ État d’avancement
-
-* [x] Installation **IntelliJ IDEA Ultimate**
-* [x] Installation **JDK 11** 
-* [x] Installation **Apache Tomcat 9**
-* [x] Importation du projet **_00_ASBank2023** dans IntelliJ
-* [x] Création de l’**artifact WAR exploded**
-* [x] Déploiement sur **Tomcat** avec le contexte `/_00_ASBank2023_war_exploded`
-* [x] Connexion **MySQL** via **Spring / Hibernate**
-* [x] Vérification du rendu **CSS** dans l’application
-* [x] Dépôt **GitHub** initialisé et fonctionnel (`git add / commit / push`)
+**ASBank 2026 — Université de Lorraine**  
+Projet Qualité de Développement R5.A08

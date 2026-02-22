@@ -3,9 +3,12 @@ package com.iut.banque.controller;
 import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.IllegalOperationException;
 import com.iut.banque.modele.CompteAvecDecouvert;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 public class DetailCompteEdit extends DetailCompte {
 
+    private static final Logger logger = LoggerFactory.getLogger(DetailCompteEdit.class);
 	private static final long serialVersionUID = 1L;
 	private String decouvertAutorise;
 
@@ -14,8 +17,7 @@ public class DetailCompteEdit extends DetailCompte {
 	 */
 	public DetailCompteEdit() {
 		super();
-		System.out.println("======================================");
-		System.out.println("Dans le constructeur DetailCompteEdit");
+        logger.debug("Tentative de création de l'objet DetailCompteEdit {}", this);
 	}
 
 	/**
@@ -45,13 +47,16 @@ public class DetailCompteEdit extends DetailCompte {
 		try {
 			Double decouvert = Double.parseDouble(decouvertAutorise);
 			banque.changeDecouvert((CompteAvecDecouvert) getCompte(), decouvert);
+            logger.info("Changement de découvert effectué avec succès");
 			return "SUCCESS";
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
+            logger.error("Erreur dans le format du nombre", nfe);
 			return "ERROR";
 		} catch (IllegalFormatException e) {
+            logger.error("Erreur de format", e);
 			return "NEGATIVEOVERDRAFT";
 		} catch (IllegalOperationException e) {
+            logger.error("Opération illégale", e);
 			return "INCOMPATIBLEOVERDRAFT";
 		}
 	}

@@ -12,7 +12,7 @@
 <body>
 	<div class="btnLogout">
 		<s:form name="myForm" action="logout" method="POST">
-			<s:submit name="Retour" value="Logout" />
+			<s:submit name="Retour" value="Déconnexion" />
 		</s:form>
 	</div>
 	<h1>Tableau de bord</h1>
@@ -21,7 +21,7 @@
 				value="connectedUser.nom" /></b> !
 	</p>
     <p>
-        <s:url action="changePassword" var="urlChangePassword"></s:url>
+        <s:url action="changePasswordClient" var="urlChangePassword"></s:url>
         <s:a href="%{urlChangePassword}">Changer mon mot de passe</s:a>
     </p>
     <p>Voici l'état de vos comptes :</p>

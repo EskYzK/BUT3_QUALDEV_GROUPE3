@@ -1,5 +1,6 @@
 package com.iut.banque.modele;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -25,7 +26,9 @@ import com.iut.banque.exceptions.IllegalFormatException;
 @Table(name = "Utilisateur")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 15)
-public abstract class Utilisateur {
+public abstract class Utilisateur implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
 	/**
 	 * L'identifiant (unique) de l'utilisateur.
@@ -199,8 +202,7 @@ public abstract class Utilisateur {
 	/**
 	 * @param userId
 	 *            : l'identifiant de l'utilisateur
-	 * @throws IllegalFormatException
-	 */
+     */
     public void setUserId(String userId) throws IllegalFormatException {
         if (userId == null || userId.isEmpty()) {
             throw new IllegalFormatException("userId ne peut pas être vide");
@@ -228,17 +230,8 @@ public abstract class Utilisateur {
 	 * paramètres.
 	 * Il est préférable d'utiliser une classe implémentant IDao pour créer un
 	 * objet au lieu d'appeler ce constructeur.
-	 * 
-	 * @param nom
-	 * @param prenom
-	 * @param adresse
-	 * @param male
-	 * @param userId
-	 * @param userPwd
-     * @param email
-     * @param resetToken
-     * @param tokenExpiry
-	 */
+	 *
+     */
 	protected Utilisateur(String nom, String prenom, String adresse, boolean male, String userId, String userPwd, String email, String resetToken,  java.sql.Timestamp tokenExpiry) {
 		super();
 		this.nom = nom;

@@ -61,6 +61,7 @@ public class TestsClientConverter {
 
     @Test
     public void testDefaultConstructor_DoesNotThrow() {
-        new ClientConverter(); // juste pour s'assurer qu’il ne jette pas d’erreur
+        ClientConverter converterInstance = new ClientConverter();
+        assertNotNull("L'instance du convertisseur ne doit pas être null", converterInstance);
     }
 }

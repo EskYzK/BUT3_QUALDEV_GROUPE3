@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/tx
-        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task.xsd">
 
     <!-- ************************************************************ -->
     <!-- * Fichier de configuration utilisé par le framework SPRING * -->
@@ -75,4 +78,15 @@
           class="com.iut.banque.converter.AccountConverter" scope="singleton">
         <constructor-arg ref="daoHibernate" />
     </bean>
+
+    <!-- ============= Service ============= -->
+    <bean id="batchClotureService" class="com.iut.banque.service.BatchClotureService">
+        <property name="banqueManager" ref="banqueManager" />
+    </bean>
+
+    <task:scheduler id="monPlanificateur" pool-size="1"/>
+
+    <task:scheduled-tasks scheduler="monPlanificateur">
+        <task:scheduled ref="batchClotureService" method="lancerClotureMensuelle" cron="0 0 3 1 * ?" />
+    </task:scheduled-tasks>
 </beans>

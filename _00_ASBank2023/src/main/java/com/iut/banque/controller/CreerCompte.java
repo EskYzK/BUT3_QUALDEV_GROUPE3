@@ -1,8 +1,7 @@
 package com.iut.banque.controller;
 
-import org.apache.struts2.ServletActionContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -15,6 +14,7 @@ import com.iut.banque.modele.Compte;
 
 public class CreerCompte extends ActionSupport {
 
+    private static final Logger logger = LoggerFactory.getLogger(CreerCompte.class);
 	private static final long serialVersionUID = 1L;
 	private String numeroCompte;
 	private boolean avecDecouvert;
@@ -23,7 +23,7 @@ public class CreerCompte extends ActionSupport {
 	private String message;
 	private boolean error;
 	private boolean result;
-	private BanqueFacade banque;
+	private transient BanqueFacade banqueFacade;
 	private Compte compte;
 
 	/**
@@ -49,7 +49,7 @@ public class CreerCompte extends ActionSupport {
 	}
 
 	/**
-	 * Indique si le résultat de l'action précedente avait réussi
+	 * Indique si le résultat de l'action précédente avait réussi
 	 * 
 	 * @return le status de l'action précédente
 	 */
@@ -59,9 +59,8 @@ public class CreerCompte extends ActionSupport {
 
 	/**
 	 * Setter de l'action précédente
-	 * 
-	 * @param error
-	 */
+	 *
+     */
 	public void setError(boolean error) {
 		this.error = error;
 	}
@@ -75,14 +74,16 @@ public class CreerCompte extends ActionSupport {
 	}
 
 	/**
-	 * Constructeur sans paramêtre de CreerCompte
+	 * Constructeur sans paramètre de CreerCompte
 	 */
 	public CreerCompte() {
-		System.out.println("In Constructor from CreerCompte class ");
-		ApplicationContext context = WebApplicationContextUtils
-				.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-		this.banque = (BanqueFacade) context.getBean("banqueFacade");
+        logger.debug("Instanciation du contrôleur CreerCompte");
 	}
+
+    // Le setter indispensable pour l'injection
+    public void setBanqueFacade(BanqueFacade banqueFacade) {
+        this.banqueFacade = banqueFacade;
+    }
 
 	/**
 	 * @return the numeroCompte
@@ -139,7 +140,7 @@ public class CreerCompte extends ActionSupport {
 	}
 
 	/**
-	 * Choisi le message à enregistrer en fonction du message reçu en paramêtre.
+	 * Choisi le message à enregistrer en fonction du message reçu en paramètre.
 	 * 
 	 * @param message
 	 *            : le message indiquant le status de l'action précédente.
@@ -153,8 +154,15 @@ public class CreerCompte extends ActionSupport {
 			this.message = "Ce numéro de compte n'est pas dans un format valide !";
 			break;
 		case "SUCCESS":
-			this.message = "Le compte " + compte.getNumeroCompte() + " a bien été créé.";
+            if (compte != null) {
+                this.message = "Le compte " + compte.getNumeroCompte() + " a bien été créé.";
+            } else {
+                this.message = "Compte créé.";
+            }
 			break;
+        default:
+            this.message = message;
+            break;
 		}
 	}
 
@@ -185,23 +193,33 @@ public class CreerCompte extends ActionSupport {
 	 * @return une chaine déterminant le résultat de l'action
 	 */
 	public String creationCompte() {
+        logger.info("Tentative de création du compte {} (Découvert: {})", numeroCompte, avecDecouvert);
 		try {
 			if (avecDecouvert) {
-				try {
-					banque.createAccount(numeroCompte, client, decouvertAutorise);
-				} catch (IllegalOperationException e) {
-					e.printStackTrace();
-				}
+                banqueFacade.createAccount(numeroCompte, client, decouvertAutorise);
 			} else {
-				banque.createAccount(numeroCompte, client);
+				banqueFacade.createAccount(numeroCompte, client);
 			}
-			this.compte = banque.getCompte(numeroCompte);
+            logger.info("Compte {} créé avec succès.", numeroCompte);
+			this.compte = banqueFacade.getCompte(numeroCompte);
 			return "SUCCESS";
 		} catch (TechnicalException e) {
+            logger.warn("Échec création : Le numéro de compte {} existe déjà.", numeroCompte);
 			return "NONUNIQUEID";
 		} catch (IllegalFormatException e) {
+            logger.warn("Échec création : Format invalide pour le compte {}.", numeroCompte);
 			return "INVALIDFORMAT";
-		}
+		}catch (IllegalOperationException e) {
+            // 4. Gestion de l'exception qui était "avalée" auparavant
+            logger.error("Erreur métier lors de la création du compte avec découvert.", e);
+            this.message = "Erreur opération : " + e.getMessage();
+            return ERROR; // Retourne vers la page d'erreur standard de Struts
+
+        } catch (Exception e) {
+            // Sécurité globale pour tout autre crash
+            logger.error("Erreur système inattendue.", e);
+            return ERROR;
+        }
 
 	}
 }

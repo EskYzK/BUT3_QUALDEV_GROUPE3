@@ -1,5 +1,6 @@
 package com.iut.banque.modele;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -18,7 +19,9 @@ import com.iut.banque.exceptions.IllegalFormatException;
  */
 @Entity
 @DiscriminatorValue("CLIENT")
-public class Client extends Utilisateur {
+public class Client extends Utilisateur implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
 	/**
 	 * Numéro du client.
@@ -33,10 +36,10 @@ public class Client extends Utilisateur {
 	 * compte.
 	 * 
 	 * L'association "one-to-many" signifie que chaque client possède plusieurs
-	 * comptes mais que chaque compte a un unique propriétaire.
+	 * comptes, mais que chaque compte a un unique propriétaire.
 	 * 
 	 * FetchType.EAGER signifie que le chargment des comptes n'est pas
-	 * paresseux. Ce n'est pas optimal si il y a beaucoup de comptes, mais cela
+	 * paresseux. Ce n'est pas optimal s'il y a beaucoup de comptes, mais cela
 	 * permet de travailler avec les objets Clients en dehors d'une session.
 	 */
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "owner")

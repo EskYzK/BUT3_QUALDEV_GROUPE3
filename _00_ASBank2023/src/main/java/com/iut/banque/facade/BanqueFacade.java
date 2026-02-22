@@ -7,23 +7,17 @@ import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.IllegalOperationException;
 import com.iut.banque.exceptions.InsufficientFundsException;
 import com.iut.banque.exceptions.TechnicalException;
-import com.iut.banque.modele.Client;
-import com.iut.banque.modele.Compte;
-import com.iut.banque.modele.CompteAvecDecouvert;
-import com.iut.banque.modele.Gestionnaire;
-import com.iut.banque.modele.Utilisateur;
+import com.iut.banque.modele.*;
 
 public class BanqueFacade {
 
-	private BanqueManager banqueManager;
-	private LoginManager loginManager;
+	private final BanqueManager banqueManager;
+	private final LoginManager loginManager;
 
 	/**
 	 * Constructeur de la facade sans paramètre
-	 * 
-	 * @return BanqueFacade : avec un nouveau BanqueManager et un nouveau
-	 *         LoginManager
-	 */
+	 *
+     */
 	public BanqueFacade(LoginManager loginMng, BanqueManager banqueMng) {
 		this.banqueManager = banqueMng;
 		this.loginManager = loginMng;
@@ -81,7 +75,7 @@ public class BanqueFacade {
 	 *            : un double correspondant au montant qu'on veut débiter
 	 * @throws InsufficientFundsException
 	 *             dans le cas où le retrait n'est pas autorisé (dépassement de
-	 *             découvert autorisé par exemple)
+	 *             découvert autorisé par exemple).
 	 * @throws IllegalFormatException
 	 *             : si le param montant est négatif
 	 */
@@ -141,8 +135,7 @@ public class BanqueFacade {
 	 *             compte de la base
 	 * @throws IllegalFormatException
 	 *             : si le numeroCompte n'est pas du bon format
-	 * @throws IllegalOperationException 
-	 */
+     */
 	public void createAccount(String numeroCompte, Client client, double decouvertAutorise)
 			throws TechnicalException, IllegalFormatException, IllegalOperationException {
 		if (loginManager.getConnectedUser() instanceof Gestionnaire) {
@@ -156,7 +149,7 @@ public class BanqueFacade {
 	 * @param compte
 	 *            : le compte à supprimer
 	 * @throws IllegalOperationException
-	 *             : si le compte n'a pas un solde de 0
+	 *             : si le compte n'a pas un solde de 0.
 	 * @throws TechnicalException
 	 *             : si le compte est null ou si le compte n'est pas un compte
 	 *             persistant.
@@ -170,19 +163,10 @@ public class BanqueFacade {
 	/**
 	 * Cr�er un manager. L'utilisateur connecté doit être un gestionnaire.
 	 * 
-	 * @param userId
-	 * @param userPwd
-	 * @param nom
-	 * @param prenom
-	 * @param adresse
-	 * @param male
-     * @param email
 	 * @throws TechnicalException
 	 *             : Si l'id fourni en param�tre est déjà assigné à un autre
 	 *             utilisateur de la base
-	 * @throws IllegalFormatException
-	 * @throws IllegalArgumentException
-	 */
+     */
 	public void createManager(String userId, String userPwd, String nom, String prenom, String adresse, boolean male, String email)
 			throws TechnicalException, IllegalArgumentException, IllegalFormatException {
 		if (loginManager.getConnectedUser() instanceof Gestionnaire) {
@@ -194,23 +178,13 @@ public class BanqueFacade {
 	 * 
 	 * L'utilisateur connecté doit être un gestionnaire.
 	 * 
-	 * @param userId
-	 * @param userPwd
-	 * @param nom
-	 * @param prenom
-	 * @param adresse
-	 * @param male
-     * @param email
-	 * @param numeroClient
 	 * @throws IllegalOperationException
-	 *             : si le numeroClient founri en paramètre est déjà assigné à
+	 *             : si le numeroClient fourni en paramètre est déjà assigné à
 	 *             un autre utilisateur de la base
 	 * @throws TechnicalException
 	 *             : Si l'id fourni en paramètre est déjà assigné à un autre
 	 *             utilisateur de la base
-	 * @throws IllegalFormatException
-	 * @throws IllegalArgumentException
-	 */
+     */
 	public void createClient(String userId, String userPwd, String nom, String prenom, String adresse, boolean male, String email, String numeroClient)
 			throws IllegalOperationException, TechnicalException, IllegalArgumentException, IllegalFormatException {
 		if (loginManager.getConnectedUser() instanceof Gestionnaire) {
@@ -222,7 +196,6 @@ public class BanqueFacade {
 	 * 
 	 * L'utilisateur connecté doit être un gestionnaire.
 	 * 
-	 * @param u
 	 * @throws IllegalOperationException
 	 *             si l'user est null ou si l'utilisateur n'est pas un
 	 *             utilisateur persistant.
@@ -236,8 +209,7 @@ public class BanqueFacade {
 	}
 
 	/**
-	 * L'utilisateur connecté doit être un getstionnaire
-	 * 
+	 * L'utilisateur connecté doit être un gestionnaire
 	 * Charge la banqueManager avec une map de tous les clients
 	 */
 	public void loadClients() {
@@ -247,7 +219,7 @@ public class BanqueFacade {
 	}
 
 	/**
-	 * Méthode pour récupérer un objet compte basé sur son String identidiant
+	 * Méthode pour récupérer un objet Compte par rapport à son String identifiant
 	 * 
 	 * @param idCompte
 	 *            : String correspondant à l'ID du compte qu'on veut récupérer
@@ -259,7 +231,6 @@ public class BanqueFacade {
 
 	/**
 	 * L'utilisateur connecté doit être un gestionnaire
-	 * 
 	 * Méthode pour changer le découvert autorisé d'un compte
 	 * 
 	 * @param compte
@@ -268,9 +239,7 @@ public class BanqueFacade {
 	 * @param nouveauDecouvert
 	 *            : double correspondant au nouveau montant de découvert qu'on
 	 *            veut assigner
-	 * @throws IllegalFormatException
-	 * @throws IllegalOperationException 
-	 */
+     */
 	public void changeDecouvert(CompteAvecDecouvert compte, double nouveauDecouvert) throws IllegalFormatException, IllegalOperationException {
 		if (loginManager.getConnectedUser() instanceof Gestionnaire) {
 			banqueManager.changeDecouvert(compte, nouveauDecouvert);
@@ -285,8 +254,6 @@ public class BanqueFacade {
     /**
      * Génère le lien permettant de réinitialiser le mot de passe d'un utilisateur l'ayant oublié
      *
-     * @param email
-     * @return
      */
     public boolean initiatePasswordReset(String email) {
         return loginManager.initiatePasswordReset(email);
@@ -295,11 +262,76 @@ public class BanqueFacade {
     /**
      * Valide le jeton et modifie le mot de passe de l'utilisateur associé
      *
-     * @param token
-     * @param newPassword
-     * @return
      */
     public boolean usePasswordResetToken(String token, String newPassword) {
         return loginManager.usePasswordResetToken(token, newPassword);
+    }
+
+    // ------------------------------------------------------------------------
+    // GESTION DES CARTES BANCAIRES (Façade)
+    // ------------------------------------------------------------------------
+
+    /**
+     * Récupère une carte. Accessible à tout utilisateur connecté.
+     */
+    public CarteBancaire getCarte(String numeroCarte) {
+        return banqueManager.getCarte(numeroCarte);
+    }
+
+    /**
+     * Création de carte : RÉSERVÉ AU GESTIONNAIRE.
+     */
+    public void createCarte(String numeroCompte, double plafond, String typeDebit) throws TechnicalException, IllegalFormatException {
+        if (loginManager.getConnectedUser() instanceof Gestionnaire) {
+            banqueManager.creerCarte(numeroCompte, plafond, typeDebit);
+        }
+    }
+
+    /**
+     * Modification du plafond : RÉSERVÉ AU GESTIONNAIRE.
+     */
+    public void changerPlafondCarte(String numeroCarte, double nouveauPlafond) throws TechnicalException {
+        if (loginManager.getConnectedUser() instanceof Gestionnaire) {
+            banqueManager.changerPlafondCarte(numeroCarte, nouveauPlafond);
+        }
+    }
+
+    /**
+     * Modification du compte lié : RÉSERVÉ AU GESTIONNAIRE.
+     */
+    public void changerCompteLieCarte(String numeroCarte, String nouveauNumeroCompte) throws TechnicalException, IllegalOperationException {
+        if (loginManager.getConnectedUser() instanceof Gestionnaire) {
+            banqueManager.changerCompteLieCarte(numeroCarte, nouveauNumeroCompte);
+        }
+    }
+
+    /**
+     * Blocage de carte : ACCESSIBLE AU CLIENT ET AU GESTIONNAIRE.
+     * (Le client peut bloquer sa propre carte en cas de perte/vol).
+     */
+    public void bloquerCarte(String numeroCarte, boolean definitif) throws TechnicalException {
+        // Pas de vérification "instanceof Gestionnaire" ici, car le client a le droit de bloquer.
+        // Idéalement, on devrait vérifier que la carte appartient bien au client connecté,
+        // mais pour l'instant, on laisse passer l'ordre vers le Manager.
+        banqueManager.bloquerCarte(numeroCarte, definitif);
+    }
+
+    /**
+     * Déblocage de carte : RÉSERVÉ AU GESTIONNAIRE.
+     * (Règle de gestion : le client ne peut pas débloquer lui-même).
+     */
+    public void debloquerCarte(String numeroCarte) throws TechnicalException, IllegalOperationException {
+        if (loginManager.getConnectedUser() instanceof Gestionnaire) {
+            banqueManager.debloquerCarte(numeroCarte);
+        }
+    }
+
+    /**
+     * Effectue un paiement par carte (vérifie le plafond et le solde).
+     */
+    public void payerParCarte(String numeroCarte, double montant, String libelle)
+            throws TechnicalException, IllegalOperationException, InsufficientFundsException, IllegalFormatException {
+        // Pas de restriction de rôle : un client peut payer avec sa carte, un manager peut simuler.
+        banqueManager.effectuerPaiementCarte(numeroCarte, montant, libelle);
     }
 }

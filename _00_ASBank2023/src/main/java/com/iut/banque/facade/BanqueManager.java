@@ -13,9 +13,20 @@ import com.iut.banque.modele.Compte;
 import com.iut.banque.modele.CompteAvecDecouvert;
 import com.iut.banque.modele.Gestionnaire;
 import com.iut.banque.modele.Utilisateur;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
+import java.util.Collection;
+import com.iut.banque.modele.CarteBancaire;
+import com.iut.banque.modele.CarteDebitDiffere;
+import com.iut.banque.modele.CarteDebitImmediat;
+import com.iut.banque.modele.Operation;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 public class BanqueManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(BanqueManager.class);
 	private Banque bank;
 	private IDao dao;
 
@@ -74,6 +85,19 @@ public class BanqueManager {
 	public void crediter(Compte compte, double montant) throws IllegalFormatException {
 		bank.crediter(compte, montant);
 		dao.updateAccount(compte);
+        Operation op = new Operation(
+                "Crédit réalisé en agence",  // Libellé
+                montant,                     // Montant positif
+                new Date(),                  // Date du jour
+                "DEPOT",                     // Type d'opération
+                compte,                       // Compte associé
+                null
+        );
+        try {
+            dao.createOperation(op);
+        } catch (Exception e) {
+            logger.error("Erreur lors de la création de l'historique crédit", e);
+        }
 	}
 
 	/**
@@ -87,12 +111,26 @@ public class BanqueManager {
 	 * @param montant
 	 *            : un double correspondant au montant à créditer
 	 * @throws IllegalFormatException
-	 *             : si le param montant est négatif; InsufficientFundsException
+	 *             : si le param montant est négatif
+     * @throws InsufficientFundsException
 	 *             : si les fonds sont insuffisants
 	 */
 	public void debiter(Compte compte, double montant) throws InsufficientFundsException, IllegalFormatException {
 		bank.debiter(compte, montant);
 		dao.updateAccount(compte);
+        Operation op = new Operation(
+                "Débit réalisé en agence",   // Libellé
+                -montant,                    // Montant NÉGATIF !
+                new Date(),                  // Date du jour
+                "RETRAIT",                   // Type d'opération
+                compte,                       // Compte associé
+                null
+        );
+        try {
+            dao.createOperation(op);
+        } catch (Exception e) {
+            logger.error("Erreur lors de la création de l'historique débit", e);
+        }
 	}
 
 	/**
@@ -159,7 +197,7 @@ public class BanqueManager {
 	 *            nouveau compte
 	 * @throws TechnicalException
 	 * @throws IllegalFormatException
-	 * @throws IllegalOperationException 
+	 * @throws IllegalOperationException
 	 */
 	public void createAccount(String numeroCompte, Client client, double decouvertAutorise)
 			throws TechnicalException, IllegalFormatException, IllegalOperationException {
@@ -174,7 +212,7 @@ public class BanqueManager {
 	 *            Compte correspondant à l'objet à supprimer
 	 * @throws IllegalOperationException
 	 *             quand on essaie la suppression d'un compte avec un solde
-	 *             différent de 0
+	 *             différent de 0.
 	 * @throws TechnicalException
 	 *             si le compte est null ou si le compte n'est pas un compte
 	 *             persistant.
@@ -286,4 +324,251 @@ public class BanqueManager {
 		dao.updateAccount(compte);
 	}
 
+    // ------------------------------------------------------------------------
+    // GESTION DES CARTES BANCAIRES
+    // ------------------------------------------------------------------------
+
+    /**
+     * Création d'une nouvelle carte bancaire.
+     * Génère un numéro de carte aléatoire (simulation) et l'associe au compte.
+     */
+    public CarteBancaire creerCarte(String numeroCompte, double plafond, String typeDebit)
+            throws TechnicalException, IllegalFormatException {
+
+        Compte compte = dao.getAccountById(numeroCompte);
+        if (compte == null) {
+            throw new TechnicalException("Le compte associé n'existe pas.");
+        }
+
+        // Génération d'un faux numéro de carte à 16 chiffres pour l'exercice
+        String numeroCarte = generateRandomCardNumber();
+
+        CarteBancaire carte;
+        if ("IMMEDIAT".equals(typeDebit)) {
+            carte = new CarteDebitImmediat(numeroCarte, plafond, compte);
+        } else if ("DIFFERE".equals(typeDebit)) {
+            carte = new CarteDebitDiffere(numeroCarte, plafond, compte);
+        } else {
+            throw new IllegalFormatException("Type de débit invalide (doit être IMMEDIAT ou DIFFERE)");
+        }
+
+        return dao.createCarteBancaire(carte);
+    }
+
+    /**
+     * Récupère une carte bancaire par son numéro.
+     */
+    public CarteBancaire getCarte(String numeroCarte) {
+        return dao.getCarteBancaire(numeroCarte);
+    }
+
+    /**
+     * Change le plafond d'une carte.
+     * Autorisé pour tous les types de cartes.
+     */
+    public void changerPlafondCarte(String numeroCarte, double nouveauPlafond) throws TechnicalException {
+        CarteBancaire carte = dao.getCarteBancaire(numeroCarte);
+        if (carte == null) {
+            throw new TechnicalException("Carte introuvable.");
+        }
+        if (carte.isSupprimee()) {
+            throw new TechnicalException("Impossible de modifier une carte supprimée.");
+        }
+
+        carte.setPlafond(nouveauPlafond);
+        dao.updateCarteBancaire(carte);
+    }
+
+    /**
+     * Change le compte associé à une carte.
+     * RÈGLE MÉTIER : Interdit pour les cartes à débit différé.
+     */
+    public void changerCompteLieCarte(String numeroCarte, String nouveauNumeroCompte)
+            throws TechnicalException, IllegalOperationException {
+
+        CarteBancaire carte = dao.getCarteBancaire(numeroCarte);
+        if (carte == null) {
+            throw new TechnicalException("Carte introuvable.");
+        }
+
+        // Vérification de la règle métier spécifique
+        if (carte instanceof CarteDebitDiffere) {
+            throw new IllegalOperationException("Impossible de changer le compte d'une carte à débit différé (Cohérence comptable).");
+        }
+
+        Compte nouveauCompte = dao.getAccountById(nouveauNumeroCompte);
+        if (nouveauCompte == null) {
+            throw new TechnicalException("Le nouveau compte n'existe pas.");
+        }
+
+        carte.setCompte(nouveauCompte);
+        dao.updateCarteBancaire(carte);
+    }
+
+    /**
+     * Bloque une carte (Temporaire ou Définitif).
+     * managerRequest = true si c'est le banquier qui demande, false si c'est le client.
+     */
+    public void bloquerCarte(String numeroCarte, boolean definitif) throws TechnicalException {
+        CarteBancaire carte = dao.getCarteBancaire(numeroCarte);
+        if (carte == null) {
+            throw new TechnicalException("Carte introuvable.");
+        }
+
+        if (definitif) {
+            carte.setSupprimee(true); // Blocage irréversible
+        } else {
+            carte.setBloquee(true); // Blocage temporaire
+        }
+        dao.updateCarteBancaire(carte);
+    }
+
+    /**
+     * Débloque une carte.
+     * RÈGLE MÉTIER : Impossible si la carte est supprimée (blocage définitif).
+     */
+    public void debloquerCarte(String numeroCarte) throws TechnicalException, IllegalOperationException {
+        CarteBancaire carte = dao.getCarteBancaire(numeroCarte);
+        if (carte == null) {
+            throw new TechnicalException("Carte introuvable.");
+        }
+
+        if (carte.isSupprimee()) {
+            throw new IllegalOperationException("Impossible de débloquer une carte supprimée définitivement.");
+        }
+
+        carte.setBloquee(false);
+        dao.updateCarteBancaire(carte);
+    }
+
+    /**
+     * Tente d'effectuer un paiement par carte.
+     * VÉRIFIE LE PLAFOND GLISSANT SUR 30 JOURS.
+     */
+    public void effectuerPaiementCarte(String numeroCarte, double montant, String libelle)
+            throws TechnicalException, IllegalOperationException, InsufficientFundsException, IllegalFormatException {
+
+        CarteBancaire carte = dao.getCarteBancaire(numeroCarte);
+        if (carte == null) throw new TechnicalException("Carte introuvable.");
+        if (carte.isBloquee() || carte.isSupprimee()) {
+            throw new IllegalOperationException("Carte bloquée ou supprimée. Paiement refusé.");
+        }
+
+        // 1. Calcul des dépenses sur les 30 derniers jours glissants
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_YEAR, -30);
+        Date dateDebut = cal.getTime();
+
+        // On récupère la somme des dépenses
+        double depenses30Jours = dao.getMontantTotalDepensesCarte(
+                carte.getNumeroCarte(),
+                dateDebut
+        );
+
+        // 2. Vérification du plafond
+        if ((depenses30Jours + montant) > carte.getPlafond()) {
+            throw new InsufficientFundsException("Plafond de carte dépassé (" + carte.getPlafond() + "€ sur 30 jours).");
+        }
+
+        // 3. Exécution du débit sur le compte (via la méthode existante debiter() qui gère le découvert)
+        Compte compte = carte.getCompte();
+        String typeOpEnregistre;
+
+        if (carte instanceof CarteDebitImmediat) {
+            // Cas 1 : Immédiat → On débite tout de suite
+            compte.debiter(montant);
+            dao.updateAccount(compte);
+            typeOpEnregistre = "CB_IMDT"; // Type classique
+        } else {
+            // Cas 2 : Différé → On ne touche PAS au solde maintenant
+            typeOpEnregistre = "CB_DIFF"; // Type spécifique pour le repérer plus tard
+        }
+
+        // 4. Enregistrement de l'opération pour l'historique (et le futur calcul du plafond)
+        Operation op = new Operation(libelle, -montant, new Date(), typeOpEnregistre, compte, carte);
+        dao.createOperation(op);
+    }
+
+    // Utilitaire pour générer un numéro (simulation)
+    private String generateRandomCardNumber() {
+        Random rand = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 16; i++) {
+            sb.append(rand.nextInt(10));
+        }
+        return sb.toString();
+    }
+
+    public void cloturerComptesDifferes() {
+        logger.info(">>> Début Clôture Mensuelle (Basée sur les opérations)");
+
+        // 1. Calcul des dates (Mois dernier)
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);
+
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date debut = cal.getTime();
+
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        Date fin = cal.getTime();
+
+        // --- CHARGEMENT FORCÉ DES DONNÉES ---
+        // On s'assure que l'objet 'bank' est à jour avec la BDD
+        // sinon getAllClients() renvoie null au démarrage du serveur
+        loadAllClients();
+
+        // 2. On parcourt TOUS les comptes (via les clients)
+        Map<String, Client> clients = getAllClients();
+        for (Client client : clients.values()) {
+            if (client.getAccounts() == null) continue;
+
+            for (Compte compteObs : client.getAccounts().values()) {
+
+                // --- RECHARGEMENT FRAIS ---
+                // On récupère la version "Temps Réel" de la BDD (avec les 3000€)
+                // et on ignore la version en cache (qui a 70€)
+                Compte compte = dao.getAccountById(compteObs.getNumeroCompte());
+                if (compte == null) continue;
+
+                // 3. On demande la somme des 'CB_DIFF' du mois dernier
+                // (Peu importe quelle carte a généré ces opérations, active ou supprimée)
+                double totalADebiter = 0;
+                try {
+                    totalADebiter = dao.getMontantTotalDepensesDifferees(compte.getNumeroCompte(), debut, fin);
+                } catch (Exception e) {
+                    logger.error("Erreur lors du calcul du débit différé pour le compte {}", compte.getNumeroCompte(), e);
+                    continue;
+                }
+
+                // 4. Si on a trouvé des dépenses différées, on prélève
+                if (totalADebiter > 0) {
+                    logger.info("Prélèvement de {}€ sur le compte {}", totalADebiter, compte.getNumeroCompte());
+
+                    // A. On force le débit
+                    compte.debitTechnique(totalADebiter);
+                    dao.updateAccount(compte);
+
+                    // B. On trace le prélèvement
+                    Operation op = new Operation(
+                            "Prélèvement mensuel des cartes différées",
+                            -totalADebiter,
+                            new Date(),
+                            "PRLV_DIFF", // Type spécial pour archive
+                            compte,
+                            null
+                    );
+                    dao.createOperation(op);
+                }
+            }
+        }
+        logger.info(">>> Fin Clôture");
+    }
 }

@@ -1,16 +1,12 @@
 package com.iut.banque.interfaces;
 
+import java.util.Date;
 import java.util.Map;
 
 import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.IllegalOperationException;
 import com.iut.banque.exceptions.TechnicalException;
-import com.iut.banque.modele.Client;
-import com.iut.banque.modele.Compte;
-import com.iut.banque.modele.CompteAvecDecouvert;
-import com.iut.banque.modele.CompteSansDecouvert;
-import com.iut.banque.modele.Gestionnaire;
-import com.iut.banque.modele.Utilisateur;
+import com.iut.banque.modele.*;
 
 public interface IDao {
 
@@ -138,7 +134,7 @@ public interface IDao {
 	 * passé en paramètre
 	 * 
 	 * @param userId
-	 *            : un String correspondant au userId à qui on veut vérifier le
+	 *            : un String correspondant à l'userId à qui on veut vérifier le
 	 *            mot de passe
 	 * @param userPwd
 	 *            : un String correspondant au mot de passe qu'on veut
@@ -205,4 +201,36 @@ public interface IDao {
      * @return L'utilisateur correspondant ou null
      */
     Utilisateur getUserByToken(String token);
+
+    /**
+     * Crée une carte bancaire dans la base de données.
+     */
+    public CarteBancaire createCarteBancaire(CarteBancaire carte);
+
+    /**
+     * Récupère une carte bancaire par son numéro.
+     */
+    public CarteBancaire getCarteBancaire(String numeroCarte);
+
+    /**
+     * Met à jour une carte bancaire (ex: changement de plafond ou blocage).
+     */
+    public void updateCarteBancaire(CarteBancaire carte);
+
+    /**
+     * Enregistre une opération (nécessaire pour l'historique des paiements).
+     */
+    public Operation createOperation(Operation operation);
+
+    /**
+     * Calcule la somme des dépenses par carte sur une période donnée (ex: 30 jours).
+     * Retourne la valeur absolue de la somme (ex: dépense de -500 renvoie 500).
+     */
+    public double getMontantTotalDepensesCarte(String numeroCompte, java.util.Date dateDebut);
+
+    /**
+     * Calcule la somme des dépenses par carte différée sur une période donnée (un mois entier).
+     * Retourne la valeur absolue de la somme
+     */
+    public double getMontantTotalDepensesDifferees(String numeroCompte, Date debut, Date fin);
 }

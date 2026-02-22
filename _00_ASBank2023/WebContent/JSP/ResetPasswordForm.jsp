@@ -27,6 +27,7 @@
 <s:form action="redirectionLogin" method="POST">
     <s:submit value="Annuler" />
 </s:form>
+
 </body>
 <jsp:include page="/JSP/Footer.jsp" />
 </html>
