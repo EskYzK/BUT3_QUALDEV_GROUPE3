@@ -11,7 +11,7 @@
 <body>
 <div class="btnLogout">
     <s:form action="logout" method="POST">
-        <s:submit value="Logout" />
+        <s:submit value="Déconnexion" />
     </s:form>
 </div>
 
