@@ -16,7 +16,7 @@
 		method="POST">
 		<s:textfield label="Code user" name="userCde" />
 		<s:password label="Password" name="userPwd" />
-        <s:submit value="Submit"/>
+        <s:submit value="Se Connecter"/>
     </s:form>
 
     <s:form action="forgotPasswordInput" method="POST">
