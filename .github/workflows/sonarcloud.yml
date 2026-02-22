@@ -81,6 +81,7 @@ jobs:
             -Dsonar.projectKey=EskYzK_BUT3_QUALDEV_GROUPE3 \
             -Dsonar.organization=eskyzk \
             -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
           # Variables pour les Tests (BDD)
           DB_URL: jdbc:mysql://127.0.0.1:3306/chollet14u_bankiuttest?useSSL=false&serverTimezone=UTC
