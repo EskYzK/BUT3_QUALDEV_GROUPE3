@@ -337,7 +337,7 @@
         </action>
 
         <action name="resetPasswordForm" class="com.iut.banque.controller.ResetFlowAction" method="showForm">
-            <result name="show_form">/JSP/ResetPasswordFormClient.jsp</result>
+            <result name="show_form">/JSP/ResetPasswordForm.jsp</result>
             <result name="error">/JSP/Login.jsp</result> </action>
 
 
