@@ -152,7 +152,7 @@
         <s:url action="creerCarte_input" var="urlCreer">
             <s:param name="numeroCompte" value="compte.numeroCompte" />
         </s:url>
-        <a href="${urlCreer}" class="btn" style="padding: 5px 10px; background-color: #ddd; border: 1px solid #999; text-decoration: none; color: black;">
+        <a href="${urlCreer}" class="btn">
             [+] Ajouter une Carte Bancaire
         </a>
     </div>
