@@ -54,7 +54,7 @@ public abstract class CarteBancaire implements Serializable {
     /**
      * Constructeur vide requis par Hibernate.
      */
-    public CarteBancaire() {
+    protected CarteBancaire() {
         super();
     }
 

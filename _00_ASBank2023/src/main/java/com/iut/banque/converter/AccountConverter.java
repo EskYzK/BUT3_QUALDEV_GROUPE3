@@ -9,6 +9,8 @@ import com.opensymphony.xwork2.conversion.TypeConversionException;
 import com.iut.banque.interfaces.IDao;
 import com.iut.banque.modele.Compte;
 
+import java.util.logging.Logger;
+
 /**
  * Cette classe contient des méthodes permettant de convertir un compte en
  * string et vice-versa. Elle est déclarée dans
@@ -21,6 +23,7 @@ import com.iut.banque.modele.Compte;
  */
 public class AccountConverter extends StrutsTypeConverter {
 
+    Logger logger = Logger.getLogger(getClass().getName());
 	/**
 	 * DAO utilisée pour récuperer les objets correspondants à l'id passé en
 	 * paramêtre de convertFromString.
@@ -40,19 +43,17 @@ public class AccountConverter extends StrutsTypeConverter {
 	 * @param dao
 	 */
 	public AccountConverter(IDao dao) {
-		System.out.println("=========================");
-		System.out.println("Création du convertisseur de compte");
+		logger.info("=========================");
+		logger.info("Création du convertisseur de compte");
 		AccountConverter.dao = dao;
-		//System.out.println("DAO injectée : " + dao);
 	}
 
 	/**
 	 * 	Constructeur sans paramêtre pour le AccountConverter
 	 */
 	public AccountConverter() {
-		System.out.println("=========================");
-		System.out.println("Création du convertisseur de compte");
-		//System.out.println("DAO : " + dao);
+        logger.info("=========================");
+        logger.info("Création du convertisseur de compte");
 	}
 
 	/**

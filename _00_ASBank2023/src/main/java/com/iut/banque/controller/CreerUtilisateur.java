@@ -11,6 +11,9 @@ import com.iut.banque.exceptions.TechnicalException;
 import com.iut.banque.facade.BanqueFacade;
 import com.opensymphony.xwork2.ActionSupport;
 
+import java.util.logging.Logger;
+
+
 public class CreerUtilisateur extends ActionSupport {
 
 	private static final long serialVersionUID = 1L;
@@ -26,8 +29,9 @@ public class CreerUtilisateur extends ActionSupport {
     private String email;
 	private String message;
 	private String result;
+    Logger logger = Logger.getLogger(getClass().getName());
 
-	/**
+    /**
 	 * @return the userId
 	 */
 	public String getUserId() {
@@ -166,13 +170,13 @@ public class CreerUtilisateur extends ActionSupport {
 	 * Constructeur sans paramêtre de CreerUtilisateur
 	 */
 	public CreerUtilisateur() {
-		System.out.println("In Constructor from CreerUtilisateur class ");
+        logger.info("In Constructor from CreerUtilisateur class ");
 		try {
 			ApplicationContext context = WebApplicationContextUtils
 					.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
 			this.banque = (BanqueFacade) context.getBean("banqueFacade");
 		} catch (Exception e) {
-			System.out.println("Mode test : BanqueFacade sera injectée via le setter.");
+            logger.info("Mode test : BanqueFacade sera injectée via le setter.");
 		}
 	}
 

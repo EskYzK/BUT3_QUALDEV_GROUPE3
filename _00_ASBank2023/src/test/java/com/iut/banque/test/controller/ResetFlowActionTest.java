@@ -13,7 +13,7 @@ import com.iut.banque.controller.ResetFlowAction;
 import com.iut.banque.facade.BanqueFacade;
 
 @ExtendWith(MockitoExtension.class)
-public class ResetFlowActionTest {
+class ResetFlowActionTest {
 
 	private ResetFlowAction action;
 

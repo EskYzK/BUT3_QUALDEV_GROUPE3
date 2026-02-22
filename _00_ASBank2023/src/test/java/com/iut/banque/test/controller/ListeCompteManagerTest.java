@@ -21,7 +21,7 @@ import com.iut.banque.modele.Client;
 import com.iut.banque.modele.Compte;
 
 @ExtendWith(MockitoExtension.class)
-public class ListeCompteManagerTest {
+class ListeCompteManagerTest {
 
 	private ListeCompteManager controller;
 

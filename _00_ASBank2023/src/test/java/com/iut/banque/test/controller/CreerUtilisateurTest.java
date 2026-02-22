@@ -16,7 +16,7 @@ import com.iut.banque.exceptions.TechnicalException;
 import com.iut.banque.facade.BanqueFacade;
 
 @ExtendWith(MockitoExtension.class)
-public class CreerUtilisateurTest {
+class CreerUtilisateurTest {
 
 	private CreerUtilisateur controller;
 

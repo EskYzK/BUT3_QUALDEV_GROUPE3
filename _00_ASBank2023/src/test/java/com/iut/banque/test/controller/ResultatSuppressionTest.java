@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.iut.banque.controller.ResultatSuppression;
 
-public class ResultatSuppressionTest {
+class ResultatSuppressionTest {
 
 	private ResultatSuppression controller;
 

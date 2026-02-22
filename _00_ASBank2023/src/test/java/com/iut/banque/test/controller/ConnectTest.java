@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.iut.banque.constants.LoginConstants;
 import com.iut.banque.controller.Connect;
@@ -16,7 +18,7 @@ import com.iut.banque.modele.Client;
 import com.iut.banque.modele.Utilisateur;
 
 @ExtendWith(MockitoExtension.class)
-public class ConnectTest {
+class ConnectTest {
 
 	private Connect connectController;
 
@@ -83,49 +85,27 @@ public class ConnectTest {
 		verify(banqueMock).tryLogin("wrong", "user");
 	}
 
-	/**
-	 * Test du login avec paramètres null (short-circuit avant l'appel à la
-	 * façade)
-	 */
-	@Test
-	void testLogin_NullParameters() {
-		connectController.setUserCde(null);
-		connectController.setUserPwd(null);
+    /**
+     * Test du login avec un ou plusieurs paramètres null.
+     * Remplace les tests testLogin_NullParameters, testLogin_NullUserCde et testLogin_NullUserPwd.
+     */
+    @ParameterizedTest(name = "Test login échoué avec userCde={0} et userPwd={1}")
+    @CsvSource(value = {
+            "NULL, NULL",
+            "NULL, password",
+            "user, NULL"
+    }, nullValues = "NULL")
+    void testLogin_NullValues(String cde, String pwd) {
+        connectController.setUserCde(cde);
+        connectController.setUserPwd(pwd);
 
-		String result = connectController.login();
+        String result = connectController.login();
 
-		assertEquals("ERROR", result);
-		// Vérifier que la banque n'a pas été interrogée
-		verifyNoInteractions(banqueMock);
-	}
+        assertEquals("ERROR", result);
 
-	/**
-	 * Test du login avec userCde null
-	 */
-	@Test
-	void testLogin_NullUserCde() {
-		connectController.setUserCde(null);
-		connectController.setUserPwd("password");
-
-		String result = connectController.login();
-
-		assertEquals("ERROR", result);
-		verifyNoInteractions(banqueMock);
-	}
-
-	/**
-	 * Test du login avec userPwd null
-	 */
-	@Test
-	void testLogin_NullUserPwd() {
-		connectController.setUserCde("user");
-		connectController.setUserPwd(null);
-
-		String result = connectController.login();
-
-		assertEquals("ERROR", result);
-		verifyNoInteractions(banqueMock);
-	}
+        // Vérifier que la banque n'a pas été interrogée
+        verifyNoInteractions(banqueMock);
+    }
 
 	/**
 	 * Test du logout

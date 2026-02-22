@@ -18,7 +18,7 @@ import com.iut.banque.modele.CompteSansDecouvert;
 import com.iut.banque.modele.Gestionnaire;
 
 @ExtendWith(MockitoExtension.class)
-public class DetailCompteEditTest {
+class DetailCompteEditTest {
 
 	private DetailCompteEdit controller;
 

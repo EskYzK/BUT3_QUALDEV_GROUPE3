@@ -24,7 +24,7 @@
     </s:form>
 </div>
 
-<div align="center">
+<div>
     <s:if test="hasActionErrors()">
         <div class="failure"><s:actionerror /></div>
     </s:if>
@@ -34,7 +34,6 @@
 
     <s:form action="modifierCarte" method="post" theme="simple">
         <s:hidden name="numeroCarte" value="%{carte.numeroCarte}" theme="simple" />
-
         <table class="form-table">
             <tr>
                 <td><strong>Numéro de Carte :</strong></td>
@@ -52,7 +51,7 @@
                 </td>
             </tr>
             <tr>
-                <td><label>Compte lié :</label></td>
+                <td><label><input type="text" />Compte lié :</label></td>
                 <td>
                     <s:if test='%{carte.typeDeCarte == "Débit Immédiat"}'>
                         <s:select
@@ -71,7 +70,7 @@
                 </td>
             </tr>
             <tr>
-                <td><label>Nouveau Plafond :</label></td>
+                <td><label><input type="text" />Nouveau Plafond :</label></td>
                 <td>
                     <s:textfield name="plafond" value="%{carte.plafond}" theme="simple" />
                 </td>

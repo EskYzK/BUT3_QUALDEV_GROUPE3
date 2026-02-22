@@ -37,7 +37,6 @@ public class BanqueManager {
 	 */
 	public BanqueManager() {
 		super();
-		// TODO injecter banque par Spring ?
 		bank = new Banque();
 	}
 
@@ -489,12 +488,13 @@ public class BanqueManager {
         dao.createOperation(op);
     }
 
+    final Random random = new Random();
+
     // Utilitaire pour générer un numéro (simulation)
     private String generateRandomCardNumber() {
-        Random rand = new Random();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 16; i++) {
-            sb.append(rand.nextInt(10));
+            sb.append(random.nextInt(10));
         }
         return sb.toString();
     }
