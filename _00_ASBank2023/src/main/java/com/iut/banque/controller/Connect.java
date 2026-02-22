@@ -19,7 +19,7 @@ public class Connect extends ActionSupport {
 	private static final long serialVersionUID = 1L;
 	private String userCde;
 	private String userPwd;
-    private String Retour;
+    private String retour;
 	private transient BanqueFacade banque;
 
 	/**
@@ -149,6 +149,6 @@ public class Connect extends ActionSupport {
 		this.banque = banque;
 	}
 
-    public String getRetour() { return Retour; }
-    public void setRetour(String retour) { this.Retour = retour; }
+    public String getRetour() { return retour; }
+    public void setRetour(String retour) { this.retour = retour; }
 }

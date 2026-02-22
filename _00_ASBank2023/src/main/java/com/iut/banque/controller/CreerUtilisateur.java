@@ -234,13 +234,12 @@ public class CreerUtilisateur extends ActionSupport {
 	 * @return String : le status de l'action
 	 */
 	public String creationUtilisateur() {
+        String mess="Error";
 		try {
-            if (email != null && !email.trim().isEmpty()) {
-                if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            if ((email != null && !email.trim().isEmpty())&&(!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"))) {
                     this.message = "Le format de l'adresse email est incorrect.";
-                    this.result = "ERROR";
-                    return "ERROR";
-                }
+                    this.result = mess;
+                    return this.result;
             }
 			if (client) {
 				banque.createClient(userId, userPwd, nom, prenom, adresse, male, email, numClient);
@@ -252,24 +251,24 @@ public class CreerUtilisateur extends ActionSupport {
 			return "SUCCESS";
 		} catch (IllegalOperationException e) {
 			this.message = "L'identifiant à déjà été assigné à un autre utilisateur de la banque.";
-			this.result = "ERROR";
-			return "ERROR";
+            this.result = mess;
+            return this.result;
 		} catch (TechnicalException e) {
 			this.message = "Le numéro de client est déjà assigné à un autre client.";
-			this.result = "ERROR";
-			return "ERROR";
+            this.result = mess;
+            return this.result;
 		} catch (IllegalArgumentException e) {
 			this.message = "Le format de l'identifiant est incorrect.";
-			this.result = "ERROR";
-			return "ERROR";
+            this.result = mess;
+            return this.result;
 		} catch (IllegalFormatException e) {
             if (client && !Client.checkFormatNumeroClient(numClient)) {
                 this.message = "Le numéro de client est incorrect (doit contenir 10 chiffres).";
             } else {
                 this.message = "L'identifiant utilisateur est incorrect (ex: j.dupont1).";
             }
-			this.result = "ERROR";
-			return "ERROR";
+            this.result = mess;
+            return this.result;
 		}
 	}
 }
