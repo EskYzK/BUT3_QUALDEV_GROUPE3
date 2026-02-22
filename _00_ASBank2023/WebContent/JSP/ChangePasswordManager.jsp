@@ -11,6 +11,11 @@
 </head>
 
 <body>
+    <div class="btnLogout">
+	    <s:form name="myForm" action="logout" method="POST">
+			<s:submit name="Retour" value="Déconnexion" />
+		</s:form>
+	</div>
 	<h1>Modifier mon mot de passe</h1>
 
 	<div style="color: red">
