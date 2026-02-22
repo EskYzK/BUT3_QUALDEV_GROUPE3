@@ -12,6 +12,7 @@ public class ResetFlowAction extends ActionSupport {
     private String token;
     private String newPassword;
     private String message;
+    private BanqueFacade banque;
 
     // --- Getters & Setters ---
 
@@ -27,6 +28,17 @@ public class ResetFlowAction extends ActionSupport {
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
+    public void setBanque(BanqueFacade banque) { this.banque = banque; }
+
+    // --- Méthode helper pour récupérer la banque ---
+    private BanqueFacade getBanque() {
+        if (this.banque == null) {
+            ApplicationContext context = WebApplicationContextUtils
+                    .getRequiredWebApplicationContext(ServletActionContext.getServletContext());
+            this.banque = (BanqueFacade) context.getBean("banqueFacade");
+        }
+        return this.banque;
+    }
 
     // --- Actions ---
 
@@ -34,12 +46,7 @@ public class ResetFlowAction extends ActionSupport {
      * Appelé depuis le formulaire "Mot de passe oublié"
      */
     public String sendLink() {
-        // Récupération de la façade à la demande (comme dans ChangePassword)
-        ApplicationContext context = WebApplicationContextUtils
-                .getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-        BanqueFacade banque = (BanqueFacade) context.getBean("banqueFacade");
-
-        if (banque.initiatePasswordReset(email)) {
+        if (getBanque().initiatePasswordReset(email)) {
             message = "Lien envoyé à l'adresse mail renseignée si elle existe.";
             return "link_sent";
         } else {
@@ -64,11 +71,7 @@ public class ResetFlowAction extends ActionSupport {
      * Appelé quand l'utilisateur soumet son nouveau mot de passe
      */
     public String processReset() {
-        ApplicationContext context = WebApplicationContextUtils
-                .getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-        BanqueFacade banque = (BanqueFacade) context.getBean("banqueFacade");
-
-        if (banque.usePasswordResetToken(token, newPassword)) {
+        if (getBanque().usePasswordResetToken(token, newPassword)) {
             return "reset_success";
         } else {
             addActionError("Lien invalide ou expiré.");

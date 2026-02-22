@@ -32,9 +32,13 @@ public class ListeCompteManager extends ActionSupport {
 	 */
 	public ListeCompteManager() {
 		System.out.println("In Constructor from ListeCompteManager class ");
-		ApplicationContext context = WebApplicationContextUtils
-				.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-		this.banque = (BanqueFacade) context.getBean("banqueFacade");
+		try {
+			ApplicationContext context = WebApplicationContextUtils
+					.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
+			this.banque = (BanqueFacade) context.getBean("banqueFacade");
+		} catch (Exception e) {
+			System.out.println("Mode test : BanqueFacade sera injectée via le setter.");
+		}
 
 	}
 
@@ -46,6 +50,15 @@ public class ListeCompteManager extends ActionSupport {
 	public Map<String, Client> getAllClients() {
 		banque.loadClients();
 		return banque.getAllClients();
+	}
+
+	/**
+	 * Setter pour injection de la BanqueFacade (utilisé en test)
+	 * 
+	 * @param banque la BanqueFacade à injecter
+	 */
+	public void setBanque(BanqueFacade banque) {
+		this.banque = banque;
 	}
 
 	/**
