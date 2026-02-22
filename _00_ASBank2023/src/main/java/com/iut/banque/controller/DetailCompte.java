@@ -7,46 +7,39 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.struts2.ServletActionContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import com.iut.banque.modele.*;
 
 import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.InsufficientFundsException;
 import com.iut.banque.facade.BanqueFacade;
-import com.iut.banque.modele.CarteBancaire;
-import com.iut.banque.modele.Client;
-import com.iut.banque.modele.Compte;
-import com.iut.banque.modele.Gestionnaire;
 import com.opensymphony.xwork2.ActionSupport;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 public class DetailCompte extends ActionSupport {
 
+    private static final String NEGATIVEAMOUNT_ERROR = "NEGATIVEAMOUNT";
+    private static final Logger logger = LoggerFactory.getLogger(DetailCompte.class);
 	private static final long serialVersionUID = 1L;
-	protected BanqueFacade banque;
+	protected transient BanqueFacade banque;
 	private String montant;
 	private String error;
     private String message;
 	protected Compte compte;
 
 	/**
-	 * Constructeur du controlleur DetailCompte
-	 * 
+	 * Constructeur du controller DetailCompte
 	 * Récupère l'ApplicationContext
-	 * 
-	 * @return un nouvel objet DetailCompte avec une BanqueFacade provenant de
-	 *         la factory
-	 */
+	 *
+     */
 	public DetailCompte() {
-		System.out.println("In Constructor from DetailCompte class ");
-		try {
-			ApplicationContext context = WebApplicationContextUtils
-					.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-			this.banque = (BanqueFacade) context.getBean("banqueFacade");
-		} catch (Exception e) {
-			System.out.println("Mode test : BanqueFacade sera injectée via le setter.");
-		}
+        logger.debug("Tentative de création de l'objet DetailCompte {}", this);
 	}
+
+    // Un Setter pour permettre aux tests d'injecter un Mock
+    public void setBanqueFacade(BanqueFacade banqueFacade) {
+        this.banque = banqueFacade;
+    }
 
 	/**
 	 * Retourne sous forme de string le message d'erreur basé sur le champ
@@ -62,7 +55,7 @@ public class DetailCompte extends ActionSupport {
 
 		switch (error) {
 		case "TECHNICAL":
-			return "Erreur interne. Verifiez votre saisie puis réessayer. Contactez votre conseiller si le problème persiste.";
+			return "Erreur interne. Vérifiez votre saisie puis réessayer. Contactez votre conseiller si le problème persiste.";
 		case "BUSINESS":
 			return "Fonds insuffisants.";
         case "OVER_LIMIT":
@@ -71,7 +64,7 @@ public class DetailCompte extends ActionSupport {
             return "Numéro de compte manquant.";
         case "CARD_NOT_FOUND":
             return "Carte introuvable.";
-		case "NEGATIVEAMOUNT":
+		case NEGATIVEAMOUNT_ERROR:
 			return "Veuillez rentrer un montant positif.";
 		case "NEGATIVEOVERDRAFT":
 			return "Veuillez rentrer un découvert positif.";
@@ -85,7 +78,7 @@ public class DetailCompte extends ActionSupport {
 	/**
 	 * Permet de définir le champ error de la classe avec le string passé en
 	 * paramètre. Si jamais on passe un objet null, on adapte le string
-	 * automatiquement en "EMPTY"
+	 * automatiquement en "EMPTY".
 	 * 
 	 * @param error
 	 *            : Un String correspondant à celui qu'on veut définir dans le
@@ -130,20 +123,19 @@ public class DetailCompte extends ActionSupport {
 	/**
 	 * Getter du compte actuellement sélectionné. Récupère la liste des comptes
 	 * de l'utilisateur connecté dans un premier temps. Récupère ensuite dans la
-	 * HashMap la clé qui comporte le string provenant de idCompte. Renvoie donc
+	 * HashMap la clé qui comporte le string provenant d'idCompte. Renvoie donc
 	 * null si le compte n'appartient pas à l'utilisateur
 	 * 
 	 * @return Compte : l'objet compte après s'être assuré qu'il appartient à
 	 *         l'utilisateur
 	 */
 	public Compte getCompte() {
-		if (banque.getConnectedUser() instanceof Gestionnaire) {
-			return compte;
-		} else if (banque.getConnectedUser() instanceof Client) {
-			if (((Client) banque.getConnectedUser()).getAccounts().containsKey(compte.getNumeroCompte())) {
-				return compte;
-			}
-		}
+        Utilisateur user = banque.getConnectedUser();
+
+        if (user instanceof Gestionnaire ||
+                (user instanceof Client && ((Client) user).getAccounts().containsKey(compte.getNumeroCompte()))) {
+            return compte;
+        }
 		return null;
 	}
 
@@ -163,42 +155,44 @@ public class DetailCompte extends ActionSupport {
 	/**
 	 * Méthode débit pour débiter le compte considéré en cours
 	 * 
-	 * @return String : Message correspondant à l'état du débit (si il a réussi
+	 * @return String : Message correspondant à l'état du débit (s'il a réussi
 	 *         ou pas)
 	 */
 	public String debit() {
 		Compte compte = getCompte();
 		try {
 			banque.debiter(compte, Double.parseDouble(montant.trim()));
+            logger.info("Débit effectué avec succès");
 			return "SUCCESS";
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+            logger.error("Erreur dans le format du nombre", e);
 			return "ERROR";
 		} catch (InsufficientFundsException ife) {
-			ife.printStackTrace();
+            logger.error("Erreur pour cause de fonds insuffisants", ife);
 			return "NOTENOUGHFUNDS";
 		} catch (IllegalFormatException e) {
-			e.printStackTrace();
-			return "NEGATIVEAMOUNT";
+            logger.error("Erreur de format", e);
+			return NEGATIVEAMOUNT_ERROR;
 		}
 	}
 
 	/**
 	 * Méthode crédit pour créditer le compte considéré en cours
 	 * 
-	 * @return String : Message correspondant à l'état du crédit (si il a réussi
+	 * @return String : Message correspondant à l'état du crédit (s'il a réussi
 	 *         ou pas)
 	 */
 	public String credit() {
 		Compte compte = getCompte();
 		try {
 			banque.crediter(compte, Double.parseDouble(montant.trim()));
+            logger.info("Crédit effectué avec succès");
 			return "SUCCESS";
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
+            logger.error("Erreur dans le format du nombre", nfe);
 			return "ERROR";
 		} catch (IllegalFormatException e) {
-			return "NEGATIVEAMOUNT";
+			return NEGATIVEAMOUNT_ERROR;
 		}
 	}
 

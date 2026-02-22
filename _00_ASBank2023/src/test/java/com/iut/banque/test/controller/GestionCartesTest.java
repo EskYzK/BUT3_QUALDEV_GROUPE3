@@ -92,7 +92,9 @@ class GestionCartesTest {
 
     @Test
     void testCreerCarte_ExceptionTechnique() throws Exception {
+        gestionCartes.setNumeroCompte("CPT001");
         gestionCartes.setPlafond(100.0);
+        gestionCartes.setTypeDebit("IMMEDIAT");
         doThrow(new RuntimeException("Erreur DB")).when(banqueFacadeMock).createCarte(anyString(), anyDouble(), anyString());
 
         String result = gestionCartes.creerCarte();

@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 @DiscriminatorValue("DIFFERE")
 public class CarteDebitDiffere extends CarteBancaire {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Constructeur vide requis par Hibernate.
      */

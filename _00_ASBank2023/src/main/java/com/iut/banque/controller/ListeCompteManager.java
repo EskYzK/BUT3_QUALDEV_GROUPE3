@@ -2,10 +2,6 @@ package com.iut.banque.controller;
 
 import java.util.Map;
 
-import org.apache.struts2.ServletActionContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import com.opensymphony.xwork2.ActionSupport;
 
 import com.iut.banque.exceptions.IllegalOperationException;
@@ -13,11 +9,14 @@ import com.iut.banque.exceptions.TechnicalException;
 import com.iut.banque.facade.BanqueFacade;
 import com.iut.banque.modele.Client;
 import com.iut.banque.modele.Compte;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 public class ListeCompteManager extends ActionSupport {
 
+    private static final Logger logger = LoggerFactory.getLogger(ListeCompteManager.class);
 	private static final long serialVersionUID = 1L;
-	private BanqueFacade banque;
+	private transient BanqueFacade banque;
 	private boolean aDecouvert;
 	private Compte compte;
 	private Client client;
@@ -26,21 +25,16 @@ public class ListeCompteManager extends ActionSupport {
 
 	/**
 	 * Constructeur de la classe Connect
-	 * 
-	 * @return Un objet de type Connect avec façade BanqueFacade provenant de sa
-	 *         factory
-	 */
+	 *
+     */
 	public ListeCompteManager() {
-		System.out.println("In Constructor from ListeCompteManager class ");
-		try {
-			ApplicationContext context = WebApplicationContextUtils
-					.getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-			this.banque = (BanqueFacade) context.getBean("banqueFacade");
-		} catch (Exception e) {
-			System.out.println("Mode test : BanqueFacade sera injectée via le setter.");
-		}
-
+        logger.debug("Tentative de création de l'objet ListeCompteManager {}", this);
 	}
+
+    // Le setter indispensable pour l'injection
+    public void setBanqueFacade(BanqueFacade banqueFacade) {
+        this.banque = banqueFacade;
+    }
 
 	/**
 	 * Méthode qui va renvoer la liste de tous les clients sous forme de hashmap
@@ -149,12 +143,13 @@ public class ListeCompteManager extends ActionSupport {
 		try {
 			setUserInfo(client.getIdentity());
 			banque.deleteUser(client);
+            logger.info("Utilisateur supprimé avec succès");
 			return "SUCCESS";
 		} catch (TechnicalException e) {
-			e.printStackTrace();
+            logger.error("Erreur technique lors de la suppression d'utilisateur", e);
 			return "ERROR";
 		} catch (IllegalOperationException ioe) {
-			ioe.printStackTrace();
+            logger.error("Opération illégale", ioe);
 			return "NONEMPTYACCOUNT";
 		}
 	}
@@ -168,12 +163,13 @@ public class ListeCompteManager extends ActionSupport {
 		try {
 			setCompteInfo(compte.getNumeroCompte());
 			banque.deleteAccount(compte);
+            logger.info("Compte supprimé avec succès");
 			return "SUCCESS";
 		} catch (IllegalOperationException e) {
-			e.printStackTrace();
+            logger.error("Opération illégale", e);
 			return "NONEMPTYACCOUNT";
 		} catch (TechnicalException e) {
-			e.printStackTrace();
+            logger.error("Erreur technique lors de la suppression d'utilisateur", e);
 			return "ERROR";
 		}
 	}
