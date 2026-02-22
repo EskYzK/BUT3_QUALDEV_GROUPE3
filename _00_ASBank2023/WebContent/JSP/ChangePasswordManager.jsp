@@ -26,7 +26,7 @@
 		<s:submit value="Modifier"/>
 	</s:form>
 
-	<s:form action="redirectionLogin" method="POST">
+	<s:form action="retourTableauDeBordManager" method="POST">
 		<s:submit value="Annuler" />
 	</s:form>
 

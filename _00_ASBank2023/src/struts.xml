@@ -315,9 +315,15 @@
             <result>/JSP/CreerUtilisateur.jsp</result>
         </action>
 
-        <action name="changePassword" class="com.iut.banque.controller.ChangePassword">
+        <action name="changePasswordClient" class="com.iut.banque.controller.ChangePassword">
             <result name="success">/JSP/ChangePasswordSuccess.jsp</result>
-            <result name="input">/JSP/ChangePassword.jsp</result>
+            <result name="input">/JSP/ChangePasswordClient.jsp</result>
+            <result name="error">/JSP/Login.jsp</result>
+        </action>
+
+        <action name="changePasswordManager" class="com.iut.banque.controller.ChangePassword">
+            <result name="success">/JSP/ChangePasswordSuccess.jsp</result>
+            <result name="input">/JSP/ChangePasswordManager.jsp</result>
             <result name="error">/JSP/Login.jsp</result>
         </action>
 
