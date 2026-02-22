@@ -87,13 +87,13 @@ docker-compose up -d --build
 
 Une fois le déploiement terminé (attendre ~30 secondes), l'application est accessible ici :
 
-`http://localhost:8080/_00_ASBank2023/`
+http://localhost:8080/_00_ASBank2023/
 
 ### 🗃️ Accès Base de Données (Interface Web)
 
 Pour visualiser et administrer la base de données sans ligne de commande :
 
-`http://localhost:8082`
+http://localhost:8082
 
 (La connexion est automatique avec les identifiants du fichier .env)
 
