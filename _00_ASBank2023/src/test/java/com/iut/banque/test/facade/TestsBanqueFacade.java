@@ -113,4 +113,242 @@ public class TestsBanqueFacade {
         assertTrue(result);
         verify(mockLoginManager).changePassword(mockClient, "old", "new");
     }
+
+    @Test
+    public void testTryLogin_LoginFailed() {
+        when(mockLoginManager.tryLogin("bad", "bad")).thenReturn(LoginConstants.LOGIN_FAILED);
+
+        int result = banqueFacade.tryLogin("bad", "bad");
+
+        assertEquals(LoginConstants.LOGIN_FAILED, result);
+        verify(mockBanqueManager, never()).loadAllClients();
+    }
+
+    @Test
+    public void testGetConnectedUser() {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+
+        Utilisateur result = banqueFacade.getConnectedUser();
+
+        assertEquals(mockClient, result);
+    }
+
+    @Test
+    public void testDeleteAccount_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.deleteAccount(mockCompte);
+
+        verify(mockBanqueManager).deleteAccount(mockCompte);
+    }
+
+    @Test
+    public void testDeleteAccount_NotForUser() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+
+        banqueFacade.deleteAccount(mockCompte);
+
+        verify(mockBanqueManager, never()).deleteAccount(mockCompte);
+    }
+
+    @Test
+    public void testCreateAccountWithDecouvert_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.createAccount("456", mockClient, 1000.0);
+
+        verify(mockBanqueManager).createAccount("456", mockClient, 1000.0);
+    }
+
+    @Test
+    public void testCreateAccountWithDecouvert_NotForUser() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+
+        banqueFacade.createAccount("456", mockClient, 1000.0);
+
+        verify(mockBanqueManager, never()).createAccount(anyString(), any(Client.class), anyDouble());
+    }
+
+    @Test
+    public void testDeleteUser_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.deleteUser(mockClient);
+
+        verify(mockBanqueManager).deleteUser(mockClient);
+    }
+
+    @Test
+    public void testDeleteUser_NotForUser() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+
+        banqueFacade.deleteUser(mockClient);
+
+        verify(mockBanqueManager, never()).deleteUser(mockClient);
+    }
+
+    @Test
+    public void testCreateManager_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.createManager("newmgr", "pwd", "Dupont", "Jean", "123 rue", true, "jean@email.com");
+
+        verify(mockBanqueManager).createManager("newmgr", "pwd", "Dupont", "Jean", "123 rue", true, "jean@email.com");
+    }
+
+    @Test
+    public void testCreateClient_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.createClient("newclient", "pwd", "Martin", "Alice", "456 ave", false, "alice@email.com", "NC001");
+
+        verify(mockBanqueManager).createClient("newclient", "pwd", "Martin", "Alice", "456 ave", false, "alice@email.com", "NC001");
+    }
+
+    @Test
+    public void testLoadClients_OnlyForManager() {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.loadClients();
+
+        verify(mockBanqueManager).loadAllClients();
+    }
+
+    @Test
+    public void testLoadClients_NotForUser() {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+
+        banqueFacade.loadClients();
+
+        verify(mockBanqueManager, never()).loadAllClients();
+    }
+
+    @Test
+    public void testGetCompte() {
+        when(mockBanqueManager.getAccountById("ACC001")).thenReturn(mockCompte);
+
+        Compte result = banqueFacade.getCompte("ACC001");
+
+        assertEquals(mockCompte, result);
+    }
+
+    @Test
+    public void testChangeDecouvert_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.changeDecouvert(mockCompteDecouvert, 2000.0);
+
+        verify(mockBanqueManager).changeDecouvert(mockCompteDecouvert, 2000.0);
+    }
+
+    @Test
+    public void testChangeDecouvert_NotForUser() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+
+        banqueFacade.changeDecouvert(mockCompteDecouvert, 2000.0);
+
+        verify(mockBanqueManager, never()).changeDecouvert(any(), anyDouble());
+    }
+
+    @Test
+    public void testInitiatePasswordReset() {
+        when(mockLoginManager.initiatePasswordReset("test@email.com")).thenReturn(true);
+
+        boolean result = banqueFacade.initiatePasswordReset("test@email.com");
+
+        assertTrue(result);
+        verify(mockLoginManager).initiatePasswordReset("test@email.com");
+    }
+
+    @Test
+    public void testUsePasswordResetToken() {
+        when(mockLoginManager.usePasswordResetToken("token123", "newPwd")).thenReturn(true);
+
+        boolean result = banqueFacade.usePasswordResetToken("token123", "newPwd");
+
+        assertTrue(result);
+        verify(mockLoginManager).usePasswordResetToken("token123", "newPwd");
+    }
+
+    @Test
+    public void testGetCarte() {
+        CarteBancaire mockCarte = mock(CarteBancaire.class);
+        when(mockBanqueManager.getCarte("CARD001")).thenReturn(mockCarte);
+
+        CarteBancaire result = banqueFacade.getCarte("CARD001");
+
+        assertEquals(mockCarte, result);
+    }
+
+    @Test
+    public void testCreateCarte_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.createCarte("ACC001", 5000.0, "IMMEDIAT");
+
+        verify(mockBanqueManager).creerCarte("ACC001", 5000.0, "IMMEDIAT");
+    }
+
+    @Test
+    public void testCreateCarte_NotForUser() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+
+        banqueFacade.createCarte("ACC001", 5000.0, "IMMEDIAT");
+
+        verify(mockBanqueManager, never()).creerCarte(anyString(), anyDouble(), anyString());
+    }
+
+    @Test
+    public void testChangerPlafondCarte_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.changerPlafondCarte("CARD001", 8000.0);
+
+        verify(mockBanqueManager).changerPlafondCarte("CARD001", 8000.0);
+    }
+
+    @Test
+    public void testChangerCompteLieCarte_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.changerCompteLieCarte("CARD001", "ACC002");
+
+        verify(mockBanqueManager).changerCompteLieCarte("CARD001", "ACC002");
+    }
+
+    @Test
+    public void testBloquerCarte() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+
+        banqueFacade.bloquerCarte("CARD001", false);
+
+        verify(mockBanqueManager).bloquerCarte("CARD001", false);
+    }
+
+    @Test
+    public void testBloquerCarteDefinitif() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.bloquerCarte("CARD001", true);
+
+        verify(mockBanqueManager).bloquerCarte("CARD001", true);
+    }
+
+    @Test
+    public void testDebloquerCarte_OnlyForManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+
+        banqueFacade.debloquerCarte("CARD001");
+
+        verify(mockBanqueManager).debloquerCarte("CARD001");
+    }
+
+    @Test
+    public void testPayerParCarte() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+
+        banqueFacade.payerParCarte("CARD001", 150.0, "Achat");
+
+        verify(mockBanqueManager).effectuerPaiementCarte("CARD001", 150.0, "Achat");
+    }
 }

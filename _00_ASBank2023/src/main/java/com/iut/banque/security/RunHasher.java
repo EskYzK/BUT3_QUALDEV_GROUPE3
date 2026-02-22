@@ -6,7 +6,8 @@ import java.util.logging.Logger;
 
 
 public class RunHasher {
-    Logger logger = Logger.getLogger(getClass().getName());
+    private static final Logger logger = Logger.getLogger(RunHasher.class.getName());
+    
     public static void main(String[] args) {
         // Charge le contexte Spring pour récupérer le bean DaoHibernate
         ClassPathXmlApplicationContext context =

@@ -236,7 +236,7 @@ public class CreerUtilisateur extends ActionSupport {
 	 * @return String : le status de l'action
 	 */
 	public String creationUtilisateur() {
-        String mess="Error";
+        String mess="ERROR";
 		try {
             if (email != null && !email.trim().isEmpty() && !emailPattern.matcher(email).matches()) {
                 this.message = "Le format de l'adresse email est incorrect.";
