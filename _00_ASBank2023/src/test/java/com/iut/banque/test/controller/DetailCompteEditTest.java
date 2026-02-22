@@ -239,7 +239,7 @@ public class DetailCompteEditTest {
 	@Test
 	void testSetterGetter_Error() {
 		controller.setError("TECHNICAL");
-		assertEquals("Erreur interne. Verifiez votre saisie puis réessayer. Contactez votre conseiller si le problème persiste.", 
+		assertEquals("Erreur interne. Vérifiez votre saisie puis réessayez. Contactez votre conseiller si le problème persiste.",
 			controller.getError());
 	}
 

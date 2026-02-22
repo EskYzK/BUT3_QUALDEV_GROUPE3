@@ -55,7 +55,7 @@ public class DetailCompte extends ActionSupport {
 
 		switch (error) {
 		case "TECHNICAL":
-			return "Erreur interne. Vérifiez votre saisie puis réessayer. Contactez votre conseiller si le problème persiste.";
+			return "Erreur interne. Vérifiez votre saisie puis réessayez. Contactez votre conseiller si le problème persiste.";
 		case "BUSINESS":
 			return "Fonds insuffisants.";
         case "OVER_LIMIT":

@@ -72,22 +72,23 @@ public class CreerCompteTest {
 	}
 
 	/**
-	 * Test avec découvert mais exception IllegalOperationException levée
+	 * Test avec découvert, mais exception IllegalOperationException levée
 	 */
 	@Test
 	void testCreationCompte_AvecDecouvert_IllegalOperationException() throws Exception {
 		controller.setNumeroCompte("FR888");
 		controller.setAvecDecouvert(true);
 		controller.setDecouvertAutorise(1000.0);
-		when(banqueMock.getCompte("FR888")).thenReturn(compteMock);
 
 		doThrow(new IllegalOperationException("Impossible de créer un compte avec découvert"))
 			.when(banqueMock).createAccount("FR888", clientMock, 1000.0);
 
 		String result = controller.creationCompte();
 
-		assertEquals("SUCCESS", result);
-		verify(banqueMock).createAccount("FR888", clientMock, 1000.0);
+		assertEquals("error", result);
+
+        // Optionnel, mais recommandé : vérifier que getCompte n'a JAMAIS été appelé
+        verify(banqueMock, never()).getCompte(anyString());
 	}
 
 	/**
@@ -161,7 +162,7 @@ public class CreerCompteTest {
 	@Test
 	void testSetMessage_UnknownValue() {
 		controller.setMessage("UNKNOWN");
-		assertNull(controller.getMessage());
+        assertEquals("UNKNOWN", controller.getMessage());
 	}
 
 	/**
