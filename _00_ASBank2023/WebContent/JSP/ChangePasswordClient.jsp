@@ -32,7 +32,7 @@
 	</s:form>
 
 	<s:form action="retourTableauDeBordClient" method="POST">
-		<s:submit value="Annuler" />
+		<s:submit name="Retour" value="Annuler" />
 	</s:form>
 
 	<s:if test="result">
