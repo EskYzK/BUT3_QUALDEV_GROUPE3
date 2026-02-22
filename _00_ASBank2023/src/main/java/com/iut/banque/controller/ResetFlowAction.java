@@ -2,9 +2,6 @@ package com.iut.banque.controller;
 
 import com.iut.banque.facade.BanqueFacade;
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.struts2.ServletActionContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class ResetFlowAction extends ActionSupport {
 
@@ -12,7 +9,7 @@ public class ResetFlowAction extends ActionSupport {
     private String token;
     private String newPassword;
     private String message;
-    private BanqueFacade banque;
+    private transient BanqueFacade banque;
 
     // --- Getters & Setters ---
 
@@ -30,14 +27,9 @@ public class ResetFlowAction extends ActionSupport {
 
     public void setBanque(BanqueFacade banque) { this.banque = banque; }
 
-    // --- Méthode helper pour récupérer la banque ---
-    private BanqueFacade getBanque() {
-        if (this.banque == null) {
-            ApplicationContext context = WebApplicationContextUtils
-                    .getRequiredWebApplicationContext(ServletActionContext.getServletContext());
-            this.banque = (BanqueFacade) context.getBean("banqueFacade");
-        }
-        return this.banque;
+    // Un Setter pour permettre aux tests d'injecter un Mock
+    public void setBanqueFacade(BanqueFacade banqueFacade) {
+        this.banque = banqueFacade;
     }
 
     // --- Actions ---
@@ -46,13 +38,9 @@ public class ResetFlowAction extends ActionSupport {
      * Appelé depuis le formulaire "Mot de passe oublié"
      */
     public String sendLink() {
-        if (getBanque().initiatePasswordReset(email)) {
-            message = "Lien envoyé à l'adresse mail renseignée si elle existe.";
-            return "link_sent";
-        } else {
-            addActionError("Erreur.");
-            return ERROR;
-        }
+        banque.initiatePasswordReset(email);
+        message = "Lien envoyé à l'adresse mail renseignée si elle existe.";
+        return "link_sent";
     }
 
     /**
@@ -71,7 +59,7 @@ public class ResetFlowAction extends ActionSupport {
      * Appelé quand l'utilisateur soumet son nouveau mot de passe
      */
     public String processReset() {
-        if (getBanque().usePasswordResetToken(token, newPassword)) {
+        if (banque.usePasswordResetToken(token, newPassword)) {
             return "reset_success";
         } else {
             addActionError("Lien invalide ou expiré.");

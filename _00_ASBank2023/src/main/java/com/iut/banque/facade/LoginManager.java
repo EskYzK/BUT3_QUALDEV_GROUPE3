@@ -10,9 +10,12 @@ import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.*;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 
 public class LoginManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(LoginManager.class);
 	private IDao dao;
 	private Utilisateur user;
 
@@ -106,7 +109,7 @@ public class LoginManager {
      */
     public boolean initiatePasswordReset(String email) {
         Utilisateur user = dao.getUserByEmail(email);
-        if (user == null) return true;
+        if (user == null) return false;
 
         // Générer un token unique (UUID)
         String token = java.util.UUID.randomUUID().toString();
@@ -140,7 +143,7 @@ public class LoginManager {
         final String password = dotenv.get("MAIL_PASSWORD");
 
         if (username == null || password == null) {
-            System.err.println("ERREUR : Les identifiants mail ne sont pas configurés dans le fichier .env !");
+            logger.error("ERREUR : Les identifiants mail ne sont pas configurés dans le fichier .env !");
             return;
         }
 
@@ -173,12 +176,10 @@ public class LoginManager {
             message.setContent(content, "text/html; charset=utf-8");
 
             Transport.send(message);
-            System.out.println("Email envoyé avec succès à " + recipientEmail);
+            logger.info("Email envoyé avec succès à {}", recipientEmail);
 
         } catch (MessagingException e) {
-            e.printStackTrace();
-            // On log l'erreur mais on ne fait pas planter l'application
-            System.err.println("Erreur lors de l'envoi du mail : " + e.getMessage());
+            logger.error("Erreur lors de l'envoi de l'email", e);
         }
     }
 

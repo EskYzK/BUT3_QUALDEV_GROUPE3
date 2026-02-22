@@ -5,15 +5,16 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.iut.banque.facade.BanqueFacade;
 import com.iut.banque.modele.CarteBancaire;
 import java.util.Map;
-import org.apache.struts2.ServletActionContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.slf4j.Logger;         // Import SLF4J
+import org.slf4j.LoggerFactory;  // Import SLF4J
 import com.iut.banque.modele.Compte;
 
 public class GestionCartes extends ActionSupport {
 
+    private static final String TECHNICAL_ERROR = "TECHNICAL";
+    private static final Logger logger = LoggerFactory.getLogger(GestionCartes.class);
     private static final long serialVersionUID = 1L;
-    private BanqueFacade banqueFacade;
+    private transient BanqueFacade banqueFacade;
 
     // --- Paramètres d'entrée (Envoyés par les formulaires JSP) ---
     private String numeroCompte;
@@ -31,7 +32,7 @@ public class GestionCartes extends ActionSupport {
 
     // --- Paramètres de sortie (Pour l'affichage) ---
     private String message;
-    private CarteBancaire carte; // Utilisé pour pré-remplir le formulaire de modification
+    private CarteBancaire carte; // Utilisé pour préremplir le formulaire de modification
 
     // --- La liste des comptes pour le menu déroulant ---
     private Map<String, Compte> comptesClient;
@@ -66,8 +67,10 @@ public class GestionCartes extends ActionSupport {
      * Exécute la création de la carte (Appelé par le submit du formulaire).
      */
     public String creerCarte() {
+        logger.debug("Tentative de création de carte pour le compte {}", numeroCompte);
         try {
             if (plafond <= 0) {
+                logger.warn("Tentative de création avec plafond invalide : {}", plafond);
                 addFieldError("plafond", "Le plafond doit être strictement positif.");
                 return INPUT;
             }
@@ -75,11 +78,13 @@ public class GestionCartes extends ActionSupport {
             // Appel sécurisé via la Facade (qui vérifie si c'est un Manager)
             banqueFacade.createCarte(numeroCompte, plafond, typeDebit);
 
+            logger.info("Carte créée avec succès pour le compte {}", numeroCompte);
             message = "Carte créée avec succès.";
             return SUCCESS; // Redirigera vers le détail du compte
 
         } catch (Exception e) {
-            message = "TECHNICAL";
+            logger.error("Erreur technique lors de la création de la carte", e);
+            message = TECHNICAL_ERROR;
             return ERROR;
         }
     }
@@ -104,7 +109,7 @@ public class GestionCartes extends ActionSupport {
             }
             return SUCCESS;
         } catch (Exception e) {
-            message = "TECHNICAL";
+            message = TECHNICAL_ERROR;
             return ERROR;
         }
     }
@@ -118,7 +123,7 @@ public class GestionCartes extends ActionSupport {
             message = "Carte réactivée avec succès.";
             return SUCCESS;
         } catch (Exception e) {
-            message = "TECHNICAL";
+            message = TECHNICAL_ERROR;
             return ERROR;
         }
     }
@@ -149,7 +154,7 @@ public class GestionCartes extends ActionSupport {
 
             return SUCCESS;
         } catch (Exception e) {
-            message = "TECHNICAL";
+            message = TECHNICAL_ERROR;
             return ERROR;
         }
     }
@@ -185,7 +190,7 @@ public class GestionCartes extends ActionSupport {
             message = "Carte modifiée avec succès.";
             return SUCCESS;
         } catch (Exception e) {
-            message = "TECHNICAL";
+            message = TECHNICAL_ERROR;
             return ERROR;
         }
     }
@@ -216,7 +221,7 @@ public class GestionCartes extends ActionSupport {
             return ERROR;
         } catch (Exception e) {
             // Toute autre erreur inattendue
-            message = "TECHNICAL";
+            message = TECHNICAL_ERROR;
             return ERROR;
         }
     }

@@ -20,14 +20,14 @@
 
     <package name="com.iut.banque" namespace="/" extends="struts-default">
 
-        <!-- Action générique ou dynamique -->
-        <!-- 1er paramètre indique le chemin du package -->
-        <!-- 2ème paramètre indique la class elle-même -->
-        <!-- 3ème paramètre indique la méthode à lancer -->
-        <!-- Un succès redirige vers une page comportant le nom de la class -->
-        <!-- Un echec redirige vers une page comportant le nom de la class prefixée
-            par '-error' -->
-        <!-- Toutes les combinaisons sont donc possibles -->
+		<!-- Action générique ou dynamique -->
+		<!-- 1er paramètre indique le chemin du package -->
+		<!-- 2ème paramètre indique la class elle-même -->
+		<!-- 3ème paramètre indique la méthode à lancer -->
+		<!-- Un succès redirige vers une page comportant le nom de la class -->
+		<!-- Un échec redirige vers une page comportant le nom de la class préfixée
+			par '-error' -->
+		<!-- Toutes les combinaisons sont donc possibles -->
 
         <action name="*.*.*" class="com.iut.banque.{1}.{2}" method="{3}">
             <result name="SUCCESS">/JSP/{2}.jsp</result>
@@ -39,17 +39,15 @@
             <result name="FAILED">Failed.jsp</result>
         </action>
 
-        <!-- Permet un retour 'static' vers la page principal pour les clients -->
+		<!-- Permet un retour 'static' vers la page principale pour les clients -->
+		<action name="retourTableauDeBordClient" class="com.iut.banque.controller.Connect">
+			<result>/JSP/Connect.jsp</result>
+		</action>
 
-        <action name="retourTableauDeBordClient" class="com.iut.banque.controller.Connect">
-            <result>/JSP/Connect.jsp</result>
-        </action>
-
-        <!-- Permet un retour 'static' vers la page principal pour le manager -->
-
-        <action name="retourTableauDeBordManager" class="com.iut.banque.controller.Connect">
-            <result>/JSP/Connect-Manager.jsp</result>
-        </action>
+		<!-- Permet un retour 'static' vers la page principale pour le manager -->
+		<action name="retourTableauDeBordManager" class="com.iut.banque.controller.Connect">
+			<result>/JSP/Connect-Manager.jsp</result>
+		</action>
 
 
         <action name="logout" class="com.iut.banque.controller.Connect"
