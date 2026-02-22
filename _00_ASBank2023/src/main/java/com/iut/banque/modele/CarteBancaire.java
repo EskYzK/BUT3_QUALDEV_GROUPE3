@@ -10,6 +10,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * Classe abstraite représentant une carte bancaire.
@@ -20,7 +21,9 @@ import javax.persistence.Table;
 @Table(name = "CarteBancaire")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "typeDebit", discriminatorType = DiscriminatorType.STRING)
-public abstract class CarteBancaire {
+public abstract class CarteBancaire implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "numeroCarte")
@@ -61,7 +64,7 @@ public abstract class CarteBancaire {
      * @param plafond : Le plafond de dépenses (30 jours glissants)
      * @param compte : Le compte associé
      */
-    public CarteBancaire(String numeroCarte, double plafond, Compte compte) {
+    protected CarteBancaire(String numeroCarte, double plafond, Compte compte) {
         this.numeroCarte = numeroCarte;
         this.plafond = plafond;
         this.compte = compte;

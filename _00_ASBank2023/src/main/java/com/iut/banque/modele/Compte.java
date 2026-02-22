@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.OneToMany;
 import javax.persistence.FetchType;
+import java.io.Serializable;
 
 import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.InsufficientFundsException;
@@ -36,7 +37,9 @@ import com.iut.banque.exceptions.InsufficientFundsException;
 @Table(name = "Compte")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "avecDecouvert", discriminatorType = DiscriminatorType.STRING, length = 5)
-public abstract class Compte {
+public abstract class Compte implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
 	/**
 	 * L'identifiant unique du compte.
