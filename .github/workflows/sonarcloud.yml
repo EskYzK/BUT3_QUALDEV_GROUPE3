@@ -79,6 +79,12 @@ jobs:
       # On combine "verify" (tests) et "sonar:sonar" (analyse)
       # Ainsi, Sonar profite de la compilation et de la BDD déjà prêtes.
       - name: Build and analyze with Maven
+        run: |
+          mvn -B -f _00_ASBank2023/pom.xml verify sonar:sonar \
+            -Dsonar.projectKey=EskYzK_BUT3_QUALDEV_GROUPE3 \
+            -Dsonar.organization=eskyzk \
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
           # Variables pour les Tests (BDD)
           DB_URL: jdbc:mysql://127.0.0.1:3306/chollet14u_bankiuttest?useSSL=false&serverTimezone=UTC
