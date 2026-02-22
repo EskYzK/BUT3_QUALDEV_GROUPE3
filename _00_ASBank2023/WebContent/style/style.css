@@ -1,83 +1,106 @@
-body
-{
-	font-family : 'Montserrat', 'Open Sans', 'Segoe UI', Arial, sans-serif;
-	text-align : center;
-	color: #4d4d4f;
+@import url('https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;700&display=swap');
+
+body {
+    font-family: 'Maven Pro', sans-serif;
+    margin: 0; padding: 0;
+    background-color: #f8f9fa; color: #333; text-align: center;
+    min-height:100vh; display: flex; flex-direction:column;
 }
-h1
-{
-	text-align : center;
-	border : 5px solid #00aeef;
-	margin-left: 20px;
-	margin-right: 20px;
-	color: #00aeef;
+
+h1 {
+    background-color: #333; color: #FFED45;
+    margin: 0; padding: 40px 20px;
+    text-transform: uppercase; font-size: 1.8em;
+    letter-spacing: 2px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
-table
-{
-	margin-right: auto;
-	margin-left: auto;
-	padding : 5px;
-	text-align: center;
-	border: 3px solid #00aeef;
-	border-collapse: collapse;
+
+h2 {
+    color: #333;
+    margin-top: 30px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1.4em;
 }
-td
-{
-	border : 1px solid #4d4d4f;
-	text-align: center;
+
+img[src*="UL_IUT_MOSELLE_EST.png"] {
+    min-width: 500px; margin-top: 20px;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));
 }
-table>thead
-{
-	background-color: #00aeef;
-	color: #ffffff;
+
+.btnLogout { position: absolute; top: 45px; left: 30px; z-index: 10; }
+
+.btnLogout input[type="submit"] {
+    background-color: #FFED45; color: #333;
+    border: none; padding: 10px 20px;
+    font: 700 0.8em 'Maven Pro'; border-radius: 2px;
+    cursor: pointer; text-transform: uppercase;
+    transition: all 0.3s ease; box-shadow: 0 4px 0px #d4c43a;
 }
-table>thead>tr>td
-{
-	padding: 5px;
-	border: 3px solid #00aeef;
-	font-weight: bold;
-	font-size: 150%;
+
+.btnLogout input[type="submit"]:hover {
+    background-color: #fff; box-shadow: 0 4px 0px #ccc;
+    transform: translateY(-2px);
 }
-table>tbody>tr>td
-{
-	padding: 5px;
-	border: 1px solid #00aeef;
+
+table {
+    margin: 40px auto; border-collapse: collapse;
+    width: 90%; max-width: 1000px;
+    background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border-radius: 8px; overflow: hidden;
 }
-.success
-{
-	background-color: #329d6e;
-	color: #ffffff;
+
+td { border: 1px solid #eee; padding: 12px 15px; text-align: center; }
+
+thead td {
+    background-color: #FFED45; color: #333;
+    padding: 15px; font-weight: 700; text-transform: uppercase;
 }
-.failure
-{
-	background-color: #d8515b;
-	color: #ffffff;
+
+tbody tr:nth-of-type(even) { background-color: #fafafa; }
+
+.success { background: #e8f5e9; color: #2e7d32; font-weight: 700; }
+.failure { background: #ffebee; color: #c62828; font-weight: 700; }
+.soldeNegatif { color: #d32f2f; font-weight: 700; }
+
+footer {
+    background-color: #333; color: #ffffff;
+    padding: 30px 20px; margin-top: auto;
+    font-size: 0.85em;
+    border-top: 5px solid #FFED45;
+    letter-spacing: 1px;
 }
-.soldeNegatif
-{
-	font-weight: bold;
-	color: #d8515b;
+
+footer p { margin: 0; font-weight: 400; }
+
+input[type="submit"], input[type="button"], button, .btn-link {
+    background-color: #FFED45;
+    color: #333;
+    border: none;
+    padding: 12px 25px;
+    font: 700 0.9em 'Maven Pro';
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 0px #d4c43a;
+    display: inline-block;
+    text-decoration: none;
+    margin: 10px;
 }
-footer
-{
-	margin-top: 10px;
-	font-style: italic;
-	border: 1px solid #4d4d4f;
-	box-shadow: 3px 3px 5px rgba(77, 77, 79, 0.5);
+
+input[type="submit"]:hover, input[type="button"]:hover, button:hover {
+    background-color: #333;
+    color: #FFED45;
+    box-shadow: 0 4px 0px #111;
+    transform: translateY(-2px);
 }
-.btnLogout
-{
-	position: absolute;
-	top : 90px;
-	left : 30px;
-	background-color: #4d4d4f;
-	color: #ffffff;
-	border: none;
-	padding: 5px 15px;
-	cursor: pointer;
-	font-family: inherit;
+
+input[name="Retour"], .btn-secondary {
+    background-color: #e0e0e0;
+    box-shadow: 0 4px 0px #bcbcbc;
 }
-.btnLogout:hover
-{
-	background-color: #00aeef;
+
+input[type="button"]{
+    margin: 10px auto;
+    align-self: center;
 }
