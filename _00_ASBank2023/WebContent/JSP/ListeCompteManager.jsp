@@ -37,12 +37,12 @@
 		<s:iterator value="allClients">
 			<s:if test="(value.possedeComptesADecouvert() || !aDecouvert)">
 				<tr>
-					<td colspan="3"><b>Client :</b> <s:property
+					<th colspan="3"><b>Client :</b> <s:property
 							value="value.prenom" /> <s:property value="value.nom" /> (n°<s:property
-							value="value.numeroClient" />)</td>
+							value="value.numeroClient" />)</th>
 
 					<s:if test="(!aDecouvert)">
-						<td><s:url action="urlAddAccount" var="addAccount">
+						<th><s:url action="urlAddAccount" var="addAccount">
 								<s:param name="client">
 									<s:property value="value.userId" />
 								</s:param>
@@ -51,8 +51,8 @@
 									src="https://cdn4.iconfinder.com/data/icons/e-commerce-icon-set/48/More-128.png"
 									style="width: 20px; height: 20px" alt="Créer un compte"
 									title="Créer un compte pour ce client" />
-							</s:a></td>
-						<td><s:url action="deleteUser" var="deleteUser">
+							</s:a></th>
+						<th><s:url action="deleteUser" var="deleteUser">
 								<s:param name="client">
 									<s:property value="value.userId" />
 								</s:param>
@@ -62,24 +62,24 @@
 									style="width: 20px; height: 20px" alt="Supprimer ce client"
 									title="Supprimer ce client et tous ses comptes associés" />
 							</s:a>
-							</td>
+							</th>
 					</s:if>
 				</tr>
 				<s:iterator value="value.accounts">
 					<s:if test="(value.solde <0 || !aDecouvert)">
 						<tr>
-							<td><s:property value="key" /></td>
+							<th><s:property value="key" /></th>
 							<s:if test="%{value.className == \"CompteAvecDecouvert\"}">
-								<td>Découvert possible</td>
+								<th>Découvert possible</th>
 							</s:if>
 							<s:else>
-								<td>Simple</td>
+								<th>Simple</th>
 							</s:else>
 							<s:if test="%{value.solde >= 0}">
-								<td><s:property value="value.solde" /></td>
+								<th><s:property value="value.solde" /></th>
 							</s:if>
 							<s:else>
-								<td class="soldeNegatif"><s:property value="value.solde" /></td>
+								<th class="soldeNegatif"><s:property value="value.solde" /></th>
 							</s:else>
 							<s:if test="(!aDecouvert)">
 								<s:url action="editAccount" var="editAccount">
@@ -87,12 +87,12 @@
 										<s:property value="value.numeroCompte" />
 									</s:param>
 								</s:url>
-								<td><s:a href="%{editAccount}">
+								<th><s:a href="%{editAccount}">
 										<img
                                                 src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png"
                                                 style="width: 20px; height: 20px" alt="Editer ce compte" title="Editer ce compte" />
-									</s:a></td>
-								<td><s:url action="deleteAccount" var="deleteAccount">
+									</s:a></th>
+								<th><s:url action="deleteAccount" var="deleteAccount">
 										<s:param name="compte">
 											<s:property value="value.numeroCompte" />
 										</s:param>
@@ -104,7 +104,7 @@
 											src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/trash-.png"
 											style="width: 20px; height: 20px" alt="Supprimer ce compte"
 											title="Supprimer ce compte" />
-									</s:a></td>
+									</s:a></th>
 							</s:if>
 						</tr>
 					</s:if>

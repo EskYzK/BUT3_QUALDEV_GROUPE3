@@ -49,9 +49,9 @@ table {
     border-radius: 8px; overflow: hidden;
 }
 
-td { border: 1px solid #eee; padding: 12px 15px; text-align: center; }
+th { border: 1px solid #eee; padding: 12px 15px; text-align: center; }
 
-thead td {
+thead th {
     background-color: #FFED45; color: #333;
     padding: 15px; font-weight: 700; text-transform: uppercase;
 }

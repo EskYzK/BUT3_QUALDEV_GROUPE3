@@ -73,19 +73,19 @@
         <tbody>
         <s:iterator value="cartesTriees" var="carte">
             <tr>
-                <td style="padding: 8px; border: 1px solid #ddd;">
+                <th style="padding: 8px; border: 1px solid #ddd;">
                     <s:property value="#carte.numeroCarte" />
-                </td>
+                </th>
 
-                <td style="padding: 8px; border: 1px solid #ddd;">
+                <th style="padding: 8px; border: 1px solid #ddd;">
                     <s:property value="#carte.typeDeCarte" />
-                </td>
+                </th>
 
-                <td style="padding: 8px; border: 1px solid #ddd;">
+                <th style="padding: 8px; border: 1px solid #ddd;">
                     <s:property value="#carte.plafond" /> &euro;
-                </td>
+                </th>
 
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                     <s:if test="#carte.supprimee">
                         <span style="color:red; font-weight:bold;">SUPPRIMÉE</span>
                     </s:if>
@@ -95,9 +95,9 @@
                     <s:else>
                         <span style="color:green; font-weight:bold;">ACTIVE</span>
                     </s:else>
-                </td>
+                </th>
 
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                     <s:if test="!#carte.supprimee && !#carte.bloquee">
                         <s:url action="bloquerCarteClient" var="urlBloque">
                             <s:param name="numeroCarte" value="#carte.numeroCarte" />
@@ -117,7 +117,7 @@
                     <s:elseif test="#carte.bloquee && !#carte.supprimee">
                         <i>Contactez votre conseiller pour débloquer</i>
                     </s:elseif>
-                </td>
+                </th>
             </tr>
         </s:iterator>
         </tbody>
