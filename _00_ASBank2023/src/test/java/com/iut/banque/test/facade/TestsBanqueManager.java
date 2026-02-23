@@ -1,7 +1,9 @@
 package com.iut.banque.test.facade;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.iut.banque.modele.Compte;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,5 +174,37 @@ public class TestsBanqueManager {
 			fail("Une Exception " + te.getClass().getSimpleName() + " a été récupérée");
 		}
 	}
+
+    // --- AJOUT : Tests d'intégration pour les Cartes Bancaires ---
+
+    @Test
+    public void testIntegrationCreationEtRecuperationCarte() {
+        try {
+            // On charge un compte existant de la base de test
+            Compte compte = bm.getAccountById("CADV000000");
+
+            // On crée une carte via le Manager
+            bm.creerCarte("CADV000000", 1200.0, "IMMEDIAT");
+
+            // Le numéro de carte est généré aléatoirement, on ne le connaît pas.
+            // Mais s'il n'y a pas eu d'exception (TechnicalException), c'est que la DAO l'a bien sauvegardé !
+            assertTrue("La création de la carte n'a pas levé d'erreur.", true);
+        } catch (Exception e) {
+            fail("Une exception a été levée lors de la création de la carte : " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testIntegrationCreationCarte_CompteInexistant() {
+        try {
+            bm.creerCarte("COMPTE_FANTOME", 1000.0, "IMMEDIAT");
+            fail("Une TechnicalException aurait dû être levée car le compte n'existe pas.");
+        } catch (com.iut.banque.exceptions.TechnicalException e) {
+            // Succès : l'exception est bien levée
+            assertTrue(e.getMessage().contains("n'existe pas"));
+        } catch (Exception e) {
+            fail("Mauvais type d'exception levé : " + e.getClass().getSimpleName());
+        }
+    }
 
 }
