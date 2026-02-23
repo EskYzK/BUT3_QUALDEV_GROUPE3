@@ -36,23 +36,23 @@
         <s:hidden name="numeroCarte" value="%{carte.numeroCarte}" theme="simple" />
         <table class="form-table">
             <tr>
-                <th><strong>Numéro de Carte :</strong></th>
-                <th><s:property value="carte.numeroCarte" /></th>
+                <th scope="col"><strong>Numéro de Carte :</strong></th>
+                <th scope="col"><s:property value="carte.numeroCarte" /></th>
             </tr>
             <tr>
-                <th><strong>Type :</strong></th>
-                <th><s:property value="carte.typeDeCarte" /></th>
+                <th scope="col"><strong>Type :</strong></th>
+                <th scope="col"><s:property value="carte.typeDeCarte" /></th>
             </tr>
             <tr>
-                <th><strong>Statut :</strong></th>
-                <th>
+                <th scope="col"><strong>Statut :</strong></th>
+                <th scope="col">
                     <s:if test="carte.bloquee"><span style="color:orange">Bloquée</span></s:if>
                     <s:else><span style="color:green">Active</span></s:else>
                 </th>
             </tr>
             <tr>
-                <th><label><input type="text" />Compte lié :</label></th>
-                <th>
+                <th scope="col"><label><input type="text" />Compte lié :</label></th>
+                <th scope="col">
                     <s:if test='%{carte.typeDeCarte == "Débit Immédiat"}'>
                         <s:select
                                 list="comptesClient"
@@ -70,13 +70,13 @@
                 </th>
             </tr>
             <tr>
-                <th><label><input type="text" />Nouveau Plafond :</label></th>
-                <th>
+                <th scope="col"><label><input type="text" />Nouveau Plafond :</label></th>
+                <th scope="col">
                     <s:textfield name="plafond" value="%{carte.plafond}" theme="simple" />
                 </th>
             </tr>
             <tr>
-                <th colspan="2" style="text-align: center; padding-top: 20px;">
+                <th scope="col" colspan="2" style="text-align: center; padding-top: 20px;">
                     <s:submit value="Enregistrer les modifications" class="btn-primary" theme="simple" />
                 </th>
             </tr>

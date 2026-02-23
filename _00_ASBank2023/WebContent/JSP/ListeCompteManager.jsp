@@ -37,12 +37,12 @@
 		<s:iterator value="allClients">
 			<s:if test="(value.possedeComptesADecouvert() || !aDecouvert)">
 				<tr>
-					<th colspan="3"><b>Client :</b> <s:property
+					<th scope="col" colspan="3"><b>Client :</b> <s:property
 							value="value.prenom" /> <s:property value="value.nom" /> (n°<s:property
 							value="value.numeroClient" />)</th>
 
 					<s:if test="(!aDecouvert)">
-						<th><s:url action="urlAddAccount" var="addAccount">
+						<th scope="col"><s:url action="urlAddAccount" var="addAccount">
 								<s:param name="client">
 									<s:property value="value.userId" />
 								</s:param>
@@ -52,7 +52,7 @@
 									style="width: 20px; height: 20px" alt="Créer un compte"
 									title="Créer un compte pour ce client" />
 							</s:a></th>
-						<th><s:url action="deleteUser" var="deleteUser">
+						<th scope="col"><s:url action="deleteUser" var="deleteUser">
 								<s:param name="client">
 									<s:property value="value.userId" />
 								</s:param>
@@ -68,18 +68,18 @@
 				<s:iterator value="value.accounts">
 					<s:if test="(value.solde <0 || !aDecouvert)">
 						<tr>
-							<th><s:property value="key" /></th>
+							<th scope="col"><s:property value="key" /></th>
 							<s:if test="%{value.className == \"CompteAvecDecouvert\"}">
-								<th>Découvert possible</th>
+								<th scope="col">Découvert possible</th>
 							</s:if>
 							<s:else>
-								<th>Simple</th>
+								<th scope="col">Simple</th>
 							</s:else>
 							<s:if test="%{value.solde >= 0}">
-								<th><s:property value="value.solde" /></th>
+								<th scope="col"><s:property value="value.solde" /></th>
 							</s:if>
 							<s:else>
-								<th class="soldeNegatif"><s:property value="value.solde" /></th>
+								<th scope="col" class="soldeNegatif"><s:property value="value.solde" /></th>
 							</s:else>
 							<s:if test="(!aDecouvert)">
 								<s:url action="editAccount" var="editAccount">
@@ -87,12 +87,12 @@
 										<s:property value="value.numeroCompte" />
 									</s:param>
 								</s:url>
-								<th><s:a href="%{editAccount}">
+								<th scope="col"><s:a href="%{editAccount}">
 										<img
                                                 src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png"
                                                 style="width: 20px; height: 20px" alt="Editer ce compte" title="Editer ce compte" />
 									</s:a></th>
-								<th><s:url action="deleteAccount" var="deleteAccount">
+								<th scope="col"><s:url action="deleteAccount" var="deleteAccount">
 										<s:param name="compte">
 											<s:property value="value.numeroCompte" />
 										</s:param>
