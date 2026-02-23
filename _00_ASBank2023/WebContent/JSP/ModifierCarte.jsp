@@ -36,23 +36,23 @@
         <s:hidden name="numeroCarte" value="%{carte.numeroCarte}" theme="simple" />
         <table class="form-table">
             <tr>
-                <td><strong>Numéro de Carte :</strong></td>
-                <td><s:property value="carte.numeroCarte" /></td>
+                <th><strong>Numéro de Carte :</strong></th>
+                <th><s:property value="carte.numeroCarte" /></th>
             </tr>
             <tr>
-                <td><strong>Type :</strong></td>
-                <td><s:property value="carte.typeDeCarte" /></td>
+                <th><strong>Type :</strong></th>
+                <th><s:property value="carte.typeDeCarte" /></th>
             </tr>
             <tr>
-                <td><strong>Statut :</strong></td>
-                <td>
+                <th><strong>Statut :</strong></th>
+                <th>
                     <s:if test="carte.bloquee"><span style="color:orange">Bloquée</span></s:if>
                     <s:else><span style="color:green">Active</span></s:else>
-                </td>
+                </th>
             </tr>
             <tr>
-                <td><label><input type="text" />Compte lié :</label></td>
-                <td>
+                <th><label><input type="text" />Compte lié :</label></th>
+                <th>
                     <s:if test='%{carte.typeDeCarte == "Débit Immédiat"}'>
                         <s:select
                                 list="comptesClient"
@@ -67,18 +67,18 @@
                         <s:property value="carte.compte.numeroCompte" />
                         <s:hidden name="nouveauNumeroCompte" value="%{carte.compte.numeroCompte}" theme="simple" />
                     </s:else>
-                </td>
+                </th>
             </tr>
             <tr>
-                <td><label><input type="text" />Nouveau Plafond :</label></td>
-                <td>
+                <th><label><input type="text" />Nouveau Plafond :</label></th>
+                <th>
                     <s:textfield name="plafond" value="%{carte.plafond}" theme="simple" />
-                </td>
+                </th>
             </tr>
             <tr>
-                <td colspan="2" style="text-align: center; padding-top: 20px;">
+                <th colspan="2" style="text-align: center; padding-top: 20px;">
                     <s:submit value="Enregistrer les modifications" class="btn-primary" theme="simple" />
-                </td>
+                </th>
             </tr>
         </table>
     </s:form>

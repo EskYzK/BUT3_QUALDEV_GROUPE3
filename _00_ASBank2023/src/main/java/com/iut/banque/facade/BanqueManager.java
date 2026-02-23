@@ -1,6 +1,7 @@
 package com.iut.banque.facade;
 
 import java.util.Map;
+import java.security.SecureRandom;
 
 import com.iut.banque.exceptions.IllegalFormatException;
 import com.iut.banque.exceptions.IllegalOperationException;
@@ -15,14 +16,12 @@ import com.iut.banque.modele.Gestionnaire;
 import com.iut.banque.modele.Utilisateur;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
-import java.util.Collection;
 import com.iut.banque.modele.CarteBancaire;
 import com.iut.banque.modele.CarteDebitDiffere;
 import com.iut.banque.modele.CarteDebitImmediat;
 import com.iut.banque.modele.Operation;
-import org.slf4j.Logger;         // Import SLF4J
-import org.slf4j.LoggerFactory;  // Import SLF4J
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BanqueManager {
 
@@ -488,9 +487,9 @@ public class BanqueManager {
         dao.createOperation(op);
     }
 
-    final Random random = new Random();
+    final SecureRandom random = new SecureRandom();
 
-    // Utilitaire pour générer un numéro (simulation)
+    // Générer un numéro (simulation)
     private String generateRandomCardNumber() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 16; i++) {
@@ -521,7 +520,7 @@ public class BanqueManager {
         Date fin = cal.getTime();
 
         // --- CHARGEMENT FORCÉ DES DONNÉES ---
-        // On s'assure que l'objet 'bank' est à jour avec la BDD
+        // On s'assure que l'objet bank est à jour avec la BDD
         // sinon getAllClients() renvoie null au démarrage du serveur
         loadAllClients();
 
