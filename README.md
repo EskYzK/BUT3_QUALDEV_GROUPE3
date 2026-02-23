@@ -144,7 +144,11 @@ mvn test
 Rapport généré dans : `target/site/jacoco/index.html`
 
 **Tests Selenium**  
-Tests de recette automatisés pour valider les parcours critiques (en cours d’implémentation).
+Tests de recette automatisés pour valider les parcours critiques.
+Assurez-vous que l'application est démarrée avant de lancer ces tests.
+```bash
+mvn test -Dtest=TestCreationClient
+```
 
 ## 🔍 Analyse Statique & CI/CD
 
