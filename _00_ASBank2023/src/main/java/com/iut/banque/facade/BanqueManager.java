@@ -489,7 +489,7 @@ public class BanqueManager {
 
     final SecureRandom random = new SecureRandom();
 
-    // Utilitaire pour générer un numéro (simulation)
+    // Générer un numéro (simulation)
     private String generateRandomCardNumber() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 16; i++) {
