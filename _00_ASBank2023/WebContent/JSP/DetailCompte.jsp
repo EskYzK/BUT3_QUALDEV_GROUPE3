@@ -63,29 +63,29 @@
     <table class="tabDonnees" style="   width: 100%; border-collapse: collapse; margin-bottom: 20px;">
         <thead>
         <tr style="background-color: #eee;">
-            <th style="padding: 8px; border: 1px solid #ddd;">Numéro</th>
-            <th style="padding: 8px; border: 1px solid #ddd;">Type</th>
-            <th style="padding: 8px; border: 1px solid #ddd;">Plafond</th>
-            <th style="padding: 8px; border: 1px solid #ddd;">Statut</th>
-            <th style="padding: 8px; border: 1px solid #ddd;">Actions</th>
+            <th scope="col" style="padding: 8px; border: 1px solid #ddd;">Numéro</th>
+            <th scope="col" style="padding: 8px; border: 1px solid #ddd;">Type</th>
+            <th scope="col" style="padding: 8px; border: 1px solid #ddd;">Plafond</th>
+            <th scope="col" style="padding: 8px; border: 1px solid #ddd;">Statut</th>
+            <th scope="col" style="padding: 8px; border: 1px solid #ddd;">Actions</th>
         </tr>
         </thead>
         <tbody>
         <s:iterator value="cartesTriees" var="carte">
             <tr>
-                <th style="padding: 8px; border: 1px solid #ddd;">
+                <th scope="col" style="padding: 8px; border: 1px solid #ddd;">
                     <s:property value="#carte.numeroCarte" />
                 </th>
 
-                <th style="padding: 8px; border: 1px solid #ddd;">
+                <th scope="col" style="padding: 8px; border: 1px solid #ddd;">
                     <s:property value="#carte.typeDeCarte" />
                 </th>
 
-                <th style="padding: 8px; border: 1px solid #ddd;">
+                <th scope="col" style="padding: 8px; border: 1px solid #ddd;">
                     <s:property value="#carte.plafond" /> &euro;
                 </th>
 
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                <th scope="col" style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                     <s:if test="#carte.supprimee">
                         <span style="color:red; font-weight:bold;">SUPPRIMÉE</span>
                     </s:if>
@@ -97,7 +97,7 @@
                     </s:else>
                 </th>
 
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                <th scope="col" style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                     <s:if test="!#carte.supprimee && !#carte.bloquee">
                         <s:url action="bloquerCarteClient" var="urlBloque">
                             <s:param name="numeroCarte" value="#carte.numeroCarte" />
@@ -147,21 +147,21 @@
 
                             <table style="width: 100%; border: none;">
                                 <tr>
-                                    <td style="padding-bottom: 5px;">Libellé :</td>
-                                    <td style="padding-bottom: 5px;">
+                                    <th scope="col" style="padding-bottom: 5px;">Libellé :</th>
+                                    <th scope="col" style="padding-bottom: 5px;">
                                         <s:textfield name="libellePaiement" placeholder="Ex: Amazon" theme="simple" style="width: 95%;" />
-                                    </td>
+                                    </th>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 5px; min-width: 70px">Montant :</td>
-                                    <td style="padding-bottom: 5px;">
+                                    <th scope="col" style="padding-bottom: 5px; min-width: 70px">Montant :</th>
+                                    <th scope="col" style="padding-bottom: 5px;">
                                         <s:textfield name="montantPaiement" placeholder="0.00" theme="simple" style="width: 80px; text-align: right;" /> &euro;
-                                    </td>
+                                    </th>
                                 </tr>
                                 <tr>
-                                    <td colspan="2" style="text-align: right; padding-top: 10px;">
+                                    <th scope="col" colspan="2" style="text-align: right; padding-top: 10px;">
                                         <s:submit value="Payer" class="btn-primary" theme="simple" style="cursor:pointer; padding: 5px 15px;" />
-                                    </td>
+                                    </th>
                                 </tr>
                             </table>
                         </s:form>

@@ -41,23 +41,23 @@
 
         <table class="form-table">
             <tr>
-                <td><label>Type de débit :</label></td>
-                <td>
+                <th scope="col"><label>Type de débit :</label></th>
+                <th scope="col">
                     <s:select name="typeDebit"
                               list="#{'IMMEDIAT':'Débit Immédiat', 'DIFFERE':'Débit Différé'}"
                               theme="simple" />
-                </td>
+                </th>
             </tr>
             <tr>
-                <th><label>Plafond (30 jours) :</label></th>
-                <th>
+                <th scope="col"><label>Plafond (30 jours) :</label></th>
+                <th scope="col">
                     <s:textfield name="plafond" placeholder="Ex: 500" theme="simple" />
                 </th>
             </tr>
             <tr>
-                <td colspan="2" style="text-align: center; padding-top: 20px;">
+                <th scope="col" colspan="2" style="text-align: center; padding-top: 20px;">
                     <s:submit value="Créer la carte" class="btn-primary" theme="simple" />
-                </td>
+                </th>
             </tr>
         </table>
     </s:form>
