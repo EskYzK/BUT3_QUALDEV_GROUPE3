@@ -70,7 +70,7 @@
                 </th>
             </tr>
             <tr>
-                <th scope="col"><label><input type="text" />Nouveau Plafond :</label></th>
+                <th scope="col"><input type="text" />Nouveau Plafond :</th>
                 <th scope="col">
                     <s:textfield name="plafond" value="%{carte.plafond}" theme="simple" />
                 </th>

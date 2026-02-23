@@ -41,7 +41,7 @@
 
         <table class="form-table">
             <tr>
-                <th scope="col"><label>Type de débit :</label></th>
+                <th scope="col">Type de débit :</th>
                 <th scope="col">
                     <s:select name="typeDebit"
                               list="#{'IMMEDIAT':'Débit Immédiat', 'DIFFERE':'Débit Différé'}"
@@ -49,7 +49,7 @@
                 </th>
             </tr>
             <tr>
-                <th scope="col"><label>Plafond (30 jours) :</label></th>
+                <th scope="col">Plafond (30 jours) :</th>
                 <th scope="col">
                     <s:textfield name="plafond" placeholder="Ex: 500" theme="simple" />
                 </th>
