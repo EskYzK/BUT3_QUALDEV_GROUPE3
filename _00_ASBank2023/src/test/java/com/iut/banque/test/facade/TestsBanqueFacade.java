@@ -87,7 +87,7 @@ public class TestsBanqueFacade {
     }
 
     @Test
-    public void testCreateAccount_OnlyForManager() throws Exception {
+    public void testCreateAccountOnlyForManager() throws Exception {
         when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
 
         banqueFacade.createAccount("123", mockClient);
@@ -95,7 +95,7 @@ public class TestsBanqueFacade {
     }
 
     @Test
-    public void testCreateAccount_NotForUser() throws Exception {
+    public void testCreateAccountNotForUser() throws Exception {
         when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
 
         banqueFacade.createAccount("123", mockClient);
@@ -110,5 +110,64 @@ public class TestsBanqueFacade {
 
         assertTrue(result);
         verify(mockLoginManager).changePassword(mockClient, "old", "new");
+    }
+
+    // --- TESTS POUR LA CRÉATION ET GESTION DES UTILISATEURS ---
+
+    @Test
+    public void testCreateManager_AsManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+        banqueFacade.createManager("m1", "pwd", "Nom", "Prenom", "Adresse", true, "mail@mail.com");
+        verify(mockBanqueManager).createManager("m1", "pwd", "Nom", "Prenom", "Adresse", true, "mail@mail.com");
+    }
+
+    @Test
+    public void testCreateManagerAsClient() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+        banqueFacade.createManager("m1", "pwd", "Nom", "Prenom", "Adresse", true, "mail@mail.com");
+        verify(mockBanqueManager, never()).createManager(anyString(), anyString(), anyString(), anyString(), anyString(), anyBoolean(), anyString());
+    }
+
+    @Test
+    public void testDeleteUserAsManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+        banqueFacade.deleteUser(mockClient);
+        verify(mockBanqueManager).deleteUser(mockClient);
+    }
+
+    // --- TESTS POUR LA GESTION DES CARTES BANCAIRES ---
+
+    @Test
+    public void testCreateCarteAsManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+        banqueFacade.createCarte("COMPTE1", 1000.0, "IMMEDIAT");
+        verify(mockBanqueManager).creerCarte("COMPTE1", 1000.0, "IMMEDIAT");
+    }
+
+    @Test
+    public void testCreateCarteAsClientRefuse() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockClient);
+        banqueFacade.createCarte("COMPTE1", 1000.0, "IMMEDIAT");
+        verify(mockBanqueManager, never()).creerCarte(anyString(), anyDouble(), anyString());
+    }
+
+    @Test
+    public void testBloquerCarte() throws Exception {
+        // N'importe qui peut bloquer une carte (pas de vérification instanceof dans la facade)
+        banqueFacade.bloquerCarte("12345678", true);
+        verify(mockBanqueManager).bloquerCarte("12345678", true);
+    }
+
+    @Test
+    public void testDebloquerCarteAsManager() throws Exception {
+        when(mockLoginManager.getConnectedUser()).thenReturn(mockGestionnaire);
+        banqueFacade.debloquerCarte("1234");
+        verify(mockBanqueManager).debloquerCarte("1234");
+    }
+
+    @Test
+    public void testPayerParCarte() throws Exception {
+        banqueFacade.payerParCarte("1234", 50.0, "Achat Internet");
+        verify(mockBanqueManager).effectuerPaiementCarte("1234", 50.0, "Achat Internet");
     }
 }

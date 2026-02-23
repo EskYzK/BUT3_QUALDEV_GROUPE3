@@ -122,4 +122,61 @@ public class TestsLoginManager {
         assertFalse(loginManager.changePassword(user, null, "y"));
         assertFalse(loginManager.changePassword(user, "x", null));
     }
+
+    @Test
+    public void testInitiatePasswordResetUserNotFound() {
+        when(mockDao.getUserByEmail("inconnu@mail.com")).thenReturn(null);
+        boolean result = loginManager.initiatePasswordReset("inconnu@mail.com");
+        assertFalse(result);
+    }
+
+    @Test
+    public void testInitiatePasswordResetSuccess() {
+        Utilisateur mockUser = mock(Utilisateur.class);
+        when(mockDao.getUserByEmail("test@mail.com")).thenReturn(mockUser);
+
+        boolean result = loginManager.initiatePasswordReset("test@mail.com");
+
+        assertTrue(result);
+        verify(mockUser).setResetToken(anyString());
+        verify(mockUser).setTokenExpiry(any(java.sql.Timestamp.class));
+        verify(mockDao).updateUser(mockUser);
+    }
+
+    @Test
+    public void testUsePasswordResetTokenInvalidToken() {
+        when(mockDao.getUserByToken("bad-token")).thenReturn(null);
+        boolean result = loginManager.usePasswordResetToken("bad-token", "newPwd");
+        assertFalse(result);
+    }
+
+    @Test
+    public void testUsePasswordResetTokenExpiredToken() {
+        Utilisateur mockUser = mock(Utilisateur.class);
+        // Date dans le passé (expiré)
+        java.sql.Timestamp pastDate = new java.sql.Timestamp(System.currentTimeMillis() - 100000);
+        when(mockUser.getTokenExpiry()).thenReturn(pastDate);
+        when(mockDao.getUserByToken("expired-token")).thenReturn(mockUser);
+
+        boolean result = loginManager.usePasswordResetToken("expired-token", "newPwd");
+
+        assertFalse(result);
+        verify(mockDao, never()).updateUser(mockUser);
+    }
+
+    @Test
+    public void testUsePasswordResetTokenSuccess() {
+        Utilisateur mockUser = mock(Utilisateur.class);
+        // Date dans le futur (valide)
+        java.sql.Timestamp futureDate = new java.sql.Timestamp(System.currentTimeMillis() + 100000);
+        when(mockUser.getTokenExpiry()).thenReturn(futureDate);
+        when(mockDao.getUserByToken("good-token")).thenReturn(mockUser);
+
+        boolean result = loginManager.usePasswordResetToken("good-token", "newPwd");
+
+        assertTrue(result);
+        verify(mockUser).setUserPwd(anyString());
+        verify(mockUser).setResetToken(null);
+        verify(mockDao).updateUser(mockUser);
+    }
 }
