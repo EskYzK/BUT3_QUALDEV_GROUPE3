@@ -15,6 +15,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 public class TestCreationClient {
     private WebDriver driver;
@@ -23,7 +24,9 @@ public class TestCreationClient {
     @Before
     public void setUp() {
         // Initialisation du driver Firefox
-        driver = new FirefoxDriver();
+        FirefoxOptions options = new FirefoxOptions();
+        options.addArguments("--headless");
+        driver = new FirefoxDriver(options);
         js = (JavascriptExecutor) driver;
     }
 
