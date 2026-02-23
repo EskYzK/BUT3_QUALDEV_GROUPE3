@@ -100,4 +100,134 @@ public class TestsBanqueManagerBusiness {
         // Vérifie qu'une opération a été créée
         verify(mockDao).createOperation(any());
     }
+
+    // ------------------------------------------------------------------------
+    // TESTS SUR LES EXCEPTIONS SILENCIEUSES (CREDITER / DEBITER)
+    // ------------------------------------------------------------------------
+
+    @Test
+    public void testCrediter_ExceptionLorsDeCreationHistorique() throws Exception {
+        // On simule un plantage de la base de données UNIQUEMENT lors de la création de l'historique
+        doThrow(new RuntimeException("Erreur BDD simulée")).when(mockDao).createOperation(any());
+
+        // La méthode crediter ne doit PAS planter l'application entière (le try/catch absorbe l'erreur)
+        banqueManager.crediter(mockCompte, 100.0);
+
+        // On vérifie que le compte a bien été crédité localement malgré l'erreur d'historique
+        verify(mockDao).updateAccount(mockCompte);
+    }
+
+    @Test
+    public void testDebiter_ExceptionLorsDeCreationHistorique() throws Exception {
+        doThrow(new RuntimeException("Erreur BDD simulée")).when(mockDao).createOperation(any());
+
+        // La méthode debiter ne doit PAS planter l'application
+        banqueManager.debiter(mockCompte, 50.0);
+
+        verify(mockDao).updateAccount(mockCompte);
+    }
+
+    // ------------------------------------------------------------------------
+    // TESTS SUR LA MODIFICATION ET LE BLOCAGE DES CARTES
+    // ------------------------------------------------------------------------
+
+    @Test
+    public void testChangerPlafondCarte_CarteSupprimee() {
+        CarteDebitImmediat carte = new CarteDebitImmediat("123", 1000.0, mockCompte);
+        carte.setSupprimee(true); // Carte définitivement bloquée
+        when(mockDao.getCarteBancaire("123")).thenReturn(carte);
+
+        try {
+            banqueManager.changerPlafondCarte("123", 2000.0);
+            fail("Aurait dû lever une TechnicalException");
+        } catch (TechnicalException e) {
+            assertEquals("Impossible de modifier une carte supprimée.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testBloquerCarte_Definitif() throws Exception {
+        CarteDebitImmediat carte = new CarteDebitImmediat("123", 1000.0, mockCompte);
+        when(mockDao.getCarteBancaire("123")).thenReturn(carte);
+
+        // Bloque définitivement
+        banqueManager.bloquerCarte("123", true);
+
+        assertTrue(carte.isSupprimee());
+        verify(mockDao).updateCarteBancaire(carte);
+    }
+
+    @Test
+    public void testDebloquerCarte_Supprimee() throws Exception {
+        CarteDebitImmediat carte = new CarteDebitImmediat("123", 1000.0, mockCompte);
+        carte.setSupprimee(true);
+        when(mockDao.getCarteBancaire("123")).thenReturn(carte);
+
+        try {
+            banqueManager.debloquerCarte("123");
+            fail("Aurait dû lever une IllegalOperationException");
+        } catch (IllegalOperationException e) {
+            assertEquals("Impossible de débloquer une carte supprimée définitivement.", e.getMessage());
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // TEST DU PAIEMENT DIFFÉRÉ
+    // ------------------------------------------------------------------------
+
+    @Test
+    public void testPaiementCarte_DiffereNeDebitePasLeCompte() throws Exception {
+        CarteDebitDiffere carteDiff = new CarteDebitDiffere("999", 2000.0, mockCompte);
+        when(mockDao.getCarteBancaire("999")).thenReturn(carteDiff);
+        when(mockDao.getMontantTotalDepensesCarte(eq("999"), any(Date.class))).thenReturn(0.0);
+
+        banqueManager.effectuerPaiementCarte("999", 150.0, "Achat TV");
+
+        // VERIFICATION MAJEURE : On s'assure que le compte n'a JAMAIS été débité en direct !
+        verify(mockCompte, never()).debiter(anyDouble());
+        verify(mockDao, never()).updateAccount(mockCompte);
+
+        // Par contre, l'opération a bien été sauvegardée dans l'historique
+        verify(mockDao, times(1)).createOperation(any());
+    }
+
+    // ------------------------------------------------------------------------
+    // TEST DE LA CLÔTURE MENSUELLE (BATCH)
+    // ------------------------------------------------------------------------
+
+    @Test
+    public void testCloturerComptesDifferes_AvecDepenses() throws Exception {
+        // Préparation d'un faux client avec un faux compte
+        com.iut.banque.modele.Client mockClient = mock(com.iut.banque.modele.Client.class);
+        java.util.Map<String, Compte> mapComptes = new java.util.HashMap<>();
+        when(mockCompte.getNumeroCompte()).thenReturn("COMPTE_TEST");
+        mapComptes.put("COMPTE_TEST", mockCompte);
+        when(mockClient.getAccounts()).thenReturn(mapComptes);
+
+        // Remplacement de la méthode getAllClients() locale (via un "spy" si nécessaire,
+        // ou on mock directement le comportement de la dao pour charger les clients)
+        java.util.Map<String, com.iut.banque.modele.Client> mapClients = new java.util.HashMap<>();
+        mapClients.put("client1", mockClient);
+        when(mockDao.getAllClients()).thenReturn(mapClients);
+
+        // On injecte manuellement les clients dans la "Banque" interne du Manager
+        banqueManager.loadAllClients();
+
+        when(mockDao.getAccountById("COMPTE_TEST")).thenReturn(mockCompte);
+        // On simule qu'il y a 350€ de dépenses différées à prélever ce mois-ci
+        when(mockDao.getMontantTotalDepensesDifferees(eq("COMPTE_TEST"), any(Date.class), any(Date.class))).thenReturn(350.0);
+
+        // Exécution du batch
+        banqueManager.cloturerComptesDifferes();
+
+        // Vérifications :
+        // 1. Le compte a bien subi un "debitTechnique" forcé de 350€
+        verify(mockCompte).debitTechnique(350.0);
+
+        // 2. Le compte a été mis à jour en BDD
+        verify(mockDao).updateAccount(mockCompte);
+
+        // 3. Une opération de prélèvement ("PRLV_DIFF") a été créée en BDD
+        verify(mockDao).createOperation(any());
+    }
 }
