@@ -520,7 +520,7 @@ public class BanqueManager {
         Date fin = cal.getTime();
 
         // --- CHARGEMENT FORCÉ DES DONNÉES ---
-        // On s'assure que l'objet 'bank' est à jour avec la BDD
+        // On s'assure que l'objet bank est à jour avec la BDD
         // sinon getAllClients() renvoie null au démarrage du serveur
         loadAllClients();
 
