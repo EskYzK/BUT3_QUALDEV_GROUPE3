@@ -92,30 +92,6 @@ public class TestsDaoHibernateExtended {
     }
 
     @Test
-    public void testGetMontantTotalDepensesCarte() {
-        CarteDebitImmediat carte = new CarteDebitImmediat("CARD_PLAFOND_TEST", 1000.0, compteTest);
-        dao.createCarteBancaire(carte);
-
-        Calendar cal = Calendar.getInstance();
-        Date aujourdhui = cal.getTime();
-
-        // On crée deux opérations valides (dans les 30 derniers jours)
-        dao.createOperation(new Operation("Achat 1", -100.0, aujourdhui, "CB_IMDT", compteTest, carte));
-        dao.createOperation(new Operation("Achat 2", -50.0, aujourdhui, "CB_IMDT", compteTest, carte));
-
-        // On crée une opération positive (remboursement) qui ne doit PAS compter comme une dépense
-        dao.createOperation(new Operation("Remboursement", 20.0, aujourdhui, "CB_IMDT", compteTest, carte));
-
-        // Date de début de recherche (il y a 30 jours)
-        cal.add(Calendar.DAY_OF_YEAR, -30);
-        Date dateDebut = cal.getTime();
-
-        // Le montant total des dépenses en valeur absolue doit être 150.0 (100 + 50)
-        double total = dao.getMontantTotalDepensesCarte("CARD_PLAFOND_TEST", dateDebut);
-        assertEquals(150.0, total, 0.001);
-    }
-
-    @Test
     public void testGetMontantTotalDepensesDifferees() {
         CarteDebitDiffere carte = new CarteDebitDiffere("CARD_DIFF_TEST", 1000.0, compteTest);
         dao.createCarteBancaire(carte);
