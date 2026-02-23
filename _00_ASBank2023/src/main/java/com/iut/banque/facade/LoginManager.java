@@ -7,6 +7,7 @@ import com.iut.banque.modele.Utilisateur;
 import com.iut.banque.security.PasswordHasher;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import javax.mail.*;
 import javax.mail.internet.*;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -116,7 +117,7 @@ public class LoginManager {
         user1.setResetToken(token);
 
         // Expiration dans 15 minutes
-        long timeout = 15 * 60 * 1000;
+        long timeout = TimeUnit.MINUTES.toMillis(15);
         user1.setTokenExpiry(new java.sql.Timestamp(System.currentTimeMillis() + timeout));
 
         dao.updateUser(user1);
